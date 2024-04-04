@@ -1,10 +1,10 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import {createRouter, createWebHashHistory, createWebHistory} from 'vue-router'
 import ActivePlayersView from "@/views/ActivePlayersView.vue";
 import LastGamesView from "@/views/LastGamesView.vue";
 import StatusView from "@/views/StatusView.vue";
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
