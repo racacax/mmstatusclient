@@ -47,7 +47,7 @@ import {ref, watch} from "vue";
       </thead>
       <tbody>
       <tr v-for="rank in ranks">
-        <td><img :src="`/src/assets/${rank.image}`" style="width: 60px" /> {{ rank.name }}</td>
+        <td><img :src="`/images/${rank.image}`" style="width: 60px" /> {{ rank.name }}</td>
         <td>{{ status[rank.key] ? new Date(status[rank.key]["last_time"] * 1000).toLocaleTimeString() : "No game" }}</td>
         <td>{{ status[rank.key] ? status[rank.key].count : "0" }}</td>
       </tr>
