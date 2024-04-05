@@ -1,7 +1,7 @@
-import {createRouter, createWebHashHistory, createWebHistory} from 'vue-router'
-import ActivePlayersView from "@/views/ActivePlayersView.vue";
-import LastGamesView from "@/views/LastGamesView.vue";
-import StatusView from "@/views/StatusView.vue";
+import { createRouter, createWebHashHistory } from 'vue-router'
+import ActivePlayersView from '@/views/ActivePlayersView.vue'
+import LastGamesView from '@/views/LastGamesView.vue'
+import StatusView from '@/views/StatusView.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -9,7 +9,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      redirect: {name:"status"}
+      redirect: { name: 'status' }
     },
     {
       path: '/active-players',
@@ -25,7 +25,7 @@ const router = createRouter({
       path: '/current-status',
       name: 'current-status',
       component: StatusView
-    },
+    }
   ]
 })
 
