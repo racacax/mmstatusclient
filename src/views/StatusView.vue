@@ -2,6 +2,8 @@
 import {ref, watch} from "vue";
 
   const status = ref(null);
+  const minDate = ref(Math.round(new Date().getTime() / 1000 - 3600));
+  const maxDate = ref(Math.round(new Date().getTime() / 1000));
   const ranks = [{"name": "Trackmaster", "image": "TM.png", "key": "tm"},
     {"name": "Master III", "image": "M3.png", "key": "m3"},
     {"name": "Master II", "image": "M2.png", "key": "m2"},
@@ -19,19 +21,43 @@ import {ref, watch} from "vue";
   function getStatus() {
     status.value = null;
     //@ts-ignore
-    fetch(window.BASE_URL+`/api/status`)
+    fetch(window.BASE_URL+`/api/status?min_date=${minDate.value}&max_date=${maxDate.value}`)
         .then(r => r.json())
         .then(j => {
           status.value = j;
     })
   }
   getStatus()
+
+  function getLocalDate(date: Date) {
+    date = new Date(date.getTime())
+    date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+    return date.toISOString().slice(0,16)
+  }
 </script>
 
 <template>
   
   <h2>What is the state of MM ?</h2>
-  <span>Show the last time a player of each rank got a game (in the last hour).</span>
+  <span>Show the last time a player of each rank got a game depending on your filters. Data gathering started on 04/04/2024.</span>
+  <div><span>Statistics between </span><input
+      class="form-check-input"
+      style="width:180px; height:30px"
+      type="datetime-local"
+      :value="getLocalDate(new Date(minDate * 1000))"
+      min="2024-04-03T00:00"
+      :max="getLocalDate(new Date(maxDate * 1000))" @change="(e) => {
+        minDate = Math.round(new Date(e.target.value).getTime() / 1000)
+      }"
+      /> <span>and</span> <input
+      class="form-check-input"
+      style="width:180px; height:30px"
+      type="datetime-local"
+      :value="getLocalDate(new Date(maxDate * 1000))"
+      :min="getLocalDate(new Date(minDate * 1000))" @change="(e) => {
+        maxDate = Math.round(new Date(e.target.value).getTime() / 1000)
+      }"
+  /> <input type="button" class="btn btn-primary" value="Search" @click="getStatus"></div>
   <div class="w-100">
   <div v-if="status === null">
     Loading...
@@ -41,8 +67,8 @@ import {ref, watch} from "vue";
       <thead>
       <tr>
         <th scope="col">Rank</th>
-        <th scope="col">Last game</th>
-        <th scope="col">Games in the past hour</th>
+        <th scope="col">Most recent game (in the interval)</th>
+        <th scope="col">Total games (in the interval)</th>
       </tr>
       </thead>
       <tbody>

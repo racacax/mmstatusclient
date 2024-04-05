@@ -18,7 +18,7 @@ import {ref, watch} from "vue";
 
 <template>
   <h2>Last games</h2>
-  <span>Shows the last 80 games</span>
+  <span>Shows the last 80 games matching your filters</span>
   <div class="w-100">
     <div class="d-flex gap-2">
       <div>

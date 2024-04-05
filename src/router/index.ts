@@ -9,7 +9,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: ActivePlayersView
+      redirect: {name:"status"}
     },
     {
       path: '/active-players',

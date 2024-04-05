@@ -1,15 +1,30 @@
 <script setup lang="ts">
 import {ref, watch} from "vue";
 
+  function ordinal_suffix_of(i: number) {
+    let j = i % 10,
+        k = i % 100;
+    if (j === 1 && k !== 11) {
+      return i + "st";
+    }
+    if (j === 2 && k !== 12) {
+      return i + "nd";
+    }
+    if (j === 3 && k !== 13) {
+      return i + "rd";
+    }
+    return i + "th";
+  }
   const players = ref(null);
   const minElo = ref(0);
   const maxElo = ref(99999);
   const minRank = ref(1);
   const maxRank = ref(99999999);
+  const name = ref("");
   function getPlayers() {
     players.value = null;
     //@ts-ignore
-    fetch(window.BASE_URL+`/api/players?min_elo=${minElo.value}&max_elo=${maxElo.value}&min_rank=${minRank.value}&max_rank=${maxRank.value}`)
+    fetch(window.BASE_URL+`/api/players?min_elo=${minElo.value}&max_elo=${maxElo.value}&min_rank=${minRank.value}&max_rank=${maxRank.value}&name=${name.value}`)
         .then(r => r.json())
         .then(j => {
           players.value = j;
@@ -21,7 +36,7 @@ import {ref, watch} from "vue";
 <template>
 
   <h2>Active players</h2>
-  <span>Shows all players that played a game in the last 100 active players</span>
+  <span>Shows last 100 active players matching your filters</span>
   <div class="w-100">
     <div class="d-flex gap-2">
       <div>
@@ -69,6 +84,10 @@ import {ref, watch} from "vue";
         <input @change="(e) => {maxRank = e.target.value; getPlayers()}" type="number" min="1" max="999999" value="999999" class="form-check-input form-select-sm" style="width: 80px; height: 30px; margin-top: 0px"/>
       </div>
       <div>
+        <label class="form-label">Player name</label><br/>
+        <input @change="(e) => {name = e.target.value; getPlayers()}" type="text" class="form-check-input form-select-sm" style="width: 120px; height: 30px; margin-top: 0px"/>
+      </div>
+      <div>
         <label></label><br/>
         <button class="btn btn-primary" @click="getPlayers">Refresh</button>
       </div>
@@ -89,7 +108,7 @@ import {ref, watch} from "vue";
       <tbody>
       <tr v-for="player in players">
         <td><a :href="`https://trackmania.io/#/player/${player.uuid}`" target="_blank">{{ player.name }}</a></td>
-        <td>{{ player.rank }}th</td>
+        <td>{{ ordinal_suffix_of(player["rank"]) }}</td>
         <td>{{ player.points }}</td>
         <td v-if="!player.last_game_finished"><a :href="`https://trackmania.io/#/match/${player.last_game_id}`" target="_blank">In match</a></td>
         <td v-else><a :href="`https://trackmania.io/#/match/${player.last_game_id}`" target="_blank">Last match on {{ new Date(player.last_active * 1000).toLocaleDateString() }} {{ new Date(player.last_active * 1000).toTimeString().split(' ')[0] }}</a></td>
