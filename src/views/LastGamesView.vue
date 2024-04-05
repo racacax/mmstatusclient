@@ -59,19 +59,19 @@ fetchLastGames()
             }
           "
         >
-          <option value="0">Bronze I</option>
-          <option value="300">Bronze II</option>
-          <option value="600">Bronze III</option>
-          <option value="1000">Silver I</option>
-          <option value="1300">Silver II</option>
-          <option value="1600">Silver III</option>
-          <option value="2000">Gold I</option>
-          <option value="2300">Gold II</option>
-          <option value="2600">Gold III</option>
-          <option value="3000">Master I</option>
-          <option value="3300">Master II</option>
-          <option value="3600">Master III</option>
-          <option selected value="9999999">Trackmaster</option>
+          <option value="299">Bronze I</option>
+          <option value="599">Bronze II</option>
+          <option value="999">Bronze III</option>
+          <option value="1299">Silver I</option>
+          <option value="1599">Silver II</option>
+          <option value="1999">Silver III</option>
+          <option value="2299">Gold I</option>
+          <option value="2599">Gold II</option>
+          <option value="2999">Gold III</option>
+          <option value="3299">Master I</option>
+          <option value="3599">Master II</option>
+          <option value="3999">Master III (-4000 pts)</option>
+          <option selected value="9999999">Trackmaster (4000+ pts)</option>
         </select>
       </div>
       <div>
