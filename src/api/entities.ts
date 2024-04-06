@@ -5,6 +5,10 @@ export interface Player {
   points: number
   last_active: number
   last_game_finished: boolean
+
+  games_last_24_hours: string
+  games_last_week: string
+  games_last_month: string
   last_game_id: number
 }
 

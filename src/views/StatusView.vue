@@ -3,6 +3,10 @@ import { type Ref, ref, watch } from 'vue'
 import { ranks } from '@/constants'
 import { APIClient } from '@/api/client'
 import { type Status } from '@/api/entities'
+import {getRankStringFromEloAndRank} from "../utils";
+import LoadingComponent from "@/components/LoadingComponent.vue";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {faSearch} from "@fortawesome/free-solid-svg-icons";
 
 const status: Ref<Status | null> = ref(null)
 const minDate = ref(new Date())
@@ -21,7 +25,11 @@ fetchStatus()
 function getLocalDate(date: Date) {
   date = new Date(date.getTime())
   date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
-  return date.toISOString().slice(0, 16)
+  try {
+    return date.toISOString().slice(0, 16)
+  } catch (e) {
+    return ""
+  }
 }
 </script>
 
@@ -34,8 +42,7 @@ function getLocalDate(date: Date) {
   <div>
     <span>Statistics between </span
     ><input
-      class="form-check-input"
-      style="width: 180px; height: 30px"
+      class="form-check-input rounded-1 datetime"
       type="datetime-local"
       :value="getLocalDate(minDate)"
       min="2024-04-03T00:00"
@@ -46,10 +53,9 @@ function getLocalDate(date: Date) {
         }
       "
     />
-    <span>and</span>
+    <span> and </span>
     <input
-      class="form-check-input"
-      style="width: 180px; height: 30px"
+      class="form-check-input rounded-1 datetime"
       type="datetime-local"
       :value="getLocalDate(maxDate)"
       :min="getLocalDate(minDate)"
@@ -59,11 +65,10 @@ function getLocalDate(date: Date) {
         }
       "
     />
-    <input type="button" class="btn btn-primary" value="Search" @click="fetchStatus" />
+    <div type="button" class="btn btn-primary mx-1" @click="fetchStatus"><FontAwesomeIcon :icon="faSearch" /> Search</div>
   </div>
   <div class="w-100">
-    <div v-if="status === null">Loading...</div>
-
+    <LoadingComponent v-if="status === null" />
     <table class="table table-striped table-sm" data-toggle="table" v-else>
       <thead>
         <tr>
@@ -74,7 +79,7 @@ function getLocalDate(date: Date) {
       </thead>
       <tbody>
         <tr v-for="rank in ranks" :key="rank.key">
-          <td><img :src="`/images/${rank.image}`" style="width: 60px" /> {{ rank.name }}</td>
+          <td v-html='getRankStringFromEloAndRank(rank.minElo, rank.minRank, "40px")'></td>
           <td>
             {{
               status[rank.key]
@@ -88,3 +93,10 @@ function getLocalDate(date: Date) {
     </table>
   </div>
 </template>
+<style scoped type="text/css">
+.datetime {
+  width: 180px;
+  height: 38px;
+  margin-top: 0;
+}
+</style>

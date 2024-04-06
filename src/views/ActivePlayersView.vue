@@ -3,6 +3,9 @@ import { type Ref, ref } from 'vue'
 import { getRankStringFromEloAndRank, ordinalSuffixOf } from '@/utils'
 import { APIClient } from '@/api/client'
 import { type Player } from '@/api/entities'
+import LoadingComponent from "@/components/LoadingComponent.vue";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {faBackward, faForward, faHistory, faSearch} from "@fortawesome/free-solid-svg-icons";
 
 const players: Ref<Player[] | null> = ref(null)
 const minElo = ref(0)
@@ -10,9 +13,10 @@ const maxElo = ref(99999)
 const minRank = ref(1)
 const maxRank = ref(99999999)
 const name = ref('')
+const page = ref(1)
 function fetchPlayers() {
   players.value = null
-  APIClient.getPlayers(minElo.value, maxElo.value, minRank.value, maxRank.value, name.value).then(
+  APIClient.getPlayers(minElo.value, maxElo.value, minRank.value, maxRank.value, name.value, page.value).then(
     (j) => {
       players.value = j
     }
@@ -23,7 +27,7 @@ fetchPlayers()
 
 <template>
   <h2>Active players</h2>
-  <span>Shows last 100 active players matching your filters</span>
+  <span>Shows last active players matching your filters</span>
   <div class="w-100">
     <div class="d-flex gap-2">
       <div>
@@ -34,7 +38,6 @@ fetchPlayers()
           @change="
             (e) => {
               minElo = e.target.value
-              fetchPlayers()
             }
           "
         >
@@ -61,7 +64,6 @@ fetchPlayers()
           @change="
             (e) => {
               maxElo = e.target.value
-              fetchPlayers()
             }
           "
         >
@@ -86,7 +88,6 @@ fetchPlayers()
           @change="
             (e) => {
               minRank = e.target.value
-              fetchPlayers()
             }
           "
           type="number"
@@ -103,7 +104,6 @@ fetchPlayers()
           @change="
             (e) => {
               maxRank = e.target.value
-              fetchPlayers()
             }
           "
           type="number"
@@ -120,7 +120,6 @@ fetchPlayers()
           @change="
             (e) => {
               name = e.target.value
-              fetchPlayers()
             }
           "
           type="text"
@@ -130,10 +129,31 @@ fetchPlayers()
       </div>
       <div>
         <label></label><br />
-        <button class="btn btn-primary" @click="fetchPlayers">Refresh</button>
+        <button class="btn btn-primary" @click="() => {
+        page = 1
+        fetchPlayers()
+                }"><FontAwesomeIcon :icon="faSearch" /> Search</button>
+      </div>
+      <div>
+        <label></label><br />
+        <button class="btn btn-primary" :disabled="page === 1" @click="() => {
+        page -= 1
+        fetchPlayers()
+                }"><FontAwesomeIcon :icon="faBackward" /></button>
+      </div>
+      <div>
+        <label></label><br />
+        <div class="d-flex align-items"><span>Page {{ page }}</span></div>
+      </div>
+      <div>
+        <label></label><br />
+        <button class="btn btn-primary" :disabled="players === null || players.length === 0" @click="() => {
+        page += 1
+        fetchPlayers()
+                }"><FontAwesomeIcon :icon="faForward" /></button>
       </div>
     </div>
-    <div v-if="players === null">Loading...</div>
+    <LoadingComponent v-if="players === null" />
 
     <table class="table table-striped table-sm" data-toggle="table" v-else>
       <thead>
@@ -143,6 +163,9 @@ fetchPlayers()
           <th scope="col">Points</th>
           <th scope="col">Rank</th>
           <th scope="col">Activity</th>
+          <th scope="col">Games last 24h</th>
+          <th scope="col">Games last week</th>
+          <th scope="col">Games last month</th>
         </tr>
       </thead>
       <tbody>
@@ -166,6 +189,9 @@ fetchPlayers()
               {{ new Date(player.last_active * 1000).toTimeString().split(' ')[0] }}</a
             >
           </td>
+          <td>{{ player.games_last_24_hours }}</td>
+          <td>{{ player.games_last_week }}</td>
+          <td>{{ player.games_last_month }}</td>
         </tr>
       </tbody>
     </table>

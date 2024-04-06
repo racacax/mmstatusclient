@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {faGamepad, faUsers} from "@fortawesome/free-solid-svg-icons";
+import CustomIcon from "@/components/CustomIcon.vue";
 </script>
 
 <template>
@@ -23,15 +26,15 @@ import { RouterLink, RouterView } from 'vue-router'
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
             <RouterLink class="nav-link" aria-current="page" to="/active-players"
-              >Players</RouterLink
+              ><FontAwesomeIcon :icon="faUsers" /> Players</RouterLink
             >
           </li>
           <li class="nav-item">
-            <RouterLink class="nav-link" aria-current="page" to="/last-games">Games</RouterLink>
+            <RouterLink class="nav-link" aria-current="page" to="/last-games"><FontAwesomeIcon :icon="faGamepad" /> Games</RouterLink>
           </li>
           <li class="nav-item">
             <RouterLink class="nav-link" aria-current="page" to="/current-status"
-              >Status</RouterLink
+              > <CustomIcon icon="wave-pulse" /> Status</RouterLink
             >
           </li>
         </ul>
