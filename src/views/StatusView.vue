@@ -3,10 +3,10 @@ import { type Ref, ref, watch } from 'vue'
 import { ranks } from '@/constants'
 import { APIClient } from '@/api/client'
 import { type Status } from '@/api/entities'
-import {getRankStringFromEloAndRank} from "../utils";
-import LoadingComponent from "@/components/LoadingComponent.vue";
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import { getRankStringFromEloAndRank } from '../utils'
+import LoadingComponent from '@/components/LoadingComponent.vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
 
 const status: Ref<Status | null> = ref(null)
 const minDate = ref(new Date())
@@ -28,7 +28,7 @@ function getLocalDate(date: Date) {
   try {
     return date.toISOString().slice(0, 16)
   } catch (e) {
-    return ""
+    return ''
   }
 }
 </script>
@@ -65,7 +65,9 @@ function getLocalDate(date: Date) {
         }
       "
     />
-    <div type="button" class="btn btn-primary mx-1" @click="fetchStatus"><FontAwesomeIcon :icon="faSearch" /> Search</div>
+    <div type="button" class="btn btn-primary mx-1" @click="fetchStatus">
+      <FontAwesomeIcon :icon="faSearch" /> Search
+    </div>
   </div>
   <div class="w-100">
     <LoadingComponent v-if="status === null" />
@@ -79,7 +81,7 @@ function getLocalDate(date: Date) {
       </thead>
       <tbody>
         <tr v-for="rank in ranks" :key="rank.key">
-          <td v-html='getRankStringFromEloAndRank(rank.minElo, rank.minRank, "40px")'></td>
+          <td v-html="getRankStringFromEloAndRank(rank.minElo, rank.minRank, '40px')"></td>
           <td>
             {{
               status[rank.key]

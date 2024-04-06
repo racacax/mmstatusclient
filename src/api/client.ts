@@ -1,7 +1,9 @@
 import { type Game, type Player, type Status } from '@/api/entities'
 
 function fetchAndCatch(url: string) {
-  return fetch(url).then(r => r.json()).catch(() => alert("An error occurred while fetching data."))
+  return fetch(url)
+    .then((r) => r.json())
+    .catch(() => alert('An error occurred while fetching data.'))
 }
 export class APIClient {
   //@ts-ignore
@@ -20,7 +22,9 @@ export class APIClient {
     )
   }
   static getLastGames(minElo: number, maxElo: number, page: number): Promise<Game[]> {
-    return fetchAndCatch(this.BASE_URL + `/api/games?min_elo=${minElo}&max_elo=${maxElo}&page=${page}`)
+    return fetchAndCatch(
+      this.BASE_URL + `/api/games?min_elo=${minElo}&max_elo=${maxElo}&page=${page}`
+    )
   }
 
   static getStatus(minDate: Date, maxDate: Date): Promise<Status> {

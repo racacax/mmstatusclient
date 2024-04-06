@@ -2,9 +2,9 @@
 import { type Ref, ref, watch } from 'vue'
 import { APIClient } from '@/api/client'
 import { type Game } from '@/api/entities'
-import LoadingComponent from "@/components/LoadingComponent.vue";
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {faBackward, faForward, faSearch} from "@fortawesome/free-solid-svg-icons";
+import LoadingComponent from '@/components/LoadingComponent.vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faBackward, faForward, faSearch } from '@fortawesome/free-solid-svg-icons'
 
 const games: Ref<Game[] | null> = ref(null)
 const minElo = ref(0)
@@ -75,30 +75,56 @@ fetchLastGames()
           <option value="3999">Master III (-4000 pts)</option>
           <option selected value="9999999">Trackmaster (4000+ pts)</option>
         </select>
-      </div><div>
-      <label></label><br />
-      <button class="btn btn-primary" @click="() => {
-        page = 1
-        fetchLastGames()
-                }"><FontAwesomeIcon :icon="faSearch" /> Search</button>
-    </div>
-      <div>
-        <label></label><br />
-        <button class="btn btn-primary" :disabled="page === 1" @click="() => {
-        page -= 1
-        fetchLastGames()
-                }"><FontAwesomeIcon :icon="faBackward" /></button>
       </div>
       <div>
         <label></label><br />
-        <div class="d-flex align-items"><span>Page {{ page }}</span></div>
+        <button
+          class="btn btn-primary"
+          @click="
+            () => {
+              page = 1
+              fetchLastGames()
+            }
+          "
+        >
+          <FontAwesomeIcon :icon="faSearch" /> Search
+        </button>
       </div>
       <div>
         <label></label><br />
-        <button class="btn btn-primary" :disabled="games === null || games.length === 0" @click="() => {
-        page += 1
-        fetchLastGames()
-                }"><FontAwesomeIcon :icon="faForward" /></button>
+        <button
+          class="btn btn-primary"
+          :disabled="page === 1"
+          @click="
+            () => {
+              page -= 1
+              fetchLastGames()
+            }
+          "
+        >
+          <FontAwesomeIcon :icon="faBackward" />
+        </button>
+      </div>
+      <div>
+        <label></label><br />
+        <div class="d-flex align-items">
+          <span>Page {{ page }}</span>
+        </div>
+      </div>
+      <div>
+        <label></label><br />
+        <button
+          class="btn btn-primary"
+          :disabled="games === null || games.length === 0"
+          @click="
+            () => {
+              page += 1
+              fetchLastGames()
+            }
+          "
+        >
+          <FontAwesomeIcon :icon="faForward" />
+        </button>
       </div>
     </div>
     <LoadingComponent v-if="games === null" />
