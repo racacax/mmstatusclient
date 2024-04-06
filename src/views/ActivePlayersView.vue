@@ -43,6 +43,8 @@ fetchPlayers()
           @change="
             (e) => {
               minElo = e.target.value
+              page = 1
+              fetchPlayers()
             }
           "
         >
@@ -69,6 +71,8 @@ fetchPlayers()
           @change="
             (e) => {
               maxElo = e.target.value
+              page = 1
+              fetchPlayers()
             }
           "
         >
@@ -93,6 +97,8 @@ fetchPlayers()
           @change="
             (e) => {
               minRank = e.target.value
+              page = 1
+              fetchPlayers()
             }
           "
           type="number"
@@ -109,6 +115,8 @@ fetchPlayers()
           @change="
             (e) => {
               maxRank = e.target.value
+              page = 1
+              fetchPlayers()
             }
           "
           type="number"
@@ -125,6 +133,8 @@ fetchPlayers()
           @change="
             (e) => {
               name = e.target.value
+              page = 1
+              fetchPlayers()
             }
           "
           type="text"

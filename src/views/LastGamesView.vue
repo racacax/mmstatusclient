@@ -32,6 +32,8 @@ fetchLastGames()
           @change="
             (e) => {
               minElo = e.target.value
+              page = 1
+              fetchLastGames()
             }
           "
         >
@@ -58,6 +60,8 @@ fetchLastGames()
           @change="
             (e) => {
               maxElo = e.target.value
+              page = 1
+              fetchLastGames()
             }
           "
         >
