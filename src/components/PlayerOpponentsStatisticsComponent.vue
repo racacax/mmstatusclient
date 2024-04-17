@@ -18,6 +18,8 @@
             <option value="played_along">Played along</option>
             <option value="games_lost_against">Losses against</option>
             <option value="games_won_against">Wins against</option>
+            <option value="games_lost_along">Losses along</option>
+            <option value="games_won_along">Wins along</option>
           </select>
         </div>
 
@@ -47,6 +49,8 @@
           <th scope="col">Played against</th>
           <th scope="col">Wins against</th>
           <th scope="col">Losses against</th>
+          <th scope="col">Wins along</th>
+          <th scope="col">Losses along</th>
         </tr>
       </thead>
       <tbody>
@@ -68,6 +72,18 @@
           <td>
             {{ stat.total_games_lost_against }} ({{
               Math.round((stat.total_games_lost_against * 100) / stat.total_played_against)
+            }}
+            %)
+          </td>
+          <td>
+            {{ stat.total_games_won_along }} ({{
+              Math.round((stat.total_games_won_along * 100) / stat.total_played_along)
+            }}
+            %)
+          </td>
+          <td>
+            {{ stat.total_games_lost_along }} ({{
+              Math.round((stat.total_games_lost_along * 100) / stat.total_played_along)
             }}
             %)
           </td>

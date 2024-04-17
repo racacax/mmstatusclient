@@ -9,14 +9,17 @@ import PlayerStatisticsComponent from '@/components/PlayerStatisticsComponent.vu
 import PlayerMapStatisticsComponent from '@/components/PlayerMapStatisticsComponent.vue'
 import PlayerOpponentsStatisticsComponent from '@/components/PlayerOpponentsStatisticsComponent.vue'
 import {useRoute} from "vue-router";
+import {getLocalDate} from "@/utils";
 
-const minDate = ref(new Date(0))
+const minDate = ref(new Date(2024,3,4))
 const maxDate = ref(new Date())
 const route = useRoute()
 const searchString: Ref<HTMLInputElement | null> = ref(null)
 const currentPlayer: Ref<string | null> = ref(route.params?.playerId?.toString())
 const listPlayers: Ref<SearchPlayer | null> = ref(null)
 const searchBtn = ref();
+const minDateInput = ref();
+const maxDateInput = ref();
 function fetchPlayers() {
   listPlayers.value = null
   if (searchString.value === null) {
@@ -35,7 +38,33 @@ function fetchPlayers() {
       >Note : Statistics are gathered from April 4th. First 3-4 days of matchmaking are not counted
       (at least for now).</span
     ></span
-  >
+  ><br/>
+
+  <div>
+    <span>Statistics between </span
+    ><input
+      class="form-check-input rounded-1 datetime"
+      type="datetime-local"
+      ref="minDateInput"
+      :value="getLocalDate(minDate)"
+      min="2024-04-03T00:00"
+      :max="getLocalDate(maxDate)"
+  />
+    <span> and </span>
+    <input
+        class="form-check-input rounded-1 datetime"
+        ref="maxDateInput"
+        type="datetime-local"
+        :value="getLocalDate(maxDate)"
+        :min="getLocalDate(minDate)"
+    />
+    <div type="button" class="btn btn-primary mx-1" @click="(e) =>  {
+      minDate = new Date(minDateInput.value)
+      maxDate = new Date(maxDateInput.value)
+    }">
+      <FontAwesomeIcon :icon="faSearch" /> Search
+    </div>
+  </div>
   <div class="row w-100 mt-2">
     <div class="col-lg-4 col-md-6 col-12">
       <h4>Global statistics</h4>
@@ -119,4 +148,12 @@ function fetchPlayers() {
     </div>
   </div>
 </template>
-<style scoped type="text/css"></style>
+<style scoped type="text/css">
+
+.datetime {
+  width: 180px;
+  height: 38px;
+  margin-top: 0;
+}
+
+</style>

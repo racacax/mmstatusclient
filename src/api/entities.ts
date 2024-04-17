@@ -80,6 +80,8 @@ export interface OpponentsStatisticsResult {
   total_played_along: number
   total_games_lost_against: number
   total_games_won_against: number
+  total_games_lost_along: number
+  total_games_won_along: number
 }
 
 export interface PlayerStatistics {

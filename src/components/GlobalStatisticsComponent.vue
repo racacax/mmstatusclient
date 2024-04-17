@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import LoadingComponent from '@/components/LoadingComponent.vue'
-import { ref, type Ref } from 'vue'
+import { ref, type Ref, watch } from 'vue'
 import { type MapsStatistics } from '@/api/entities'
 import { APIClient } from '@/api/client'
 
@@ -46,6 +46,7 @@ function fetchStats() {
   })
 }
 fetchStats()
+watch(() => [props.maxDate, props.minDate], fetchStats)
 </script>
 
 <style scoped></style>

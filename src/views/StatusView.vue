@@ -7,6 +7,7 @@ import LoadingComponent from '@/components/LoadingComponent.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import RankComponent from '@/components/RankComponent.vue'
+import {getLocalDate} from "@/utils";
 
 const status: Ref<Status | null> = ref(null)
 const minDate = ref(new Date())
@@ -22,15 +23,6 @@ function fetchStatus() {
 }
 fetchStatus()
 
-function getLocalDate(date: Date) {
-  date = new Date(date.getTime())
-  date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
-  try {
-    return date.toISOString().slice(0, 16)
-  } catch (e) {
-    return ''
-  }
-}
 </script>
 
 <template>

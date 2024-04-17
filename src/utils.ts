@@ -12,3 +12,13 @@ export function ordinalSuffixOf(i: number) {
   }
   return i + 'th'
 }
+
+export function getLocalDate(date: Date) {
+  date = new Date(date.getTime())
+  date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
+  try {
+    return date.toISOString().slice(0, 16)
+  } catch (e) {
+    return ''
+  }
+}
