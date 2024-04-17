@@ -28,7 +28,7 @@
               </h6>
             </div>
             <div class="d-flex justify-content-between">
-              <h6>Wins: {{ stats.stats.total_losses }}</h6>
+              <h6>Losses: {{ stats.stats.total_losses }}</h6>
               <h6>
                 Loss-rate:
                 {{ Math.round((stats.stats.total_losses * 100) / stats.stats.total_played) }} %
