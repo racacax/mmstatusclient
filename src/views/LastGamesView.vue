@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { type Ref, ref, watch } from 'vue'
+import { type Ref, ref } from 'vue'
 import { APIClient } from '@/api/client'
 import { type Game } from '@/api/entities'
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faBackward, faForward, faSearch } from '@fortawesome/free-solid-svg-icons'
+import RankComponent from '@/components/RankComponent.vue'
 
 const games: Ref<Game[] | null> = ref(null)
 const minElo = ref(0)
@@ -20,8 +21,8 @@ fetchLastGames()
 </script>
 
 <template>
-  <h2>Last games</h2>
-  <span>Shows the last games matching your filters</span>
+  <h2>Last matches</h2>
+  <span>Shows the last matches matching your filters</span>
   <div class="w-100">
     <div class="d-flex gap-2">
       <div>
@@ -138,9 +139,9 @@ fetchLastGames()
         <tr>
           <th scope="col">ID</th>
           <th scope="col">Map name</th>
-          <th scope="col">Avg. points</th>
-          <th scope="col">Min. points</th>
-          <th scope="col">Max. points</th>
+          <th scope="col">Avg. rank</th>
+          <th scope="col">Min. rank</th>
+          <th scope="col">Max. rank</th>
           <th scope="col">Status</th>
           <th scope="col">Started on</th>
         </tr>
@@ -155,9 +156,30 @@ fetchLastGames()
               game.map.name
             }}</a>
           </td>
-          <td>{{ game.average_elo }}</td>
-          <td>{{ game.min_elo }}</td>
-          <td>{{ game.max_elo }}</td>
+          <td>
+            <RankComponent
+              :rank="game.trackmaster_points_limit <= game.average_elo ? 1 : 11"
+              :elo="game.average_elo"
+              width="30px"
+            />
+            ({{ game.average_elo }} pts)
+          </td>
+          <td>
+            <RankComponent
+              :rank="game.trackmaster_points_limit <= game.min_elo ? 1 : 11"
+              :elo="game.min_elo"
+              width="30px"
+            />
+            ({{ game.min_elo }} pts)
+          </td>
+          <td>
+            <RankComponent
+              :rank="game.trackmaster_points_limit <= game.max_elo ? 1 : 11"
+              :elo="game.max_elo"
+              width="30px"
+            />
+            ({{ game.max_elo }} pts)
+          </td>
           <td v-if="!game.is_finished">
             <a :href="`https://trackmania.io/#/match/${game.id}`" target="_blank">Active</a>
           </td>

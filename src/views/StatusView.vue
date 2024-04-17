@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { type Ref, ref, watch } from 'vue'
+import { type Ref, ref } from 'vue'
 import { ranks } from '@/constants'
 import { APIClient } from '@/api/client'
 import { type Status } from '@/api/entities'
-import { getRankStringFromEloAndRank } from '../utils'
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import RankComponent from '@/components/RankComponent.vue'
 
 const status: Ref<Status | null> = ref(null)
 const minDate = ref(new Date())
@@ -36,7 +36,7 @@ function getLocalDate(date: Date) {
 <template>
   <h2>What is the state of MM ?</h2>
   <span
-    >Show the last time a player of each rank got a game depending on your filters. Data gathering
+    >Shows the last time a player of each rank got a game depending on your filters. Data gathering
     started on 04/04/2024.</span
   >
   <div>
@@ -81,7 +81,7 @@ function getLocalDate(date: Date) {
       </thead>
       <tbody>
         <tr v-for="rank in ranks" :key="rank.key">
-          <td v-html="getRankStringFromEloAndRank(rank.minElo, rank.minRank, '40px')"></td>
+          <td><RankComponent :elo="rank.minElo" :rank="rank.minRank" width="40px" /></td>
           <td>
             {{
               status[rank.key]

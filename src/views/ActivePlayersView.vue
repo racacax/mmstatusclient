@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { type Ref, ref } from 'vue'
-import { getRankStringFromEloAndRank, ordinalSuffixOf } from '@/utils'
+import { ordinalSuffixOf } from '@/utils'
 import { APIClient } from '@/api/client'
 import { type Player } from '@/api/entities'
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faBackward, faForward, faHistory, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faBackward, faForward, faSearch } from '@fortawesome/free-solid-svg-icons'
+import RankComponent from '@/components/RankComponent.vue'
 
 const players: Ref<Player[] | null> = ref(null)
 const minElo = ref(0)
@@ -217,7 +218,7 @@ fetchPlayers()
           </td>
           <td>{{ ordinalSuffixOf(player.rank) }}</td>
           <td>{{ player.points }}</td>
-          <td v-html="getRankStringFromEloAndRank(player.points, player.rank, '30px')"></td>
+          <td><RankComponent :elo="player.points" :rank="player.rank" width="30px" /></td>
           <td v-if="!player.last_game_finished">
             <a :href="`https://trackmania.io/#/match/${player.last_game_id}`" target="_blank"
               >In match</a

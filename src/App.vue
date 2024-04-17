@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faGamepad, faUsers } from '@fortawesome/free-solid-svg-icons'
+import { faChartSimple, faGamepad, faUsers } from '@fortawesome/free-solid-svg-icons'
 import CustomIcon from '@/components/CustomIcon.vue'
 </script>
 
@@ -31,12 +31,17 @@ import CustomIcon from '@/components/CustomIcon.vue'
           </li>
           <li class="nav-item">
             <RouterLink class="nav-link" aria-current="page" to="/last-games"
-              ><FontAwesomeIcon :icon="faGamepad" /> Games</RouterLink
+              ><FontAwesomeIcon :icon="faGamepad" /> Matches</RouterLink
             >
           </li>
           <li class="nav-item">
             <RouterLink class="nav-link" aria-current="page" to="/current-status">
               <CustomIcon icon="wave-pulse" /> Status</RouterLink
+            >
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" aria-current="page" to="/statistics">
+              <FontAwesomeIcon :icon="faChartSimple" /> Statistics</RouterLink
             >
           </li>
         </ul>

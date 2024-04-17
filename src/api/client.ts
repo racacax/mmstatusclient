@@ -1,4 +1,13 @@
-import { type Game, type Player, type Status } from '@/api/entities'
+import {
+  type Game,
+  type MapsStatistics,
+  type OpponentsStatistics,
+  type Player,
+  type PlayerMapStatistics,
+  type PlayerStatistics,
+  type SearchPlayer,
+  type Status
+} from '@/api/entities'
 
 function fetchAndCatch(url: string) {
   return fetch(url)
@@ -31,6 +40,49 @@ export class APIClient {
     return fetchAndCatch(
       this.BASE_URL +
         `/api/status?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}`
+    )
+  }
+  static getMapsStatistics(minDate: Date, maxDate: Date): Promise<MapsStatistics> {
+    return fetchAndCatch(
+      this.BASE_URL +
+        `/api/maps_statistics?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}`
+    )
+  }
+  static getPlayerOpponentsStatistics(
+    minDate: Date,
+    maxDate: Date,
+    player: string,
+    orderBy: string,
+    order: 'desc' | 'asc'
+  ): Promise<OpponentsStatistics> {
+    return fetchAndCatch(
+      this.BASE_URL +
+        `/api/player_opponents_statistics?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}&player=${player}&order_by=${orderBy}&order=${order}`
+    )
+  }
+  static getPlayerStatistics(
+    minDate: Date,
+    maxDate: Date,
+    player: string
+  ): Promise<PlayerStatistics> {
+    return fetchAndCatch(
+      this.BASE_URL +
+        `/api/player_statistics?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}&player=${player}`
+    )
+  }
+  static searchPlayer(name: string): Promise<SearchPlayer> {
+    return fetchAndCatch(this.BASE_URL + `/api/search_player?name=${name}`)
+  }
+  static getPlayerMapStatistics(
+    minDate: Date,
+    maxDate: Date,
+    player: string,
+    orderBy: string,
+    order: 'desc' | 'asc'
+  ): Promise<PlayerMapStatistics> {
+    return fetchAndCatch(
+      this.BASE_URL +
+        `/api/player_map_statistics?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}&player=${player}&order_by=${orderBy}&order=${order}`
     )
   }
 }

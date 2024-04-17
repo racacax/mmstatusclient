@@ -1,5 +1,3 @@
-import { ranks } from '@/constants'
-
 export function ordinalSuffixOf(i: number) {
   const j = i % 10,
     k = i % 100
@@ -13,14 +11,4 @@ export function ordinalSuffixOf(i: number) {
     return i + 'rd'
   }
   return i + 'th'
-}
-
-export function getRankStringFromEloAndRank(elo: number, rank: number, width: string) {
-  for (let i = 0; i < ranks.length; i++) {
-    const rankObj = ranks[i]
-    if ((rankObj.minRank !== null && rank > rankObj.minRank) || rankObj.minElo > elo) {
-      continue
-    }
-    return `<img style="width: ${width}" src="/images/${rankObj.image}"  alt="${rankObj.name} image"/> ${rankObj.name}`
-  }
 }
