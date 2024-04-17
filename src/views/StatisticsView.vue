@@ -38,7 +38,7 @@ function fetchPlayers() {
       >Note : Statistics are gathered from April 4th. First 3-4 days of matchmaking are not counted
       (at least for now).</span
     ></span
-  ><br/>
+  ><h5 style="color: #c90b0b">I have been made aware statistics on wins haven't been gathered correctly. I will update them and they should be accurate in the next few days (once this message is gone).</h5><br/>
 
   <div>
     <span>Statistics between </span
