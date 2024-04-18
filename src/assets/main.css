@@ -5,6 +5,8 @@
   margin: 0 auto;
   padding: 0rem;
   font-weight: normal;
-  background: white;
   color: black;
+}
+body {
+  background: white;
 }

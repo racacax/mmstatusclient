@@ -8,37 +8,39 @@ import { type SearchPlayer } from '@/api/entities'
 import PlayerStatisticsComponent from '@/components/PlayerStatisticsComponent.vue'
 import PlayerMapStatisticsComponent from '@/components/PlayerMapStatisticsComponent.vue'
 import PlayerOpponentsStatisticsComponent from '@/components/PlayerOpponentsStatisticsComponent.vue'
-import {useRoute} from "vue-router";
-import {getLocalDate} from "@/utils";
+import { useRoute } from 'vue-router'
+import { getLocalDate } from '@/utils'
 
-const minDate = ref(new Date(2024,3,4))
+const minDate = ref(new Date(2024, 3, 4))
 const maxDate = ref(new Date())
 const route = useRoute()
 const searchString: Ref<HTMLInputElement | null> = ref(null)
 const currentPlayer: Ref<string | null> = ref(route.params?.playerId?.toString())
 const listPlayers: Ref<SearchPlayer | null> = ref(null)
-const searchBtn = ref();
-const minDateInput = ref();
-const maxDateInput = ref();
+const searchBtn = ref()
+const minDateInput = ref()
+const maxDateInput = ref()
 function fetchPlayers() {
   listPlayers.value = null
   if (searchString.value === null) {
     return
   }
-  searchBtn.value.disabled = "disabled"
-  APIClient.searchPlayer(searchString.value.value).then((r) => {listPlayers.value = r; searchBtn.value.disabled = "";})
+  searchBtn.value.disabled = 'disabled'
+  APIClient.searchPlayer(searchString.value.value).then((r) => {
+    listPlayers.value = r
+    searchBtn.value.disabled = ''
+  })
 }
 </script>
 
 <template>
   <h2>Statistics</h2>
-  <span
-    >Shows different statistics for current matchmaking season.
-    <span style="color: #c90b0b"
-      >Note : Statistics are gathered from April 4th. First 3-4 days of matchmaking are not counted
-      (at least for now).</span
-    ></span
-  ><h5 style="color: #c90b0b">I have been made aware statistics on wins haven't been gathered correctly. I will update them and they should be accurate in the next few days (once this message is gone).</h5><br/>
+  <span>Shows different statistics for current matchmaking season.</span>
+  <h5 style="color: #c9860b">
+    Statistics may still contain very slight inaccuracies (~95% of the data are correct) and it will
+    be fixed very soon (once this message is gone).
+  </h5>
+  <br />
 
   <div>
     <span>Statistics between </span
@@ -49,19 +51,25 @@ function fetchPlayers() {
       :value="getLocalDate(minDate)"
       min="2024-04-03T00:00"
       :max="getLocalDate(maxDate)"
-  />
+    />
     <span> and </span>
     <input
-        class="form-check-input rounded-1 datetime"
-        ref="maxDateInput"
-        type="datetime-local"
-        :value="getLocalDate(maxDate)"
-        :min="getLocalDate(minDate)"
+      class="form-check-input rounded-1 datetime"
+      ref="maxDateInput"
+      type="datetime-local"
+      :value="getLocalDate(maxDate)"
+      :min="getLocalDate(minDate)"
     />
-    <div type="button" class="btn btn-primary mx-1" @click="(e) =>  {
-      minDate = new Date(minDateInput.value)
-      maxDate = new Date(maxDateInput.value)
-    }">
+    <div
+      type="button"
+      class="btn btn-primary mx-1"
+      @click="
+        (e) => {
+          minDate = new Date(minDateInput.value)
+          maxDate = new Date(maxDateInput.value)
+        }
+      "
+    >
       <FontAwesomeIcon :icon="faSearch" /> Search
     </div>
   </div>
@@ -106,9 +114,10 @@ function fetchPlayers() {
           >
             <td>{{ player.name }}&nbsp;</td>
             <td>
-              <RouterLink :to="`/statistics/${player.uuid}`"
+              <RouterLink
+                :to="`/statistics/${player.uuid}`"
                 style="cursor: pointer"
-                          @click="
+                @click="
                   () => {
                     currentPlayer = player.uuid
                     listPlayers = null
@@ -149,11 +158,9 @@ function fetchPlayers() {
   </div>
 </template>
 <style scoped type="text/css">
-
 .datetime {
   width: 180px;
   height: 38px;
   margin-top: 0;
 }
-
 </style>

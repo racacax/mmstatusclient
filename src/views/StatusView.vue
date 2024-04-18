@@ -7,7 +7,7 @@ import LoadingComponent from '@/components/LoadingComponent.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import RankComponent from '@/components/RankComponent.vue'
-import {getLocalDate} from "@/utils";
+import { getLocalDate } from '@/utils'
 
 const status: Ref<Status | null> = ref(null)
 const minDate = ref(new Date())
@@ -22,15 +22,11 @@ function fetchStatus() {
   })
 }
 fetchStatus()
-
 </script>
 
 <template>
   <h2>What is the state of MM ?</h2>
-  <span
-    >Shows the last time a player of each rank got a game depending on your filters. Data gathering
-    started on 04/04/2024.</span
-  >
+  <span>Shows the last time a player of each rank got a game depending on your filters.</span>
   <div>
     <span>Statistics between </span
     ><input

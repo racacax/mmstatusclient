@@ -43,10 +43,10 @@
     <table class="table table-striped table-sm" data-toggle="table" v-else>
       <thead>
         <tr>
-          <th scope="col">Opponent</th>
+          <th scope="col">Player</th>
           <th scope="col">Played</th>
-          <th scope="col">Played along</th>
-          <th scope="col">Played against</th>
+          <th scope="col">As teammate</th>
+          <th scope="col">As opponent</th>
           <th scope="col">Wins against</th>
           <th scope="col">Losses against</th>
           <th scope="col">Wins along</th>
