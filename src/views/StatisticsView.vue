@@ -36,10 +36,9 @@ function fetchPlayers() {
 <template>
   <h2>Statistics</h2>
   <span>Shows different statistics for current matchmaking season.</span>
-  <h5 style="color: #c9860b">
-    Statistics may still contain very slight inaccuracies (~95% of the data are correct) and it will
-    be fixed very soon (once this message is gone).
-  </h5>
+  <h6 style="color: #2d8f0a">
+    Statistics should now be 100% accurate !
+  </h6>
   <br />
 
   <div>
