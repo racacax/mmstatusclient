@@ -11,7 +11,7 @@ import PlayerOpponentsStatisticsComponent from '@/components/PlayerOpponentsStat
 import { useRoute } from 'vue-router'
 import { getLocalDate } from '@/utils'
 
-const minDate = ref(new Date(2024, 3, 1, 17, 0))
+const minDate = ref(new Date(2024, 3, 2, 17, 0))
 const maxDate = ref(new Date())
 const route = useRoute()
 const searchString: Ref<HTMLInputElement | null> = ref(null)
