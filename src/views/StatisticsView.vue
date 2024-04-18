@@ -11,7 +11,7 @@ import PlayerOpponentsStatisticsComponent from '@/components/PlayerOpponentsStat
 import { useRoute } from 'vue-router'
 import { getLocalDate } from '@/utils'
 
-const minDate = ref(new Date(2024, 3, 4))
+const minDate = ref(new Date(2024, 3, 1, 17, 0))
 const maxDate = ref(new Date())
 const route = useRoute()
 const searchString: Ref<HTMLInputElement | null> = ref(null)
@@ -49,7 +49,7 @@ function fetchPlayers() {
       type="datetime-local"
       ref="minDateInput"
       :value="getLocalDate(minDate)"
-      min="2024-04-03T00:00"
+      min="2024-04-01T00:00"
       :max="getLocalDate(maxDate)"
     />
     <span> and </span>
