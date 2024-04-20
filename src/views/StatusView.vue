@@ -5,9 +5,9 @@ import { APIClient } from '@/api/client'
 import { type Status } from '@/api/entities'
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import {faWandMagicSparkles} from '@fortawesome/free-solid-svg-icons'
 import RankComponent from '@/components/RankComponent.vue'
-import { getLocalDate } from '@/utils'
+import { getEventValue, getLocalDate } from '@/utils'
 
 const status: Ref<Status | null> = ref(null)
 const minDate = ref(new Date())
@@ -37,7 +37,7 @@ fetchStatus()
       :max="getLocalDate(maxDate)"
       @change="
         (e) => {
-          minDate = new Date(e.target.value)
+          minDate = new Date(getEventValue(e))
         }
       "
     />
@@ -49,12 +49,12 @@ fetchStatus()
       :min="getLocalDate(minDate)"
       @change="
         (e) => {
-          maxDate = new Date(e.target.value)
+          maxDate = new Date(getEventValue(e))
         }
       "
     />
     <div type="button" class="btn btn-primary mx-1" @click="fetchStatus">
-      <FontAwesomeIcon :icon="faSearch" /> Search
+      <FontAwesomeIcon :icon="faWandMagicSparkles" /> Apply
     </div>
   </div>
   <div class="w-100">

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { type Ref, ref } from 'vue'
-import { ordinalSuffixOf } from '@/utils'
+import { getEventValue, ordinalSuffixOf } from '@/utils'
 import { APIClient } from '@/api/client'
 import { type Player } from '@/api/entities'
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faBackward, faForward, faSearch } from '@fortawesome/free-solid-svg-icons'
+import {faBackward, faForward, faWandMagicSparkles} from '@fortawesome/free-solid-svg-icons'
 import RankComponent from '@/components/RankComponent.vue'
 
 const players: Ref<Player[] | null> = ref(null)
@@ -43,7 +43,7 @@ fetchPlayers()
           aria-label="Min-elo"
           @change="
             (e) => {
-              minElo = e.target.value
+              minElo = parseInt(getEventValue(e))
               page = 1
               fetchPlayers()
             }
@@ -71,7 +71,7 @@ fetchPlayers()
           aria-label="Min-elo"
           @change="
             (e) => {
-              maxElo = e.target.value
+              maxElo = parseInt(getEventValue(e))
               page = 1
               fetchPlayers()
             }
@@ -97,7 +97,7 @@ fetchPlayers()
         <input
           @change="
             (e) => {
-              minRank = e.target.value
+              minRank = parseInt(getEventValue(e))
               page = 1
               fetchPlayers()
             }
@@ -115,7 +115,7 @@ fetchPlayers()
         <input
           @change="
             (e) => {
-              maxRank = e.target.value
+              maxRank = parseInt(getEventValue(e))
               page = 1
               fetchPlayers()
             }
@@ -133,12 +133,13 @@ fetchPlayers()
         <input
           @change="
             (e) => {
-              name = e.target.value
+              name = getEventValue(e)
               page = 1
               fetchPlayers()
             }
           "
           type="text"
+          placeholder="Enter player name..."
           class="form-check-input form-select-sm"
           style="width: 120px; height: 30px; margin-top: 0px"
         />
@@ -154,7 +155,7 @@ fetchPlayers()
             }
           "
         >
-          <FontAwesomeIcon :icon="faSearch" /> Search
+          <FontAwesomeIcon :icon="faWandMagicSparkles" /> Apply
         </button>
       </div>
       <div>
@@ -213,7 +214,7 @@ fetchPlayers()
         <tr v-for="player in players" :key="player.uuid">
           <td>
             <a :href="`https://trackmania.io/#/player/${player.uuid}`" target="_blank">{{
-              player.name
+              player.name.length > 0 ? player.name : "Unknown Player"
             }}</a>
           </td>
           <td>{{ ordinalSuffixOf(player.rank) }}</td>

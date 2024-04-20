@@ -53,11 +53,12 @@ export class APIClient {
     maxDate: Date,
     player: string,
     orderBy: string,
-    order: 'desc' | 'asc'
+    order: 'desc' | 'asc',
+    page = 1
   ): Promise<OpponentsStatistics> {
     return fetchAndCatch(
       this.BASE_URL +
-        `/api/player_opponents_statistics?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}&player=${player}&order_by=${orderBy}&order=${order}`
+        `/api/player_opponents_statistics?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}&player=${player}&order_by=${orderBy}&order=${order}&page=${page}`
     )
   }
   static getPlayerStatistics(
@@ -78,11 +79,12 @@ export class APIClient {
     maxDate: Date,
     player: string,
     orderBy: string,
-    order: 'desc' | 'asc'
+    order: 'desc' | 'asc',
+    page = 1
   ): Promise<PlayerMapStatistics> {
     return fetchAndCatch(
       this.BASE_URL +
-        `/api/player_map_statistics?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}&player=${player}&order_by=${orderBy}&order=${order}`
+        `/api/player_map_statistics?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}&player=${player}&order_by=${orderBy}&order=${order}&page=${page}`
     )
   }
 }

@@ -3,21 +3,20 @@
 </template>
 
 <script setup lang="ts">
-import { ranks } from '@/constants.ts'
+import { ranks } from '@/constants'
 import { ref } from 'vue'
 
-const props = defineProps({
-  elo: Number,
-  rank: Number,
-  width: String
-})
+const props = defineProps<{ rank: number | null; elo: number; width: string }>()
 
 const image = ref('')
 const name = ref('')
 
 for (let i = 0; i < ranks.length; i++) {
   const rankObj = ranks[i]
-  if ((rankObj.minRank !== null && props.rank > rankObj.minRank) || rankObj.minElo > props.elo) {
+  if (
+    (rankObj.minRank !== null && props.rank !== null && props.rank > rankObj.minRank) ||
+    rankObj.minElo > props.elo
+  ) {
     continue
   }
   image.value = rankObj.image

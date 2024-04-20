@@ -22,3 +22,7 @@ export function getLocalDate(date: Date) {
     return ''
   }
 }
+
+export function getEventValue(e: any) {
+  return e?.target?.value ?? ''
+}

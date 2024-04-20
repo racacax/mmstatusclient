@@ -4,8 +4,9 @@ import { APIClient } from '@/api/client'
 import { type Game } from '@/api/entities'
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faBackward, faForward, faSearch } from '@fortawesome/free-solid-svg-icons'
+import {faBackward, faForward, faWandMagicSparkles} from '@fortawesome/free-solid-svg-icons'
 import RankComponent from '@/components/RankComponent.vue'
+import { getEventValue } from '@/utils'
 
 const games: Ref<Game[] | null> = ref(null)
 const minElo = ref(0)
@@ -32,7 +33,7 @@ fetchLastGames()
           aria-label="Min-elo"
           @change="
             (e) => {
-              minElo = e.target.value
+              minElo = parseInt(getEventValue(e))
               page = 1
               fetchLastGames()
             }
@@ -60,7 +61,7 @@ fetchLastGames()
           aria-label="Min-elo"
           @change="
             (e) => {
-              maxElo = e.target.value
+              maxElo = parseInt(getEventValue(e))
               page = 1
               fetchLastGames()
             }
@@ -92,7 +93,7 @@ fetchLastGames()
             }
           "
         >
-          <FontAwesomeIcon :icon="faSearch" /> Search
+          <FontAwesomeIcon :icon="faWandMagicSparkles" /> Apply
         </button>
       </div>
       <div>

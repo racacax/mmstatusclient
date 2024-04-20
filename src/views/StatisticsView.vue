@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import GlobalStatisticsComponent from '@/components/GlobalStatisticsComponent.vue'
-import { type Ref, ref } from 'vue'
+import { type Ref, ref, watch } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import {faSearch, faWandMagicSparkles, faXmark} from '@fortawesome/free-solid-svg-icons'
 import { APIClient } from '@/api/client'
 import { type SearchPlayer } from '@/api/entities'
 import PlayerStatisticsComponent from '@/components/PlayerStatisticsComponent.vue'
@@ -16,6 +16,10 @@ const maxDate = ref(new Date())
 const route = useRoute()
 const searchString: Ref<HTMLInputElement | null> = ref(null)
 const currentPlayer: Ref<string | null> = ref(route.params?.playerId?.toString())
+watch(
+  () => [route.params?.playerId],
+  () => (currentPlayer.value = route.params?.playerId?.toString())
+)
 const listPlayers: Ref<SearchPlayer | null> = ref(null)
 const searchBtn = ref()
 const minDateInput = ref()
@@ -31,15 +35,12 @@ function fetchPlayers() {
     searchBtn.value.disabled = ''
   })
 }
+let isPlayerOpen = !!route.params?.playerId
 </script>
 
 <template>
   <h2>Statistics</h2>
   <span>Shows different statistics for current matchmaking season.</span>
-  <h6 style="color: #2d8f0a">
-    Statistics should now be 100% accurate !
-  </h6>
-  <br />
 
   <div>
     <span>Statistics between </span
@@ -69,66 +70,130 @@ function fetchPlayers() {
         }
       "
     >
-      <FontAwesomeIcon :icon="faSearch" /> Search
+      <FontAwesomeIcon :icon="faWandMagicSparkles" /> Apply
     </div>
   </div>
-  <div class="row w-100 mt-2">
-    <div class="col-lg-4 col-md-6 col-12">
-      <h4>Global statistics</h4>
-      <GlobalStatisticsComponent :min-date="minDate" :max-date="maxDate" />
+  <nav class="mt-2">
+    <div class="nav nav-tabs mb-2" id="nav-tab" role="tablist">
+      <button
+        class="nav-link"
+        :class="{ active: !isPlayerOpen }"
+        id="nav-global-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#nav-global"
+        type="button"
+        role="tab"
+        aria-controls="nav-global"
+        aria-selected="true"
+      >
+        Global
+      </button>
+      <button
+        class="nav-link"
+        :class="{ active: isPlayerOpen }"
+        id="nav-player-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#nav-player"
+        type="button"
+        role="tab"
+        aria-controls="nav-player"
+        aria-selected="false"
+      >
+        Player
+      </button>
     </div>
-    <div class="col-lg-8 col-md-6 col-12">
-      <h4>Player statistics</h4>
-      <form class="d-flex gap-2" method="dialog">
-        <input
-          type="text"
-          class="form-check-input form-select-sm"
-          ref="searchString"
-          placeholder="Enter player name..."
-          style="width: 150px; height: 45px"
-        />
-        <button
-          type="submit"
-          ref="searchBtn"
-          @click="
-            (e) => {
-              fetchPlayers()
-            }
-          "
-          class="btn btn-primary"
-        >
-          <FontAwesomeIcon :icon="faSearch" /> Search
-        </button>
-      </form>
-      <div v-if="listPlayers !== null">
-        <div v-if="listPlayers.results.length === 0" style="color: #c90b0b">
-          No player matching query
+  </nav>
+
+  <div class="tab-content" id="nav-tabContent">
+    <div
+      class="tab-pane fade"
+      :class="{ 'show active': !isPlayerOpen }"
+      id="nav-global"
+      role="tabpanel"
+      aria-labelledby="nav-global-tab"
+      tabindex="0"
+    >
+      <div class="row w-100 gx-0">
+        <GlobalStatisticsComponent :min-date="minDate" :max-date="maxDate" />
+        <div class="col-12 col-lg-6 d-flex justify-content-center align-items-center">
+          <h5>More statistics soon...</h5>
         </div>
-        <table>
-          <tr
-            class="d-flex w-100 justify-content-between"
-            style="max-width: 250px"
-            v-for="player in listPlayers.results"
-            :key="player.key"
-          >
-            <td>{{ player.name }}&nbsp;</td>
-            <td>
-              <RouterLink
-                :to="`/statistics/${player.uuid}`"
-                style="cursor: pointer"
+      </div>
+    </div>
+    <div
+      class="tab-pane fade"
+      :class="{ 'show active': isPlayerOpen }"
+      id="nav-player"
+      role="tabpanel"
+      aria-labelledby="nav-player-tab"
+      tabindex="0"
+    >
+      <form class="d-flex gap-2" method="dialog">
+        <div class="d-flex gap-2 flex-wrap flex-lg-nowrap align-items-center">
+          <label for="searchPlayer" style="white-space: nowrap">Search player: </label>
+          <div class="d-flex flex-column">
+            <div class="d-flex gap-2 flex-wrap flex-lg-nowrap align-items-center">
+              <input
+                id="searchPlayer"
+                type="text"
+                style="max-width: 300px"
+                class="form-control"
+                ref="searchString"
+                placeholder="Enter player name..."
+              />
+              <button
+                type="submit"
+                ref="searchBtn"
                 @click="
-                  () => {
-                    currentPlayer = player.uuid
-                    listPlayers = null
+                  (e) => {
+                    fetchPlayers()
                   }
                 "
-                class="text-decoration-underline"
-                >Choose</RouterLink
+                class="btn btn-primary d-flex gap-2 align-items-center"
               >
-            </td>
-          </tr>
-        </table>
-      </div>
+                <FontAwesomeIcon :icon="faSearch" /> Search
+              </button>
+            </div>
+
+            <div v-if="listPlayers !== null" class="position-relative">
+              <div
+                class="position-absolute bg-white z-2 w-100 card border-top-0 p-2"
+                style="border-top-left-radius: 0; border-top-right-radius: 0"
+              >
+                <div class="position-absolute top-0 d-flex w-100 justify-content-end px-3 py-1">
+                  <FontAwesomeIcon
+                    :icon="faXmark"
+                    style="cursor: pointer"
+                    @click="() => (listPlayers = null)"
+                  />
+                </div>
+                <strong>Search results:</strong><br />
+                <div v-if="listPlayers.results.length === 0" style="color: #c90b0b">
+                  No player matching query
+                </div>
+                <div
+                  class="d-flex w-100 flex-column"
+                  v-for="player in listPlayers.results"
+                  :key="player.uuid"
+                >
+                  <RouterLink
+                    :to="`/statistics/${player.uuid}`"
+                    @click="
+                      () => {
+                        currentPlayer = player.uuid
+                        listPlayers = null
+                      }
+                    "
+                    class="player-result"
+                    >{{ player.name }}</RouterLink
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+
       <div
         v-if="currentPlayer === null || currentPlayer === undefined"
         class="w-100 d-flex justify-content-center align-items-center"
@@ -136,13 +201,8 @@ function fetchPlayers() {
       >
         <span>Search a player to show statistics</span>
       </div>
-      <div v-else class="row mt-2">
+      <div v-else class="row mt-2 w-100 gx-0">
         <PlayerStatisticsComponent
-          :min-date="minDate"
-          :max-date="maxDate"
-          :player="currentPlayer"
-        />
-        <PlayerMapStatisticsComponent
           :min-date="minDate"
           :max-date="maxDate"
           :player="currentPlayer"
@@ -152,14 +212,29 @@ function fetchPlayers() {
           :max-date="maxDate"
           :player="currentPlayer"
         />
+        <PlayerMapStatisticsComponent
+          :min-date="minDate"
+          :max-date="maxDate"
+          :player="currentPlayer"
+        />
+        <div class="col-12 col-lg-6 d-flex justify-content-center align-items-center">
+          <h5>More statistics soon...</h5>
+        </div>
       </div>
     </div>
   </div>
 </template>
-<style scoped type="text/css">
+<style scoped>
 .datetime {
   width: 180px;
   height: 38px;
   margin-top: 0;
+}
+.player-result {
+  text-decoration: none;
+  width: 100%;
+}
+.player-result:hover {
+  background-color: #eaeaea;
 }
 </style>

@@ -13,3 +13,8 @@ export const ranks = [
   { name: 'Bronze II', image: 'B2.png', key: 'b2', minElo: 300, minRank: null },
   { name: 'Bronze I', image: 'B1.png', key: 'b1', minElo: 0, minRank: null }
 ]
+
+export const seasons = [
+  { name: 'Spring 2024', start: new Date(1712070002000), end: new Date(1719846002000) },
+  { name: 'Summer 2024', start: new Date(1719846002000), end: new Date(1727794802000) }
+]
