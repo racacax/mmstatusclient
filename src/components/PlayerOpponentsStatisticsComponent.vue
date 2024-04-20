@@ -15,8 +15,8 @@
               "
             >
               <option value="played" selected>Played</option>
-              <option value="played_against">As teammate</option>
-              <option value="played_along">As opponent</option>
+              <option value="played_against">As opponent</option>
+              <option value="played_along">As teammate</option>
               <option value="games_lost_against">Losses against</option>
               <option value="games_won_against">Wins against</option>
               <option value="games_lost_along">Losses along</option>
