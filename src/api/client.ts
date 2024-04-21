@@ -3,7 +3,7 @@ import {
   type MapsStatistics,
   type OpponentsStatistics,
   type Player,
-  type PlayerMapStatistics,
+  type PlayerMapStatistics, type PlayersStatistics,
   type PlayerStatistics,
   type SearchPlayer,
   type Status
@@ -69,6 +69,16 @@ export class APIClient {
     return fetchAndCatch(
       this.BASE_URL +
         `/api/player_statistics?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}&player=${player}`
+    )
+  }
+
+
+  static getPlayersStatistics(
+      orderBy: string
+  ): Promise<PlayersStatistics> {
+    return fetchAndCatch(
+        this.BASE_URL +
+        `/api/players_statistics?order_by=${orderBy}`
     )
   }
   static searchPlayer(name: string): Promise<SearchPlayer> {

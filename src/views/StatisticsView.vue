@@ -10,6 +10,7 @@ import PlayerMapStatisticsComponent from '@/components/PlayerMapStatisticsCompon
 import PlayerOpponentsStatisticsComponent from '@/components/PlayerOpponentsStatisticsComponent.vue'
 import { useRoute } from 'vue-router'
 import { getLocalDate } from '@/utils'
+import PlayersGlobalStatisticsComponent from "@/components/PlayersGlobalStatisticsComponent.vue";
 
 const minDate = ref(new Date(2024, 3, 2, 17, 0))
 const maxDate = ref(new Date())
@@ -115,7 +116,8 @@ let isPlayerOpen = !!route.params?.playerId
     >
       <div class="row w-100 gx-0">
         <GlobalStatisticsComponent :min-date="minDate" :max-date="maxDate" />
-        <div class="col-12 col-lg-6 d-flex justify-content-center align-items-center">
+        <PlayersGlobalStatisticsComponent :min-date="minDate" :max-date="maxDate" />
+        <div class="col-12 col-lg-6 d-flex justify-content-center align-items-center" style="min-height: 200px">
           <h5>More statistics soon...</h5>
         </div>
       </div>

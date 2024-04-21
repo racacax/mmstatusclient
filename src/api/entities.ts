@@ -116,3 +116,17 @@ export interface PlayerMapStatisticsResult {
   map_uid: string
   map_name: string
 }
+
+export interface PlayersStatistics {
+  last_updated: number;
+  results:      PlayersStatisticsResult[];
+}
+
+export interface PlayersStatisticsResult {
+  name:   string;
+  uuid:   string;
+  played: number;
+  wins:   number;
+  losses: number;
+  mvps:   number;
+}

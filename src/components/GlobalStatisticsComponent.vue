@@ -1,6 +1,6 @@
 <template>
-  <div class="col-12 col-lg-6 px-1 align-items-stretch d-flex">
-    <div class="card p-2 pt-3 w-100">
+  <div class="col-12 col-lg-6 px-1 align-items-stretch d-flex mb-2">
+    <div class="card p-2 pt-3 w-100 d-flex flex-column justify-content-around">
       <div class="d-flex justify-content-between">
         <h5>Maps</h5>
       </div>
