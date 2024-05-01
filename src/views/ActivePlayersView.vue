@@ -213,7 +213,7 @@ fetchPlayers()
       <tbody>
         <tr v-for="player in players" :key="player.uuid">
           <td>
-            <a :href="`https://trackmania.io/#/player/${player.uuid}`" target="_blank">{{
+            <a :href="`/#/statistics/${player.uuid}`" target="_blank">{{
               player.name.length > 0 ? player.name : "Unknown Player"
             }}</a>
           </td>
