@@ -231,9 +231,9 @@ fetchPlayers()
               {{ new Date(player.last_active * 1000).toTimeString().split(' ')[0] }}</a
             >
           </td>
-          <td>TBA</td>
-          <td>TBA</td>
-          <td>TBA</td>
+          <td>{{ player.games_last_24_hours }}</td>
+          <td>{{ player.games_last_week }}</td>
+          <td>{{ player.games_last_month }}</td>
         </tr>
       </tbody>
     </table>
