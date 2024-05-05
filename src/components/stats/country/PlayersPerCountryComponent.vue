@@ -25,7 +25,7 @@
       <div class="w-100 position-relative">
         <div class="w-100" :class="{ 'opacity-0': data === null }">
           <MapChartComponent
-            label="Player matches"
+            label="Players"
             :data="
               data?.results?.map((e) => [
                 getCountryISO2(e.country_alpha3)?.toLowerCase() ?? 'Other',
