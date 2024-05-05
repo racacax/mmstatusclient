@@ -75,7 +75,7 @@ function formatData() {
 
 const chartOptions = ref(formatData())
 watch(
-  () => [props.categories, props.data, props.label],
+  () => [props.data, props.label],
   () => (chartOptions.value = formatData())
 )
 </script>

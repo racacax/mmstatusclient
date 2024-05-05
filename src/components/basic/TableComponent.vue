@@ -86,15 +86,15 @@ import { getEventValue } from '@/utils'
 import CardComponent from '@/components/basic/CardComponent.vue'
 
 const props = defineProps<{
-  title: string,
-  columns: any[],
-  classes: string | undefined,
-  orderBy: any[] | undefined,
-  displayOrder: boolean | undefined,
-  displayPage: boolean | undefined,
-  data: any[] | null,
-  callback: Function,
-  bottomLabel: string | undefined,
+  title: string
+  columns: any[]
+  classes: string | undefined
+  orderBy: any[] | undefined
+  displayOrder: boolean | undefined
+  displayPage: boolean | undefined
+  data: any[] | null
+  callback: Function
+  bottomLabel: string | undefined
   tooltip: string
 }>()
 

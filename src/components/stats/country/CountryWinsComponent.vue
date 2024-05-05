@@ -2,7 +2,7 @@
   <CardComponent
     classes="col-lg-6 col-12"
     title="Wins/losses by country"
-    tooltip="Timezone: Europe/Paris. These stats are season global. Shows every player of each match where one player has the minimum rank selected. Players are not unique. If a player played 10 matches in one hour, they will be displayed 10 times."
+    tooltip="These stats are season global. Shows every player of each match where one player has the minimum rank selected. Players are not unique. If a player played 10 matches in one hour, they will be displayed 10 times."
   >
     <template #filters>
       <div>

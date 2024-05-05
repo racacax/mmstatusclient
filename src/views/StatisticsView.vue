@@ -80,7 +80,10 @@ const currentTab = ref(isPlayerOpen ? 'player' : 'global')
       <span>Season : </span>
       <select ref="currentSeasonInput" class="form-select form-select-sm datetime d-inline">
         <option
-          :selected="season.start_time * 1000 < new Date().getTime() && new Date().getTime() < season.end_time"
+          :selected="
+            season.start_time * 1000 < new Date().getTime() &&
+            new Date().getTime() < season.end_time
+          "
           :key="season.id"
           :value="season.id"
           v-for="season in listSeasons.results"
