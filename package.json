@@ -18,6 +18,10 @@
     "@fortawesome/free-regular-svg-icons": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/vue-fontawesome": "^3.0.6",
+    "@highcharts/map-collection": "^2.1.0",
+    "country-iso-3-to-2": "^1.1.1",
+    "highcharts": "^11.4.1",
+    "highcharts-vue": "^2.0.1",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },

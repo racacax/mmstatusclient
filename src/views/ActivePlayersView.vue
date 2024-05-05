@@ -5,7 +5,7 @@ import { APIClient } from '@/api/client'
 import { type Player } from '@/api/entities'
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import {faBackward, faForward, faWandMagicSparkles} from '@fortawesome/free-solid-svg-icons'
+import { faBackward, faForward, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 import RankComponent from '@/components/RankComponent.vue'
 
 const players: Ref<Player[] | null> = ref(null)
@@ -213,8 +213,9 @@ fetchPlayers()
       <tbody>
         <tr v-for="player in players" :key="player.uuid">
           <td>
+            <img alt="" class="player-flag" :src="`/flags/${player.country?.file_name}`" />
             <a :href="`/#/statistics/${player.uuid}`" target="_blank">{{
-              player.name.length > 0 ? player.name : "Unknown Player"
+              player.name.length > 0 ? player.name : 'Unknown Player'
             }}</a>
           </td>
           <td>{{ ordinalSuffixOf(player.rank) }}</td>
@@ -239,3 +240,10 @@ fetchPlayers()
     </table>
   </div>
 </template>
+<style>
+.player-flag {
+  height: 20px;
+  margin-right: 3px;
+  vertical-align: middle;
+}
+</style>

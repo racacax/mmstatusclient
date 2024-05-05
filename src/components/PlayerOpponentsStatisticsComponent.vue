@@ -176,7 +176,7 @@ watch(
   }
 )
 watch([order, orderBy], () => {
-  page.value = 1;
+  page.value = 1
   fetchStats()
 })
 watch([page], fetchStats)

@@ -1,5 +1,6 @@
 export interface Player {
   name: string
+  country: Country | null
   uuid: string
   rank: number
   points: number
@@ -10,6 +11,12 @@ export interface Player {
   games_last_week: string
   games_last_month: string
   last_game_id: number
+}
+
+export interface Country {
+  name: string
+  file_name: string
+  alpha3: string
 }
 
 export interface Game {
@@ -118,15 +125,96 @@ export interface PlayerMapStatisticsResult {
 }
 
 export interface PlayersStatistics {
-  last_updated: number;
-  results:      PlayersStatisticsResult[];
+  last_updated: number
+  results: PlayersStatisticsResult[]
 }
 
 export interface PlayersStatisticsResult {
-  name:   string;
-  uuid:   string;
-  played: number;
-  wins:   number;
-  losses: number;
-  mvps:   number;
+  name: string
+  uuid: string
+  played: number
+  wins: number
+  losses: number
+  mvps: number
+}
+
+export interface SeasonResults {
+  results: SeasonResult[]
+}
+
+export interface SeasonResult {
+  id: number
+  name: string
+  start_time: number
+  end_time: number
+  is_aggregated: boolean
+}
+
+export interface CountryStats {
+  results: CountryStatsResult[]
+  last_updated: number
+}
+
+export interface CountryStatsResult {
+  id: number
+  name: string
+  file_name: string
+  country_alpha3: string
+  total: number
+  wins: string
+}
+
+export interface CountryAndHourStats {
+  results: CountryAndHourResult[]
+}
+
+export interface CountryAndHourResult {
+  id: number
+  name: string
+  file_name: string
+  country_alpha3: string
+  '0-1': string
+  '1-2': string
+  '2-3': string
+  '3-4': string
+  '4-5': string
+  '5-6': string
+  '6-7': string
+  '7-8': string
+  '8-9': string
+  '9-10': string
+  '10-11': string
+  '11-12': string
+  '12-13': string
+  '13-14': string
+  '14-15': string
+  '15-16': string
+  '16-17': string
+  '17-18': string
+  '18-19': string
+  '19-20': string
+  '20-21': string
+  '21-22': string
+  '22-23': string
+  '23-24': string
+}
+
+export interface PlayerPoints {
+  results: PlayerPointsResult[]
+  player: string
+}
+
+export interface PlayerPointsResult {
+  time: number
+  points: number
+}
+
+export interface PlayerRanks {
+  results: PlayerRanksResult[]
+  player: string
+}
+
+export interface PlayerRanksResult {
+  time: number
+  rank: number
 }

@@ -1,0 +1,79 @@
+<template>
+  <div>
+    <highcharts
+      :constructor-type="'stockChart'"
+      class="hc"
+      :options="chartOptions"
+      ref="chart"
+    ></highcharts>
+  </div>
+</template>
+
+<script setup>
+import { ref, watch } from 'vue'
+import { dateFormat } from 'highcharts'
+
+const props = defineProps({
+  data: Array,
+  categories: Array,
+  label: String
+})
+
+function formatData() {
+  return {
+    chart: {
+      type: 'column'
+    },
+    tooltip: {
+      split: false,
+      shared: false
+    },
+    scrollbar: {
+      enabled: false
+    },
+    rangeSelector: {
+      inputEnabled: false,
+      enabled: true,
+      buttons: []
+    },
+    title: {
+      text: ''
+    },
+    xAxis: {
+      categories: props.categories.map((cat) => dateFormat(cat, 0))
+    },
+    yAxis: {
+      min: 0,
+      offset: 20,
+      labels: {},
+      title: {
+        text: props.label
+      }
+    },
+    legend: {
+      enabled: false,
+      reversed: true
+    },
+    plotOptions: {
+      series: {
+        stacking: 'normal',
+        dataLabels: {
+          enabled: false
+        }
+      }
+    },
+    series: props.data
+  }
+}
+
+const chartOptions = ref(formatData())
+watch(
+  () => [props.categories, props.data, props.label],
+  () => (chartOptions.value = formatData())
+)
+</script>
+<style>
+.highcharts-navigator-xaxis {
+  display: none;
+}
+</style>

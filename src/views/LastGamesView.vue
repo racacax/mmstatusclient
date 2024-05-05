@@ -4,7 +4,7 @@ import { APIClient } from '@/api/client'
 import { type Game } from '@/api/entities'
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import {faBackward, faForward, faWandMagicSparkles} from '@fortawesome/free-solid-svg-icons'
+import { faBackward, faForward, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 import RankComponent from '@/components/RankComponent.vue'
 import { getEventValue } from '@/utils'
 

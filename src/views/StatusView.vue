@@ -5,7 +5,7 @@ import { APIClient } from '@/api/client'
 import { type Status } from '@/api/entities'
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import {faWandMagicSparkles} from '@fortawesome/free-solid-svg-icons'
+import { faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 import RankComponent from '@/components/RankComponent.vue'
 import { getEventValue, getLocalDate } from '@/utils'
 

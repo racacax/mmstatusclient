@@ -1,11 +1,17 @@
 import {
+  type CountryAndHourStats,
+  type CountryStats,
   type Game,
   type MapsStatistics,
   type OpponentsStatistics,
   type Player,
-  type PlayerMapStatistics, type PlayersStatistics,
+  type PlayerMapStatistics,
+  type PlayerPoints,
+  type PlayerRanks,
+  type PlayersStatistics,
   type PlayerStatistics,
   type SearchPlayer,
+  type SeasonResults,
   type Status
 } from '@/api/entities'
 
@@ -71,14 +77,22 @@ export class APIClient {
         `/api/player_statistics?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}&player=${player}`
     )
   }
-
-
-  static getPlayersStatistics(
-      orderBy: string
-  ): Promise<PlayersStatistics> {
+  static getPlayerPoints(minDate: Date, maxDate: Date, player: string): Promise<PlayerPoints> {
     return fetchAndCatch(
-        this.BASE_URL +
-        `/api/players_statistics?order_by=${orderBy}`
+      this.BASE_URL +
+        `/api/player_points?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}&player=${player}`
+    )
+  }
+  static getPlayerRanks(minDate: Date, maxDate: Date, player: string): Promise<PlayerRanks> {
+    return fetchAndCatch(
+      this.BASE_URL +
+        `/api/player_ranks?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}&player=${player}`
+    )
+  }
+
+  static getPlayersStatistics(season: number, orderBy: string): Promise<PlayersStatistics> {
+    return fetchAndCatch(
+      this.BASE_URL + `/api/players_statistics?order_by=${orderBy}&season=${season}`
     )
   }
   static searchPlayer(name: string): Promise<SearchPlayer> {
@@ -95,6 +109,31 @@ export class APIClient {
     return fetchAndCatch(
       this.BASE_URL +
         `/api/player_map_statistics?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}&player=${player}&order_by=${orderBy}&order=${order}&page=${page}`
+    )
+  }
+
+  static getSeasons(): Promise<SeasonResults> {
+    return fetchAndCatch(this.BASE_URL + `/api/seasons`)
+  }
+
+  static getActivityPerCountry(season: number, minElo: number): Promise<CountryStats> {
+    return fetchAndCatch(
+      this.BASE_URL + `/api/activity_per?metric=country&min_elo=${minElo}&season=${season}`
+    )
+  }
+  static getPlayersPerCountry(season: number, minElo: number): Promise<CountryStats> {
+    return fetchAndCatch(
+      this.BASE_URL +
+        `/api/activity_per?metric=players_per_country&min_elo=${minElo}&season=${season}`
+    )
+  }
+
+  static getActivityPerCountryAndHour(
+    season: number,
+    minElo: number
+  ): Promise<CountryAndHourStats> {
+    return fetchAndCatch(
+      this.BASE_URL + `/api/activity_per?metric=country_and_hour&min_elo=${minElo}&season=${season}`
     )
   }
 }
