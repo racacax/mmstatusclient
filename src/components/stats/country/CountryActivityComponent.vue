@@ -42,7 +42,7 @@
           <span>No data to display</span>
         </div>
         <div class="w-100 d-flex justify-content-end">
-          <i>Last updated at: {{ new Date(data?.last_updated * 1000 ?? 0).toLocaleString() }}</i>
+          <i>Last updated at: {{ new Date((data?.last_updated ?? 0) * 1000).toLocaleString() }}</i>
         </div>
       </div>
     </template>

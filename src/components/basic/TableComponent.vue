@@ -85,18 +85,18 @@ import { ref, type Ref, watch } from 'vue'
 import { getEventValue } from '@/utils'
 import CardComponent from '@/components/basic/CardComponent.vue'
 
-const props = defineProps({
-  title: { type: String, required: true },
-  columns: { type: Array, required: true },
-  classes: { type: String, required: false },
-  orderBy: { type: Array, required: false },
-  displayOrder: { type: Boolean, required: false },
-  displayPage: { type: Boolean, required: false },
-  data: { type: Array, required: true },
-  callback: { type: Function, required: true },
-  bottomLabel: { type: String, required: false },
-  tooltip: { type: String, required: false }
-})
+const props = defineProps<{
+  title: string,
+  columns: any[],
+  classes: string | undefined,
+  orderBy: any[] | undefined,
+  displayOrder: boolean | undefined,
+  displayPage: boolean | undefined,
+  data: any[] | null,
+  callback: Function,
+  bottomLabel: string | undefined,
+  tooltip: string
+}>()
 
 const currentOrderBy = ref('all')
 if (props.orderBy !== undefined) {
