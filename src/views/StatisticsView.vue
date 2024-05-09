@@ -18,6 +18,8 @@ import PlayersPerCountryComponent from '@/components/stats/country/PlayersPerCou
 import CountryWinsComponent from '@/components/stats/country/CountryWinsComponent.vue'
 import PlayerPointsComponent from '@/components/stats/player/PlayerPointsComponent.vue'
 import PlayerRanksComponent from '@/components/stats/player/PlayerRanksComponent.vue'
+import RankDistributionEvolutionComponent from '@/components/stats/ranks/RankDistributionEvolutionComponent.vue'
+import RankDistributionPercentageEvolutionComponent from '@/components/stats/ranks/RankDistributionPercentageEvolutionComponent.vue'
 
 const minDate = ref(new Date(2024, 3, 8, 17, 0))
 const maxDate = ref(new Date())
@@ -166,6 +168,19 @@ const currentTab = ref(isPlayerOpen ? 'player' : 'global')
           @click="() => (currentTab = 'country')"
         >
           Country
+        </button>
+        <button
+          class="nav-link"
+          id="nav-ranks-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#nav-ranks"
+          type="button"
+          role="tab"
+          aria-controls="nav-ranks"
+          aria-selected="false"
+          @click="() => (currentTab = 'ranks')"
+        >
+          Ranks
         </button>
       </div>
     </nav>
@@ -316,6 +331,19 @@ const currentTab = ref(isPlayerOpen ? 'player' : 'global')
           <CountryActivityComponent :season="currentSeason?.id" />
           <PlayersPerCountryComponent :season="currentSeason?.id" />
           <CountryWinsComponent :season="currentSeason?.id" />
+        </div>
+      </div>
+      <div
+        class="tab-pane fade"
+        id="nav-ranks"
+        role="tabpanel"
+        aria-labelledby="nav-ranks-tab"
+        tabindex="3"
+        ref="tabRanks"
+      >
+        <div class="row mt-2 w-100 gx-0" v-if="currentTab === 'ranks'">
+          <RankDistributionEvolutionComponent :season="currentSeason?.id" />
+          <RankDistributionPercentageEvolutionComponent :season="currentSeason?.id" />
         </div>
       </div>
     </div>

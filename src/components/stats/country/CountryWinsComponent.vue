@@ -1,6 +1,6 @@
 <template>
   <CardComponent
-    classes="col-lg-6 col-12"
+    classes="col-lg-6 col-12 country-wins-losses"
     title="Wins/losses by country"
     tooltip="These stats are season global. Shows every player of each match where one player has the minimum rank selected. Players are not unique. If a player played 10 matches in one hour, they will be displayed 10 times."
   >
@@ -53,6 +53,11 @@
   </CardComponent>
 </template>
 
+<style>
+.country-wins-losses .highcharts-navigator-xaxis {
+  display: none;
+}
+</style>
 <script setup lang="ts">
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import { ref, type Ref, watch } from 'vue'

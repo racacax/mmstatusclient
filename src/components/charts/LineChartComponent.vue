@@ -79,8 +79,3 @@ watch(
   () => (chartOptions.value = formatData())
 )
 </script>
-<style>
-.highcharts-navigator-xaxis {
-  display: none;
-}
-</style>

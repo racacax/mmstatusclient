@@ -26,3 +26,7 @@ export function getLocalDate(date: Date) {
 export function getEventValue(e: any) {
   return e?.target?.value ?? ''
 }
+
+export function randomItem<T>(e: T[]): T {
+  return e[Math.floor(Math.random() * e.length)]
+}

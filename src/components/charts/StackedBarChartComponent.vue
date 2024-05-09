@@ -16,7 +16,8 @@ import { dateFormat } from 'highcharts'
 const props = defineProps({
   data: Array,
   categories: Array,
-  label: String
+  label: String,
+  enableLegend: Boolean
 })
 
 function formatData() {
@@ -40,7 +41,7 @@ function formatData() {
       text: ''
     },
     xAxis: {
-      categories: props.categories.map((cat) => dateFormat(cat, 0))
+      categories: props.categories?.map((cat) => dateFormat(cat, 0))
     },
     yAxis: {
       min: 0,
@@ -51,7 +52,7 @@ function formatData() {
       }
     },
     legend: {
-      enabled: false,
+      enabled: props.enableLegend === true,
       reversed: true
     },
     plotOptions: {
@@ -72,8 +73,3 @@ watch(
   () => (chartOptions.value = formatData())
 )
 </script>
-<style>
-.highcharts-navigator-xaxis {
-  display: none;
-}
-</style>

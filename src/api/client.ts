@@ -10,6 +10,7 @@ import {
   type PlayerRanks,
   type PlayersStatistics,
   type PlayerStatistics,
+  type RankDistributionEvolution,
   type SearchPlayer,
   type SeasonResults,
   type Status
@@ -134,6 +135,12 @@ export class APIClient {
   ): Promise<CountryAndHourStats> {
     return fetchAndCatch(
       this.BASE_URL + `/api/activity_per?metric=country_and_hour&min_elo=${minElo}&season=${season}`
+    )
+  }
+
+  static getRankDistributionEvolution(season: number): Promise<RankDistributionEvolution> {
+    return fetchAndCatch(
+      this.BASE_URL + `/api/computed_metric?metric=rank_distribution&season=${season}`
     )
   }
 }

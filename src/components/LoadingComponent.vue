@@ -1,12 +1,19 @@
 <template>
   <div class="w-100 d-flex justify-content-center align-items-center loading">
-    <div class="loading-label">
-      <img src="@/assets/owoWiggle.gif" alt="loading icon" /><span> Loading...</span>
+    <div class="loading-label d-flex align-items-center gap-2">
+      <img :src="`/loading/${randomGif}`" alt="loading icon" style="width: 60px" /><span>
+        Loading...</span
+      >
     </div>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from 'vue'
+import { randomItem } from '@/utils'
+
+const randomGif = ref(randomItem(['owoWiggle.gif', 'fdding.gif', 'donkPis.gif', 'xddSnake.gif']))
+</script>
 
 <style scoped>
 .loading {

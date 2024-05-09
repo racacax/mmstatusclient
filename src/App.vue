@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import {faChartSimple, faFileText, faGamepad, faUsers} from '@fortawesome/free-solid-svg-icons'
+import { faChartSimple, faFileText, faGamepad, faUsers } from '@fortawesome/free-solid-svg-icons'
 import CustomIcon from '@/components/CustomIcon.vue'
 </script>
 

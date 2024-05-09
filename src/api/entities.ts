@@ -218,3 +218,25 @@ export interface PlayerRanksResult {
   time: number
   rank: number
 }
+
+export interface RankDistributionEvolution {
+  results: RankDistributionEvolutionResult[]
+  last_updated: number
+}
+
+export interface RankDistributionEvolutionResult {
+  b1: number
+  b2: number
+  b3: number
+  s1: number
+  s2: number
+  s3: number
+  g1: number
+  g2: number
+  g3: number
+  m1: number
+  m2: number
+  m3: number
+  tm: number
+  date: number
+}
