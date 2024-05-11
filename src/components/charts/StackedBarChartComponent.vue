@@ -58,6 +58,9 @@ function formatData() {
     plotOptions: {
       series: {
         stacking: 'normal',
+        dataGrouping: {
+          enabled: false
+        },
         dataLabels: {
           enabled: false
         }
