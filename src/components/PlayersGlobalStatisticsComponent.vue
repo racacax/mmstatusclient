@@ -1,28 +1,31 @@
 <template>
-  <TableComponent
-    tooltip="These stats are season global"
-    title="Players"
-    classes="col-12 col-lg-6"
-    :display-page="true"
-    :callback="callback"
-    :data="data"
-    :order-by="orderByList"
-    :columns="columns"
-    :bottom-label="lastUpdated"
-  />
+  <ErrorManager :error="error">
+    <template #body>
+      <TableComponent
+        tooltip="These stats are season global"
+        title="Players"
+        classes="col-12 col-lg-6"
+        :display-page="true"
+        :callback="callback"
+        :data="data"
+        :order-by="orderByList"
+        :columns="columns"
+        :bottom-label="lastUpdated ?? undefined"
+      />
+    </template>
+  </ErrorManager>
 </template>
 
 <script setup lang="ts">
 import { ref, type Ref, watch } from 'vue'
-import { type PlayersStatistics } from '@/api/entities'
 import { APIClient } from '@/api/client'
 import TableComponent from '@/components/basic/TableComponent.vue'
+import ErrorManager from '@/components/management/ErrorManager.vue'
 
 const props = defineProps({
   season: { type: Number, required: true }
 })
 
-const stats: Ref<PlayersStatistics | null> = ref(null)
 const data: Ref<any[] | null> = ref(null)
 const lastUpdated: Ref<string | null> = ref(null)
 const page = ref(1)
@@ -40,17 +43,26 @@ function callback(order: string, oBy: string, p: number) {
   orderBy.value = oBy
   page.value = p
 }
-function fetchStats() {
-  stats.value = null
-  data.value = null
 
-  APIClient.getPlayersStatistics(props.season, orderBy.value).then((j) => {
-    stats.value = j
+const seasonRef = ref(props.season)
+const {
+  data: stats,
+  error,
+  fetchFn
+} = APIClient.getPlayersStatistics(seasonRef, orderBy, { lazy: true })
+function fetchStats() {
+  data.value = null
+  fetchFn().then(() => {
     formatData()
   })
 }
 fetchStats()
-watch(() => [props.season], fetchStats)
+watch(
+  () => [props.season],
+  () => {seasonRef.value = props.season
+    fetchStats()
+  }
+)
 watch([orderBy], fetchStats)
 watch([page], formatData)
 

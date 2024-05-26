@@ -20,6 +20,9 @@ const props = defineProps({
 
 function formatData() {
   return {
+    chart: {
+      styledMode: true
+    },
     rangeSelector: {
       buttons: [
         {

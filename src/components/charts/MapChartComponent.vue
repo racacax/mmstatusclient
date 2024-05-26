@@ -9,7 +9,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import worldMap from '@highcharts/map-collection/custom/world.geo.json'
 import { ref, watch } from 'vue'
 
@@ -21,7 +21,8 @@ const props = defineProps({
 function formatData() {
   return {
     chart: {
-      map: worldMap
+      map: worldMap,
+      styledMode: true
     },
     title: {
       text: ''

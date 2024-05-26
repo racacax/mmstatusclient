@@ -1,12 +1,9 @@
 @import './base.css';
-
+@import './highcharts.css';
 #app {
   width: 100%;
   margin: 0 auto;
   padding: 0rem;
   font-weight: normal;
-  color: black;
-}
-body {
-  background: white;
+  min-height: calc(100vh - 50px);
 }

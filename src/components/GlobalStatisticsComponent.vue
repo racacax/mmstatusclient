@@ -5,27 +5,33 @@
         <h5>Maps</h5>
       </div>
       <div class="table-max w-100">
-        <LoadingComponent v-if="stats === null" />
-        <table class="table table-striped table-sm" data-toggle="table" v-else>
-          <thead>
-            <tr>
-              <th scope="col"></th>
-              <th scope="col">Map</th>
-              <th scope="col">Total matches</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(stat, i) in stats.results" :key="i">
-              <td>{{ i + 1 }}</td>
-              <td>
-                <a target="_blank" :href="`https://trackmania.io/#/leaderboard/${stat.map_uid}`">{{
-                  stat.map_name
-                }}</a>
-              </td>
-              <td>{{ stat.total_played }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <ErrorManager :error="error">
+          <template #body>
+            <LoadingComponent v-if="loading" />
+            <table class="table table-striped table-sm" data-toggle="table" v-else>
+              <thead>
+                <tr>
+                  <th scope="col"></th>
+                  <th scope="col">Map</th>
+                  <th scope="col">Total matches</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(stat, i) in stats?.results" :key="i">
+                  <td>{{ i + 1 }}</td>
+                  <td>
+                    <a
+                      target="_blank"
+                      :href="`https://trackmania.io/#/leaderboard/${stat.map_uid}`"
+                      >{{ stat.map_name }}</a
+                    >
+                  </td>
+                  <td>{{ stat.total_played }}</td>
+                </tr>
+              </tbody>
+            </table></template
+          ></ErrorManager
+        >
       </div>
     </div>
   </div>
@@ -33,26 +39,22 @@
 
 <script setup lang="ts">
 import LoadingComponent from '@/components/LoadingComponent.vue'
-import { ref, type Ref, watch } from 'vue'
-import { type MapsStatistics } from '@/api/entities'
+import { ref, watch } from 'vue'
 import { APIClient } from '@/api/client'
+import ErrorManager from '@/components/management/ErrorManager.vue'
 
 const props = defineProps({
   minDate: { type: Date, required: true },
   maxDate: { type: Date, required: true }
 })
-
-const stats: Ref<MapsStatistics | null> = ref(null)
-
-function fetchStats() {
-  stats.value = null
-
-  APIClient.getMapsStatistics(props.minDate, props.maxDate).then((j) => {
-    stats.value = j
-  })
+const maxDateRef = ref(props.maxDate)
+const minDateRef = ref(props.minDate)
+const { data: stats, error, loading } = APIClient.getMapsStatistics(minDateRef, maxDateRef)
+const updateRefs = () => {
+  minDateRef.value = props.minDate
+  maxDateRef.value = props.maxDate
 }
-fetchStats()
-watch(() => [props.maxDate, props.minDate], fetchStats)
+watch(() => [props.maxDate, props.minDate], updateRefs)
 </script>
 
 <style scoped>

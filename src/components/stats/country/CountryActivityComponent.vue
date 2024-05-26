@@ -22,29 +22,38 @@
       </div>
     </template>
     <template #main>
-      <div class="w-100 position-relative">
-        <div class="w-100" :class="{ 'opacity-0': data === null }">
-          <StackedBarChartComponent
-            label="Player matches"
-            :categories="Array.from({ length: 24 }, (_, i) => `${i}h`)"
-            :data="
-              data?.results?.map((country) => ({
-                name: country.name,
-                data: Array.from({ length: 24 }, (_, i) => parseInt(country[`${i}-${i + 1}`]))
-              })) ?? []
-            "
-          />
-        </div>
-        <div class="w-100 position-absolute top-0 left-0">
-          <LoadingComponent v-if="data === null" />
-        </div>
-        <div class="w-100 d-flex justify-content-center" v-if="data?.results?.length === 0">
-          <span>No data to display</span>
-        </div>
-        <div class="w-100 d-flex justify-content-end">
-          <i>Last updated at: {{ new Date((data?.last_updated ?? 0) * 1000).toLocaleString() }}</i>
-        </div>
-      </div>
+      <ErrorManager :error="error">
+        <template #body>
+          <div class="w-100 position-relative">
+            <div class="w-100" :class="{ 'opacity-0': data === null }">
+              <StackedBarChartComponent
+                label="Player matches"
+                :categories="Array.from({ length: 24 }, (_, i) => `${i}h`)"
+                :data="
+                  data?.results?.map((country) => ({
+                    name: country.name,
+                    data: Array.from({ length: 24 }, (_, i) =>
+                      parseInt(country[`${i}-${i + 1}` as keyof CountryAndHourResult] as string)
+                    )
+                  })) ?? []
+                "
+              />
+            </div>
+            <div class="w-100 position-absolute top-0 left-0">
+              <LoadingComponent v-if="loading || data === null" />
+            </div>
+            <div class="w-100 d-flex justify-content-center" v-if="data?.results?.length === 0">
+              <span>No data to display</span>
+            </div>
+            <div class="w-100 d-flex justify-content-end">
+              <i
+                >Last updated at:
+                {{ new Date((data?.last_updated ?? 0) * 1000).toLocaleString() }}</i
+              >
+            </div>
+          </div>
+        </template>
+      </ErrorManager>
     </template>
   </CardComponent>
 </template>
@@ -56,27 +65,25 @@
 </style>
 <script setup lang="ts">
 import LoadingComponent from '@/components/LoadingComponent.vue'
-import { ref, type Ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { getEventValue } from '@/utils'
 import { ranks } from '@/constants'
 import { APIClient } from '@/api/client'
-import { type CountryAndHourStats } from '@/api/entities'
 import CardComponent from '@/components/basic/CardComponent.vue'
 import StackedBarChartComponent from '@/components/charts/StackedBarChartComponent.vue'
+import ErrorManager from '@/components/management/ErrorManager.vue'
+import type { CountryAndHourResult } from '@/api/entities'
 
 const props = defineProps({
   season: { type: Number, required: true }
 })
 
 const currentMinRank = ref(0)
-const data: Ref<CountryAndHourStats | null> = ref(null)
-function fetchStats() {
-  data.value = null
-  APIClient.getActivityPerCountryAndHour(props.season, currentMinRank.value).then((j) => {
-    data.value = j
-  })
-}
-fetchStats()
-watch(() => props.season, fetchStats)
-watch(currentMinRank, fetchStats)
+
+const seasonRef = ref(props.season)
+const { data, error, loading } = APIClient.getActivityPerCountryAndHour(seasonRef, currentMinRank)
+watch(
+  () => props.season,
+  () => (seasonRef.value = props.season)
+)
 </script>

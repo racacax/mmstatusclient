@@ -1,41 +1,32 @@
 <script setup lang="ts">
-import { type Ref, ref } from 'vue'
+import { ref } from 'vue'
 import { getEventValue, ordinalSuffixOf } from '@/utils'
 import { APIClient } from '@/api/client'
-import { type Player } from '@/api/entities'
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faBackward, faForward, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
+import { faBackward, faBackwardFast, faForward } from '@fortawesome/free-solid-svg-icons'
 import RankComponent from '@/components/RankComponent.vue'
+import ErrorManager from '@/components/management/ErrorManager.vue'
 
-const players: Ref<Player[] | null> = ref(null)
 const minElo = ref(0)
 const maxElo = ref(99999)
 const minRank = ref(1)
 const maxRank = ref(99999999)
 const name = ref('')
 const page = ref(1)
-function fetchPlayers() {
-  players.value = null
-  APIClient.getPlayers(
-    minElo.value,
-    maxElo.value,
-    minRank.value,
-    maxRank.value,
-    name.value,
-    page.value
-  ).then((j) => {
-    players.value = j
-  })
-}
-fetchPlayers()
+
+const {
+  data: players,
+  error,
+  loading
+} = APIClient.getPlayers(minElo, maxElo, minRank, maxRank, name, page, {})
 </script>
 
 <template>
   <h2>Active players</h2>
   <span>Shows last active players matching your filters</span>
   <div class="w-100">
-    <div class="d-flex gap-2">
+    <div class="d-flex gap-2 flex-wrap">
       <div>
         <label class="form-label">Min. rank</label>
         <select
@@ -45,7 +36,6 @@ fetchPlayers()
             (e) => {
               minElo = parseInt(getEventValue(e))
               page = 1
-              fetchPlayers()
             }
           "
         >
@@ -73,7 +63,6 @@ fetchPlayers()
             (e) => {
               maxElo = parseInt(getEventValue(e))
               page = 1
-              fetchPlayers()
             }
           "
         >
@@ -99,7 +88,6 @@ fetchPlayers()
             (e) => {
               minRank = parseInt(getEventValue(e))
               page = 1
-              fetchPlayers()
             }
           "
           type="number"
@@ -117,7 +105,6 @@ fetchPlayers()
             (e) => {
               maxRank = parseInt(getEventValue(e))
               page = 1
-              fetchPlayers()
             }
           "
           type="number"
@@ -135,109 +122,113 @@ fetchPlayers()
             (e) => {
               name = getEventValue(e)
               page = 1
-              fetchPlayers()
             }
           "
           type="text"
           placeholder="Enter player name..."
           class="form-check-input form-select-sm"
-          style="width: 120px; height: 30px; margin-top: 0px"
+          style="width: 140px; height: 30px; margin-top: 0px"
         />
       </div>
-      <div>
-        <label></label><br />
-        <button
-          class="btn btn-primary"
-          @click="
-            () => {
-              page = 1
-              fetchPlayers()
-            }
-          "
-        >
-          <FontAwesomeIcon :icon="faWandMagicSparkles" /> Apply
-        </button>
-      </div>
-      <div>
-        <label></label><br />
-        <button
-          class="btn btn-primary"
-          :disabled="page === 1"
-          @click="
-            () => {
-              page -= 1
-              fetchPlayers()
-            }
-          "
-        >
-          <FontAwesomeIcon :icon="faBackward" />
-        </button>
-      </div>
-      <div>
-        <label></label><br />
-        <div class="d-flex align-items">
-          <span>Page {{ page }}</span>
+      <div class="d-flex align-items-end justify-content-end flex-grow-1">
+        <div class="d-flex gap-2 align-items-stretch">
+          <div>
+            <button
+              class="btn btn-primary"
+              :disabled="page === 1"
+              @click="
+                () => {
+                  page = 1
+                }
+              "
+            >
+              <FontAwesomeIcon :icon="faBackwardFast" />
+            </button>
+          </div>
+          <div>
+            <button
+              class="btn btn-primary"
+              :disabled="page === 1"
+              @click="
+                () => {
+                  page -= 1
+                }
+              "
+            >
+              <FontAwesomeIcon :icon="faBackward" />
+            </button>
+          </div>
+          <div class="d-flex align-items-center">
+            <div>
+              <span>Page {{ page }}</span>
+            </div>
+          </div>
+          <div>
+            <button
+              class="btn btn-primary"
+              :disabled="players === null || players.length === 0"
+              @click="
+                () => {
+                  page += 1
+                }
+              "
+            >
+              <FontAwesomeIcon :icon="faForward" />
+            </button>
+          </div>
         </div>
       </div>
-      <div>
-        <label></label><br />
-        <button
-          class="btn btn-primary"
-          :disabled="players === null || players.length === 0"
-          @click="
-            () => {
-              page += 1
-              fetchPlayers()
-            }
-          "
-        >
-          <FontAwesomeIcon :icon="faForward" />
-        </button>
-      </div>
     </div>
-    <LoadingComponent v-if="players === null" />
-
-    <table class="table table-striped table-sm" data-toggle="table" v-else>
-      <thead>
-        <tr>
-          <th scope="col">Name</th>
-          <th scope="col">Position</th>
-          <th scope="col">Points</th>
-          <th scope="col">Rank</th>
-          <th scope="col">Activity</th>
-          <th scope="col">Games last 24h</th>
-          <th scope="col">Games last week</th>
-          <th scope="col">Games last month</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="player in players" :key="player.uuid">
-          <td>
-            <img alt="" class="player-flag" :src="`/flags/${player.country?.file_name}`" />
-            <a :href="`/#/statistics/${player.uuid}`" target="_blank">{{
-              player.name.length > 0 ? player.name : 'Unknown Player'
-            }}</a>
-          </td>
-          <td>{{ ordinalSuffixOf(player.rank) }}</td>
-          <td>{{ player.points }}</td>
-          <td><RankComponent :elo="player.points" :rank="player.rank" width="30px" /></td>
-          <td v-if="!player.last_game_finished">
-            <a :href="`https://trackmania.io/#/match/${player.last_game_id}`" target="_blank"
-              >In match</a
-            >
-          </td>
-          <td v-else>
-            <a :href="`https://trackmania.io/#/match/${player.last_game_id}`" target="_blank"
-              >Last match on {{ new Date(player.last_active * 1000).toLocaleDateString() }}
-              {{ new Date(player.last_active * 1000).toTimeString().split(' ')[0] }}</a
-            >
-          </td>
-          <td>{{ player.games_last_24_hours }}</td>
-          <td>{{ player.games_last_week }}</td>
-          <td>{{ player.games_last_month }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <ErrorManager :error="error">
+      <template #body>
+        <LoadingComponent v-if="loading" />
+        <div class="w-100 overflow-x-auto" v-else>
+          <table class="table table-striped table-sm w-100" data-toggle="table">
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Position</th>
+                <th scope="col">Points</th>
+                <th scope="col">Rank</th>
+                <th scope="col">Activity</th>
+                <th scope="col">Games last 24h</th>
+                <th scope="col">Games last week</th>
+                <th scope="col">Games last month</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="player in players" :key="player.uuid">
+                <td>
+                  <img alt="" class="player-flag" :src="`/flags/${player.country?.file_name}`" />
+                  <a :href="`/#/statistics/${player.uuid}`" target="_blank">{{
+                    player.name.length > 0 ? player.name : 'Unknown Player'
+                  }}</a>
+                </td>
+                <td>{{ ordinalSuffixOf(player.rank) }}</td>
+                <td>{{ player.points }}</td>
+                <td>
+                  <RankComponent :elo="player.points" :rank="player.rank" width="30px" />
+                </td>
+                <td v-if="!player.last_game_finished">
+                  <a :href="`https://trackmania.io/#/match/${player.last_game_id}`" target="_blank"
+                    >In match</a
+                  >
+                </td>
+                <td v-else>
+                  <a :href="`https://trackmania.io/#/match/${player.last_game_id}`" target="_blank"
+                    >Last match on {{ new Date(player.last_active * 1000).toLocaleDateString() }}
+                    {{ new Date(player.last_active * 1000).toTimeString().split(' ')[0] }}</a
+                  >
+                </td>
+                <td>{{ player.games_last_24_hours }}</td>
+                <td>{{ player.games_last_week }}</td>
+                <td>{{ player.games_last_month }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </template>
+    </ErrorManager>
   </div>
 </template>
 <style>

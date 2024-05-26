@@ -15,132 +15,267 @@ import {
   type SeasonResults,
   type Status
 } from '@/api/entities'
+import { ref, type Ref, watch } from 'vue'
 
-function fetchAndCatch(url: string) {
-  return fetch(url)
-    .then((r) => r.json())
-    .catch(() => alert('An error occurred while fetching data.'))
+export type FetchReturn<T> = {
+  error: Ref<string | null>
+  data: Ref<T | null>
+  loading: Ref<boolean>
+  fetchFn: () => Promise<void>
+}
+
+export type Options = {
+  lazy?: boolean
+}
+function fetchAndCatch<T>(url: Ref<string>, options: Options): FetchReturn<T> {
+  const error: Ref<string | null> = ref(null)
+  const data: Ref<T | null> = ref(null)
+  const loading: Ref<boolean> = ref(false)
+  const fetchFn = () => {
+    error.value = null
+    loading.value = true
+    data.value = null
+    return fetch(url.value)
+      .then((r) => {
+        if (r.status >= 400) {
+          return r.json().then((j) => {
+            throw new Error(j.message ?? 'Unknown error')
+          })
+        }
+        return r.json()
+      })
+      .catch((e) => {
+        error.value = e.toString()
+        loading.value = false
+      })
+      .then((v) => {
+        data.value = v
+        loading.value = false
+      })
+  }
+  if (!options.lazy) {
+    watch([url], fetchFn)
+    fetchFn()
+  }
+
+  return { error, data, loading, fetchFn }
+}
+
+function urlManager<T>(getUrl: () => string, refs: Ref<any>[], options: Options): FetchReturn<T> {
+  const url = ref<string>(getUrl())
+  watch(refs, () => {
+    url.value = getUrl()
+  })
+  return fetchAndCatch(url, options)
 }
 export class APIClient {
   //@ts-ignore
   static BASE_URL = window.BASE_URL
   static getPlayers(
-    minElo: number,
-    maxElo: number,
-    minRank: number,
-    maxRank: number,
-    name: string,
-    page: number
-  ): Promise<Player[]> {
-    return fetchAndCatch(
-      this.BASE_URL +
-        `/api/players?page=${page}&min_elo=${minElo}&max_elo=${maxElo}&min_rank=${minRank}&max_rank=${maxRank}&name=${name}`
-    )
+    minElo: Ref<number>,
+    maxElo: Ref<number>,
+    minRank: Ref<number>,
+    maxRank: Ref<number>,
+    name: Ref<string>,
+    page: Ref<number>,
+    options: Options
+  ): FetchReturn<Player[]> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/players?page=${page.value}&min_elo=${minElo.value}&max_elo=${maxElo.value}&min_rank=${minRank.value}&max_rank=${maxRank.value}&name=${name.value}`
+      )
+    }
+    return urlManager(getUrl, [minElo, maxElo, minRank, maxRank, name, page], options)
   }
-  static getLastGames(minElo: number, maxElo: number, page: number): Promise<Game[]> {
-    return fetchAndCatch(
-      this.BASE_URL + `/api/games?min_elo=${minElo}&max_elo=${maxElo}&page=${page}`
-    )
+  static getLastGames(
+    minElo: Ref<number>,
+    maxElo: Ref<number>,
+    page: Ref<number>,
+    options: Options
+  ): FetchReturn<Game[]> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/games?min_elo=${minElo.value}&max_elo=${maxElo.value}&page=${page.value}`
+      )
+    }
+    return urlManager(getUrl, [minElo, maxElo, page], options)
   }
 
-  static getStatus(minDate: Date, maxDate: Date): Promise<Status> {
-    return fetchAndCatch(
-      this.BASE_URL +
-        `/api/status?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}`
-    )
+  static getStatus(minDate: Ref<Date>, maxDate: Ref<Date>, options: Options): FetchReturn<Status> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/status?min_date=${Math.round(minDate.value.getTime() / 1000)}&max_date=${Math.round(maxDate.value.getTime() / 1000)}`
+      )
+    }
+    return urlManager(getUrl, [minDate, maxDate], options)
   }
-  static getMapsStatistics(minDate: Date, maxDate: Date): Promise<MapsStatistics> {
-    return fetchAndCatch(
-      this.BASE_URL +
-        `/api/maps_statistics?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}`
-    )
+  static getMapsStatistics(
+    minDate: Ref<Date>,
+    maxDate: Ref<Date>,
+    options: Options = {}
+  ): FetchReturn<MapsStatistics> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/maps_statistics?min_date=${Math.round(minDate.value.getTime() / 1000)}&max_date=${Math.round(maxDate.value.getTime() / 1000)}`
+      )
+    }
+    return urlManager(getUrl, [minDate, maxDate], options)
   }
   static getPlayerOpponentsStatistics(
-    minDate: Date,
-    maxDate: Date,
-    player: string,
-    orderBy: string,
-    order: 'desc' | 'asc',
-    page = 1
-  ): Promise<OpponentsStatistics> {
-    return fetchAndCatch(
-      this.BASE_URL +
-        `/api/player_opponents_statistics?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}&player=${player}&order_by=${orderBy}&order=${order}&page=${page}`
-    )
+    minDate: Ref<Date>,
+    maxDate: Ref<Date>,
+    player: Ref<string>,
+    orderBy: Ref<string>,
+    order: Ref<'desc' | 'asc'>,
+    page: Ref<number> = ref(1),
+    options: Options = {}
+  ): FetchReturn<OpponentsStatistics> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/player_opponents_statistics?min_date=${Math.round(minDate.value.getTime() / 1000)}&max_date=${Math.round(maxDate.value.getTime() / 1000)}&player=${player.value}&order_by=${orderBy.value}&order=${order.value}&page=${page.value}`
+      )
+    }
+    return urlManager(getUrl, [minDate, maxDate, player, orderBy, order, page], options)
   }
   static getPlayerStatistics(
-    minDate: Date,
-    maxDate: Date,
-    player: string
-  ): Promise<PlayerStatistics> {
-    return fetchAndCatch(
-      this.BASE_URL +
-        `/api/player_statistics?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}&player=${player}`
-    )
+    minDate: Ref<Date>,
+    maxDate: Ref<Date>,
+    player: Ref<string>,
+    options: Options = {}
+  ): FetchReturn<PlayerStatistics> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/player_statistics?min_date=${Math.round(minDate.value.getTime() / 1000)}&max_date=${Math.round(maxDate.value.getTime() / 1000)}&player=${player.value}`
+      )
+    }
+    return urlManager(getUrl, [minDate, maxDate, player], options)
   }
-  static getPlayerPoints(minDate: Date, maxDate: Date, player: string): Promise<PlayerPoints> {
-    return fetchAndCatch(
-      this.BASE_URL +
-        `/api/player_points?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}&player=${player}`
-    )
+  static getPlayerPoints(
+    minDate: Ref<Date>,
+    maxDate: Ref<Date>,
+    player: Ref<string>,
+    options: Options = {}
+  ): FetchReturn<PlayerPoints> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/player_points?min_date=${Math.round(minDate.value.getTime() / 1000)}&max_date=${Math.round(maxDate.value.getTime() / 1000)}&player=${player.value}`
+      )
+    }
+    return urlManager(getUrl, [minDate, maxDate, player], options)
   }
-  static getPlayerRanks(minDate: Date, maxDate: Date, player: string): Promise<PlayerRanks> {
-    return fetchAndCatch(
-      this.BASE_URL +
-        `/api/player_ranks?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}&player=${player}`
-    )
+  static getPlayerRanks(
+    minDate: Ref<Date>,
+    maxDate: Ref<Date>,
+    player: Ref<string>,
+    options: Options = {}
+  ): FetchReturn<PlayerRanks> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/player_ranks?min_date=${Math.round(minDate.value.getTime() / 1000)}&max_date=${Math.round(maxDate.value.getTime() / 1000)}&player=${player.value}`
+      )
+    }
+    return urlManager(getUrl, [minDate, maxDate, player], options)
   }
 
-  static getPlayersStatistics(season: number, orderBy: string): Promise<PlayersStatistics> {
-    return fetchAndCatch(
-      this.BASE_URL + `/api/players_statistics?order_by=${orderBy}&season=${season}`
-    )
+  static getPlayersStatistics(
+    season: Ref<number>,
+    orderBy: Ref<string>,
+    options: Options = {}
+  ): FetchReturn<PlayersStatistics> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL + `/api/players_statistics?order_by=${orderBy.value}&season=${season.value}`
+      )
+    }
+    return urlManager(getUrl, [orderBy, season], options)
   }
-  static searchPlayer(name: string): Promise<SearchPlayer> {
-    return fetchAndCatch(this.BASE_URL + `/api/search_player?name=${name}`)
+  static searchPlayer(name: Ref<string>, options: Options = {}): FetchReturn<SearchPlayer> {
+    const getUrl = () => {
+      return this.BASE_URL + `/api/search_player?name=${name.value}`
+    }
+    return urlManager(getUrl, [name], options)
   }
   static getPlayerMapStatistics(
-    minDate: Date,
-    maxDate: Date,
-    player: string,
-    orderBy: string,
-    order: 'desc' | 'asc',
-    page = 1
-  ): Promise<PlayerMapStatistics> {
-    return fetchAndCatch(
-      this.BASE_URL +
-        `/api/player_map_statistics?min_date=${Math.round(minDate.getTime() / 1000)}&max_date=${Math.round(maxDate.getTime() / 1000)}&player=${player}&order_by=${orderBy}&order=${order}&page=${page}`
-    )
+    minDate: Ref<Date>,
+    maxDate: Ref<Date>,
+    player: Ref<string>,
+    orderBy: Ref<string>,
+    order: Ref<'desc' | 'asc'>,
+    page: Ref<number> = ref(1),
+    options: Options = {}
+  ): FetchReturn<PlayerMapStatistics> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/player_map_statistics?min_date=${Math.round(minDate.value.getTime() / 1000)}&max_date=${Math.round(maxDate.value.getTime() / 1000)}&player=${player.value}&order_by=${orderBy.value}&order=${order.value}&page=${page.value}`
+      )
+    }
+    return urlManager(getUrl, [minDate, maxDate, player, orderBy, order, page], options)
   }
 
-  static getSeasons(): Promise<SeasonResults> {
-    return fetchAndCatch(this.BASE_URL + `/api/seasons`)
+  static getSeasons(options: Options = {}): FetchReturn<SeasonResults> {
+    const getUrl = () => {
+      return this.BASE_URL + `/api/seasons`
+    }
+    return urlManager(getUrl, [], options)
   }
 
-  static getActivityPerCountry(season: number, minElo: number): Promise<CountryStats> {
-    return fetchAndCatch(
-      this.BASE_URL + `/api/activity_per?metric=country&min_elo=${minElo}&season=${season}`
-    )
+  static getActivityPerCountry(
+    season: Ref<number>,
+    minElo: Ref<number>,
+    options: Options = {}
+  ): FetchReturn<CountryStats> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/activity_per?metric=country&min_elo=${minElo.value}&season=${season.value}`
+      )
+    }
+    return urlManager(getUrl, [season, minElo], options)
   }
-  static getPlayersPerCountry(season: number, minElo: number): Promise<CountryStats> {
-    return fetchAndCatch(
-      this.BASE_URL +
-        `/api/activity_per?metric=players_per_country&min_elo=${minElo}&season=${season}`
-    )
+  static getPlayersPerCountry(
+    season: Ref<number>,
+    minElo: Ref<number>,
+    options: Options = {}
+  ): FetchReturn<CountryStats> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/activity_per?metric=players_per_country&min_elo=${minElo.value}&season=${season.value}`
+      )
+    }
+    return urlManager(getUrl, [season, minElo], options)
   }
 
   static getActivityPerCountryAndHour(
-    season: number,
-    minElo: number
-  ): Promise<CountryAndHourStats> {
-    return fetchAndCatch(
-      this.BASE_URL + `/api/activity_per?metric=country_and_hour&min_elo=${minElo}&season=${season}`
-    )
+    season: Ref<number>,
+    minElo: Ref<number>,
+    options: Options = {}
+  ): FetchReturn<CountryAndHourStats> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/activity_per?metric=country_and_hour&min_elo=${minElo.value}&season=${season.value}`
+      )
+    }
+    return urlManager(getUrl, [season, minElo], options)
   }
 
-  static getRankDistributionEvolution(season: number): Promise<RankDistributionEvolution> {
-    return fetchAndCatch(
-      this.BASE_URL + `/api/computed_metric?metric=rank_distribution&season=${season}`
-    )
+  static getRankDistributionEvolution(
+    season: Ref<number>,
+    options: Options = {}
+  ): FetchReturn<RankDistributionEvolution> {
+    const getUrl = () => {
+      return this.BASE_URL + `/api/computed_metric?metric=rank_distribution&season=${season.value}`
+    }
+    return urlManager(getUrl, [season], options)
   }
 }

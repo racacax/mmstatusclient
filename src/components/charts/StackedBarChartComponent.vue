@@ -23,7 +23,8 @@ const props = defineProps({
 function formatData() {
   return {
     chart: {
-      type: 'column'
+      type: 'column',
+      styledMode: true
     },
     tooltip: {
       split: false,

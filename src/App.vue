@@ -3,6 +3,7 @@ import { RouterLink, RouterView } from 'vue-router'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faChartSimple, faFileText, faGamepad, faUsers } from '@fortawesome/free-solid-svg-icons'
 import CustomIcon from '@/components/CustomIcon.vue'
+import ThemeManager from '@/components/management/ThemeManager.vue'
 </script>
 
 <template>
@@ -50,6 +51,7 @@ import CustomIcon from '@/components/CustomIcon.vue'
             >
           </li>
         </ul>
+        <ThemeManager />
       </div>
     </div>
   </nav>

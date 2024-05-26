@@ -166,6 +166,7 @@ export interface CountryStatsResult {
 
 export interface CountryAndHourStats {
   results: CountryAndHourResult[]
+  last_updated: number
 }
 
 export interface CountryAndHourResult {
