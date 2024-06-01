@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRoute } from 'vue-router'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faChartSimple, faFileText, faGamepad, faUsers } from '@fortawesome/free-solid-svg-icons'
 import CustomIcon from '@/components/CustomIcon.vue'
 import ThemeManager from '@/components/management/ThemeManager.vue'
+const route = useRoute()
 </script>
 
 <template>
@@ -41,7 +42,7 @@ import ThemeManager from '@/components/management/ThemeManager.vue'
             >
           </li>
           <li class="nav-item">
-            <RouterLink class="nav-link" aria-current="page" to="/statistics">
+            <RouterLink class="nav-link" aria-current="page" to="/statistics" :class="{'router-link-active': route.path.includes('/statistics/')}">
               <FontAwesomeIcon :icon="faChartSimple" /> Statistics</RouterLink
             >
           </li>

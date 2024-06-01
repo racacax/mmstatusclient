@@ -28,7 +28,7 @@
             :key="o.country_alpha3"
             :selected="o.country_alpha3 === metricValueRef"
           >
-            {{ o.name }}
+           {{ countryCodeEmoji(getCountryISO2(o.country_alpha3)) }} {{ o.name }}
           </option>
         </select>
       </div>
@@ -41,6 +41,8 @@ import { ref, type Ref, watch } from 'vue'
 import { APIClient } from '@/api/client'
 import { getEventValue, getRenderedRank } from '@/utils'
 import TableComponent from '@/components/basic/TableComponent.vue'
+import getCountryISO2 from 'country-iso-3-to-2'
+import { countryCodeEmoji } from 'country-code-emoji'
 
 const props = defineProps({
   season: { type: Number, required: true }
