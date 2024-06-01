@@ -28,7 +28,7 @@
             :key="o.country_alpha3"
             :selected="o.country_alpha3 === metricValueRef"
           >
-           {{ countryCodeEmoji(getCountryISO2(o.country_alpha3)) }} {{ o.name }}
+            {{ countryCodeEmoji(getCountryISO2(o.country_alpha3)) }} {{ o.name }}
           </option>
         </select>
       </div>
@@ -39,7 +39,7 @@
 <script setup lang="ts">
 import { ref, type Ref, watch } from 'vue'
 import { APIClient } from '@/api/client'
-import { getEventValue, getRenderedRank } from '@/utils'
+import { getEventValue, getRenderedRank, ordinalSuffixOf } from '@/utils'
 import TableComponent from '@/components/basic/TableComponent.vue'
 import getCountryISO2 from 'country-iso-3-to-2'
 import { countryCodeEmoji } from 'country-code-emoji'
@@ -55,7 +55,7 @@ const metricRef = ref('country')
 const metricValueRef = ref('FRA')
 const lastUpdated: Ref<string | null> = ref(null)
 
-const columns = ref([' ', 'Player', 'Global rank', 'Rank', 'Points'])
+const columns = ref([' ', 'Player', 'Global position', 'Rank', 'Points'])
 
 function callback(_: string, __: string, p: number) {
   page.value = p
@@ -99,7 +99,7 @@ function formatData() {
           `
             <a target="_blank" href="/#/statistics/${e.uuid}">${e.name}</a>
             `,
-          e.rank,
+          ordinalSuffixOf(e.rank),
           getRenderedRank(e.points, e.rank, '30px'),
           e.points
         ])

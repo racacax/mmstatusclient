@@ -42,7 +42,12 @@ const route = useRoute()
             >
           </li>
           <li class="nav-item">
-            <RouterLink class="nav-link" aria-current="page" to="/statistics" :class="{'router-link-active': route.path.includes('/statistics/')}">
+            <RouterLink
+              class="nav-link"
+              aria-current="page"
+              to="/statistics"
+              :class="{ 'router-link-active': route.path.includes('/statistics/') }"
+            >
               <FontAwesomeIcon :icon="faChartSimple" /> Statistics</RouterLink
             >
           </li>

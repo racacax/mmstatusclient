@@ -243,26 +243,26 @@ export interface RankDistributionEvolutionResult {
 }
 
 export interface Leaderboard {
-  results: LeaderboardResult[];
+  results: LeaderboardResult[]
   last_updated: number
 }
 
 export interface LeaderboardResult {
-  name:   string;
-  uuid:   string;
-  rank:   number;
-  points: number;
+  name: string
+  uuid: string
+  rank: number
+  points: number
 }
 
 export interface Countries {
-  results: CountriesResult[];
+  results: CountriesResult[]
 }
 
 export interface CountriesResult {
-  id:             number;
-  uuid:           string;
-  name:           string;
-  parent:         number;
-  country_alpha3: string;
-  file_name:      string;
+  id: number
+  uuid: string
+  name: string
+  parent: number
+  country_alpha3: string
+  file_name: string
 }

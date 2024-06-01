@@ -191,9 +191,9 @@ const {
                 <th scope="col">Points</th>
                 <th scope="col">Rank</th>
                 <th scope="col">Activity</th>
-                <th scope="col">Games last 24h</th>
-                <th scope="col">Games last week</th>
-                <th scope="col">Games last month</th>
+                <th scope="col">Matches last 24h</th>
+                <th scope="col">Matches last week</th>
+                <th scope="col">Matches last month</th>
               </tr>
             </thead>
             <tbody>

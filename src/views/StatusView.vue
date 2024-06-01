@@ -28,7 +28,7 @@ const getStatusDate = (key: string) => {
   const value = status.value[key as keyof Status]
   return value && value.last_time
     ? new Date(value.last_time * 1000).toLocaleTimeString()
-    : 'No game'
+    : 'No match'
 }
 const getStatusCount = (key: string) => {
   if (status.value === null) {
@@ -41,7 +41,7 @@ const getStatusCount = (key: string) => {
 
 <template>
   <h2>What is the state of MM ?</h2>
-  <span>Shows the last time a player of each rank got a game depending on your filters.</span>
+  <span>Shows the last time a player of each rank got a match depending on your filters.</span>
   <div>
     <span>Statistics between </span
     ><input
@@ -81,8 +81,8 @@ const getStatusCount = (key: string) => {
           <thead>
             <tr>
               <th scope="col">Rank</th>
-              <th scope="col">Most recent game (in the interval)</th>
-              <th scope="col">Total games (in the interval)</th>
+              <th scope="col">Most recent match (in the interval)</th>
+              <th scope="col">Total matches (in the interval)</th>
             </tr>
           </thead>
           <tbody>
