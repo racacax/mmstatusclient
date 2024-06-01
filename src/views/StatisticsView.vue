@@ -8,7 +8,7 @@ import { type SeasonResult } from '@/api/entities'
 import PlayerStatisticsComponent from '@/components/PlayerStatisticsComponent.vue'
 import PlayerMapStatisticsComponent from '@/components/PlayerMapStatisticsComponent.vue'
 import PlayerOpponentsStatisticsComponent from '@/components/PlayerOpponentsStatisticsComponent.vue'
-import { useRoute } from 'vue-router'
+import { RouterLink, useRoute } from 'vue-router'
 import { getLocalDate } from '@/utils'
 import PlayersGlobalStatisticsComponent from '@/components/PlayersGlobalStatisticsComponent.vue'
 import LoadingComponent from '@/components/LoadingComponent.vue'
@@ -21,6 +21,7 @@ import PlayerRanksComponent from '@/components/stats/player/PlayerRanksComponent
 import RankDistributionEvolutionComponent from '@/components/stats/ranks/RankDistributionEvolutionComponent.vue'
 import RankDistributionPercentageEvolutionComponent from '@/components/stats/ranks/RankDistributionPercentageEvolutionComponent.vue'
 import ErrorManager from '@/components/management/ErrorManager.vue'
+import CountryLeaderboardComponent from '@/components/stats/leaderboard/CountryLeaderboardComponent.vue'
 
 const minDate = ref(new Date(2024, 3, 8, 17, 0))
 const maxDate = ref(new Date())
@@ -70,6 +71,17 @@ const { data: listSeasons, error: errorSeasons, loading: seasonsLoading } = APIC
 
 let isPlayerOpen = !!route.params?.playerId
 const currentTab = ref(isPlayerOpen ? 'player' : 'global')
+if (route.params.tabName !== undefined) {
+  currentTab.value = route.params.tabName as string
+}
+watch(
+  () => [route.params?.tabName],
+  () => {
+    if (route.params?.tabName !== undefined) {
+      currentTab.value = route.params.tabName as string
+    }
+  }
+)
 </script>
 
 <template>
@@ -129,67 +141,66 @@ const currentTab = ref(isPlayerOpen ? 'player' : 'global')
         </div>
         <nav class="mt-2">
           <div class="nav nav-tabs mb-2" id="nav-tab" role="tablist">
-            <button
+            <RouterLink
               class="nav-link"
-              :class="{ active: !isPlayerOpen }"
+              :class="{ active: currentTab == 'global' }"
               id="nav-global-tab"
-              data-bs-toggle="tab"
-              data-bs-target="#nav-global"
               type="button"
               role="tab"
-              aria-controls="nav-global"
-              aria-selected="true"
-              @click="() => (currentTab = 'global')"
+              :to="`/statistics/tab/global`"
             >
               Global
-            </button>
-            <button
+            </RouterLink>
+
+            <RouterLink
               class="nav-link"
-              :class="{ active: isPlayerOpen }"
+              :class="{ active: currentTab == 'player' }"
               id="nav-player-tab"
-              data-bs-toggle="tab"
-              data-bs-target="#nav-player"
               type="button"
               role="tab"
-              aria-controls="nav-player"
-              aria-selected="false"
-              @click="() => (currentTab = 'player')"
+              :to="`/statistics/tab/player`"
             >
               Player
-            </button>
-            <button
+            </RouterLink>
+
+            <RouterLink
               class="nav-link"
-              id="nav-activity-tab"
-              data-bs-toggle="tab"
-              data-bs-target="#nav-activity"
+              :class="{ active: currentTab == 'country' }"
+              id="nav-country-tab"
               type="button"
               role="tab"
-              aria-controls="nav-activity"
-              aria-selected="false"
-              @click="() => (currentTab = 'country')"
+              :to="`/statistics/tab/country`"
             >
               Country
-            </button>
-            <button
+            </RouterLink>
+
+            <RouterLink
               class="nav-link"
+              :class="{ active: currentTab == 'ranks' }"
               id="nav-ranks-tab"
-              data-bs-toggle="tab"
-              data-bs-target="#nav-ranks"
               type="button"
               role="tab"
-              aria-controls="nav-ranks"
-              aria-selected="false"
-              @click="() => (currentTab = 'ranks')"
+              :to="`/statistics/tab/ranks`"
             >
               Ranks
-            </button>
+            </RouterLink>
+            <RouterLink
+              class="nav-link"
+              :class="{ active: currentTab == 'leaderboard' }"
+              id="nav-leaderboard-tab"
+              type="button"
+              role="tab"
+              :to="`/statistics/tab/leaderboard`"
+            >
+              Leaderboard
+            </RouterLink>
           </div>
         </nav>
 
         <div class="tab-content" id="nav-tabContent" v-if="currentSeason !== undefined">
           <div
             class="tab-pane fade"
-            :class="{ 'show active': !isPlayerOpen }"
+            :class="{ 'show active': currentTab === 'global' }"
             id="nav-global"
             role="tabpanel"
             aria-labelledby="nav-global-tab"
@@ -209,7 +220,7 @@ const currentTab = ref(isPlayerOpen ? 'player' : 'global')
           </div>
           <div
             class="tab-pane fade"
-            :class="{ 'show active': isPlayerOpen }"
+            :class="{ 'show active': currentTab === 'player' }"
             id="nav-player"
             role="tabpanel"
             aria-labelledby="nav-player-tab"
@@ -333,6 +344,7 @@ const currentTab = ref(isPlayerOpen ? 'player' : 'global')
           </div>
           <div
             class="tab-pane fade"
+            :class="{ 'show active': currentTab === 'country' }"
             id="nav-activity"
             role="tabpanel"
             aria-labelledby="nav-activity-tab"
@@ -350,6 +362,7 @@ const currentTab = ref(isPlayerOpen ? 'player' : 'global')
             class="tab-pane fade"
             id="nav-ranks"
             role="tabpanel"
+            :class="{ 'show active': currentTab === 'ranks' }"
             aria-labelledby="nav-ranks-tab"
             tabindex="3"
             ref="tabRanks"
@@ -357,6 +370,19 @@ const currentTab = ref(isPlayerOpen ? 'player' : 'global')
             <div class="row mt-2 w-100 gx-0" v-if="currentTab === 'ranks'">
               <RankDistributionEvolutionComponent :season="currentSeason?.id" />
               <RankDistributionPercentageEvolutionComponent :season="currentSeason?.id" />
+            </div>
+          </div>
+          <div
+            class="tab-pane fade"
+            id="nav-leaderboard"
+            role="tabpanel"
+            :class="{ 'show active': currentTab === 'leaderboard' }"
+            aria-labelledby="nav-leaderboard-tab"
+            tabindex="4"
+            ref="tabLeaderboard"
+          >
+            <div class="row mt-2 w-100 gx-0" v-if="currentTab === 'leaderboard'">
+              <CountryLeaderboardComponent :season="currentSeason?.id" />
             </div>
           </div>
         </div>

@@ -59,7 +59,8 @@ function fetchStats() {
 fetchStats()
 watch(
   () => [props.season],
-  () => {seasonRef.value = props.season
+  () => {
+    seasonRef.value = props.season
     fetchStats()
   }
 )

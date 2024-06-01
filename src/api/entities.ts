@@ -241,3 +241,14 @@ export interface RankDistributionEvolutionResult {
   tm: number
   date: number
 }
+
+export interface Leaderboard {
+  results: LeaderboardResult[]
+}
+
+export interface LeaderboardResult {
+  name: string
+  uuid: string
+  rank: number
+  points: number
+}

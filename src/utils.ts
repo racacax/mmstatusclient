@@ -1,3 +1,5 @@
+import { ranks } from './constants'
+
 export function ordinalSuffixOf(i: number) {
   const j = i % 10,
     k = i % 100
@@ -29,4 +31,18 @@ export function getEventValue(e: any) {
 
 export function randomItem<T>(e: T[]): T {
   return e[Math.floor(Math.random() * e.length)]
+}
+
+export function getRenderedRank(elo: number, rank: number, width: string) {
+  for (let i = 0; i < ranks.length; i++) {
+    const rankObj = ranks[i]
+    if (
+      (rankObj.minRank !== null && rank !== null && rank > rankObj.minRank) ||
+      rankObj.minElo > elo
+    ) {
+      continue
+    }
+    return `<img style="width: ${width}" src="/images/${rankObj.image}" alt="${rankObj.name} image" /> ${rankObj.name}`
+  }
+  return ''
 }

@@ -33,6 +33,11 @@ const router = createRouter({
       component: StatisticsView
     },
     {
+      path: '/statistics/tab/:tabName',
+      name: 'statistics-tab',
+      component: StatisticsView
+    },
+    {
       path: '/statistics/:playerId',
       name: 'statistics-id',
       component: StatisticsView

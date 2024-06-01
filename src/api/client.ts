@@ -1,7 +1,9 @@
 import {
+  type Countries,
   type CountryAndHourStats,
   type CountryStats,
   type Game,
+  type Leaderboard,
   type MapsStatistics,
   type OpponentsStatistics,
   type Player,
@@ -277,5 +279,25 @@ export class APIClient {
       return this.BASE_URL + `/api/computed_metric?metric=rank_distribution&season=${season.value}`
     }
     return urlManager(getUrl, [season], options)
+  }
+  static getLeaderboard(
+    metric: Ref<string>,
+    metricValue: Ref<string>,
+    season: Ref<number>,
+    options: Options = {}
+  ): FetchReturn<Leaderboard> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/leaderboard?metric=${metric.value}&metric_value=${metricValue.value}&season=${season.value}`
+      )
+    }
+    return urlManager(getUrl, [season, metric, metricValue], options)
+  }
+  static getCountries(options: Options = {}): FetchReturn<Countries> {
+    const getUrl = () => {
+      return this.BASE_URL + `/api/countries`
+    }
+    return urlManager(getUrl, [], options)
   }
 }

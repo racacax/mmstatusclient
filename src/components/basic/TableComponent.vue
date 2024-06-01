@@ -1,6 +1,7 @@
 <template>
   <CardComponent :classes="classes" :title="title" :tooltip="tooltip">
     <template #filters>
+      <slot name="custom-filters"></slot>
       <div class="d-flex flex-column gap-2" v-if="orderBy !== undefined">
         Order by:
         <select
@@ -49,32 +50,36 @@
       </div>
     </template>
     <template #main>
-      <LoadingComponent v-if="data === null" />
-      <div v-else>
-        <table class="table table-striped table-sm" data-toggle="table">
-          <thead>
-            <tr>
-              <th scope="col" v-for="(c, i) in props.columns" :key="i">{{ c }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(stat, i) in data" :key="i">
-              <td
-                style="vertical-align: middle"
-                v-html="d"
-                v-for="d in stat"
-                :key="`${i}-${d.value}`"
-              ></td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="w-100 d-flex justify-content-center" v-if="data.length === 0">
-          <span>No data to display</span>
-        </div>
-        <div class="w-100 d-flex justify-content-end" v-if="bottomLabel">
-          <i>{{ bottomLabel }}</i>
-        </div>
-      </div>
+      <ErrorManager :error="error">
+        <template #body>
+          <LoadingComponent v-if="data === null" />
+          <div v-else>
+            <table class="table table-striped table-sm" data-toggle="table">
+              <thead>
+                <tr>
+                  <th scope="col" v-for="(c, i) in props.columns" :key="i">{{ c }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(stat, i) in data" :key="i">
+                  <td
+                    style="vertical-align: middle"
+                    v-html="d"
+                    v-for="d in stat"
+                    :key="`${i}-${d.value}`"
+                  ></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="w-100 d-flex justify-content-center" v-if="data.length === 0">
+              <span>No data to display</span>
+            </div>
+            <div class="w-100 d-flex justify-content-end" v-if="bottomLabel">
+              <i>{{ bottomLabel }}</i>
+            </div>
+          </div></template
+        ></ErrorManager
+      >
     </template>
   </CardComponent>
 </template>
@@ -84,6 +89,7 @@ import LoadingComponent from '@/components/LoadingComponent.vue'
 import { ref, type Ref, watch } from 'vue'
 import { getEventValue } from '@/utils'
 import CardComponent from '@/components/basic/CardComponent.vue'
+import ErrorManager from '@/components/management/ErrorManager.vue'
 
 const props = defineProps<{
   title: string
@@ -96,6 +102,8 @@ const props = defineProps<{
   callback: Function
   bottomLabel?: string | undefined
   tooltip: string
+  pageNumber?: number
+  error?: string | null
 }>()
 
 const currentOrderBy = ref('all')
@@ -104,6 +112,12 @@ if (props.orderBy !== undefined) {
 }
 const order: Ref<'desc' | 'asc'> = ref('desc')
 const page = ref(1)
+watch(
+  () => [props.pageNumber],
+  () => {
+    if (props.pageNumber !== undefined) page.value = props.pageNumber
+  }
+)
 const data: Ref<any[] | null> = ref(props.data)
 watch(
   () => [props.data],
