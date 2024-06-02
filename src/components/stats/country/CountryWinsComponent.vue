@@ -67,7 +67,7 @@
 }
 </style>
 <script setup lang="ts">
-import LoadingComponent from '@/components/LoadingComponent.vue'
+import LoadingComponent from '@/components/basic/LoadingComponent.vue'
 import { ref, watch } from 'vue'
 import { getEventValue } from '@/utils'
 import { ranks } from '@/constants'

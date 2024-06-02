@@ -2,7 +2,7 @@
 import { RouterLink, RouterView, useRoute } from 'vue-router'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faChartSimple, faFileText, faGamepad, faUsers } from '@fortawesome/free-solid-svg-icons'
-import CustomIcon from '@/components/CustomIcon.vue'
+import CustomIcon from '@/components/basic/CustomIcon.vue'
 import ThemeManager from '@/components/management/ThemeManager.vue'
 const route = useRoute()
 </script>

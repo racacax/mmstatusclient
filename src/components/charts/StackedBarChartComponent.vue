@@ -9,7 +9,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from 'vue'
 import { dateFormat } from 'highcharts'
 
@@ -42,7 +42,7 @@ function formatData() {
       text: ''
     },
     xAxis: {
-      categories: props.categories?.map((cat) => dateFormat(cat, 0))
+      categories: props.categories?.map((cat) => dateFormat(cat as string, 0))
     },
     yAxis: {
       min: 0,

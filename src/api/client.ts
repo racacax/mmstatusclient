@@ -70,9 +70,9 @@ function urlManager<T>(getUrl: () => string, refs: Ref<any>[], options: Options)
   })
   return fetchAndCatch(url, options)
 }
+
 export class APIClient {
-  //@ts-ignore
-  static BASE_URL = window.BASE_URL
+  static BASE_URL = import.meta.env.VITE_API_BASE_URL
   static getPlayers(
     minElo: Ref<number>,
     maxElo: Ref<number>,

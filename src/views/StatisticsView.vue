@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import GlobalStatisticsComponent from '@/components/GlobalStatisticsComponent.vue'
+import GlobalStatisticsComponent from '@/components/stats/global/GlobalStatisticsComponent.vue'
 import { type Ref, ref, watch } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faSearch, faWandMagicSparkles, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { APIClient } from '@/api/client'
 import { type SeasonResult } from '@/api/entities'
-import PlayerStatisticsComponent from '@/components/PlayerStatisticsComponent.vue'
-import PlayerMapStatisticsComponent from '@/components/PlayerMapStatisticsComponent.vue'
-import PlayerOpponentsStatisticsComponent from '@/components/PlayerOpponentsStatisticsComponent.vue'
+import PlayerStatisticsComponent from '@/components/stats/player/PlayerStatisticsComponent.vue'
+import PlayerMapStatisticsComponent from '@/components/stats/player/PlayerMapStatisticsComponent.vue'
+import PlayerOpponentsStatisticsComponent from '@/components/stats/player/PlayerOpponentsStatisticsComponent.vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { getLocalDate } from '@/utils'
-import PlayersGlobalStatisticsComponent from '@/components/PlayersGlobalStatisticsComponent.vue'
-import LoadingComponent from '@/components/LoadingComponent.vue'
+import PlayersGlobalStatisticsComponent from '@/components/stats/global/PlayersGlobalStatisticsComponent.vue'
+import LoadingComponent from '@/components/basic/LoadingComponent.vue'
 import CountryStatsComponent from '@/components/stats/country/CountryStatsComponent.vue'
 import CountryActivityComponent from '@/components/stats/country/CountryActivityComponent.vue'
 import PlayersPerCountryComponent from '@/components/stats/country/PlayersPerCountryComponent.vue'
@@ -258,7 +258,7 @@ watch(
                     <ErrorManager :error="errorPlayers">
                       <template #body>
                         <div
-                          v-if="!playersLoading && listPlayers !== null"
+                          v-if="playersLoading || listPlayers !== null"
                           class="position-relative"
                         >
                           <div
@@ -275,7 +275,8 @@ watch(
                               />
                             </div>
                             <strong>Search results:</strong><br />
-                            <div v-if="listPlayers?.results.length === 0" style="color: #c90b0b">
+                            <div v-if="playersLoading">Loading...</div>
+                            <div v-else-if="listPlayers?.results.length === 0" style="color: #c90b0b">
                               No player matching query
                             </div>
                             <div

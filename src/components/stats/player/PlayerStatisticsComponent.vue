@@ -87,10 +87,10 @@
 </template>
 
 <script setup lang="ts">
-import LoadingComponent from '@/components/LoadingComponent.vue'
+import LoadingComponent from '@/components/basic/LoadingComponent.vue'
 import { ref, watch } from 'vue'
 import { APIClient } from '@/api/client'
-import RankComponent from '@/components/RankComponent.vue'
+import RankComponent from '@/components/basic/RankComponent.vue'
 import { ordinalSuffixOf } from '@/utils'
 import ErrorManager from '@/components/management/ErrorManager.vue'
 

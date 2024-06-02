@@ -85,7 +85,7 @@
 </template>
 
 <script setup lang="ts">
-import LoadingComponent from '@/components/LoadingComponent.vue'
+import LoadingComponent from '@/components/basic/LoadingComponent.vue'
 import { ref, type Ref, watch } from 'vue'
 import { getEventValue } from '@/utils'
 import CardComponent from '@/components/basic/CardComponent.vue'

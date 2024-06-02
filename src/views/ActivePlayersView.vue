@@ -2,10 +2,10 @@
 import { ref } from 'vue'
 import { getEventValue, ordinalSuffixOf } from '@/utils'
 import { APIClient } from '@/api/client'
-import LoadingComponent from '@/components/LoadingComponent.vue'
+import LoadingComponent from '@/components/basic/LoadingComponent.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faBackward, faBackwardFast, faForward } from '@fortawesome/free-solid-svg-icons'
-import RankComponent from '@/components/RankComponent.vue'
+import RankComponent from '@/components/basic/RankComponent.vue'
 import ErrorManager from '@/components/management/ErrorManager.vue'
 
 const minElo = ref(0)
@@ -92,7 +92,7 @@ const {
           "
           type="number"
           min="1"
-          max="999999"
+          max="9999999"
           value="1"
           class="form-check-input form-select-sm"
           style="width: 80px; height: 30px; margin-top: 0px"
@@ -109,8 +109,8 @@ const {
           "
           type="number"
           min="1"
-          max="999999"
-          value="999999"
+          max="9999999"
+          value="9999999"
           class="form-check-input form-select-sm"
           style="width: 80px; height: 30px; margin-top: 0px"
         />

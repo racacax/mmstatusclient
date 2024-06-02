@@ -76,7 +76,7 @@
               <tbody>
                 <tr v-for="(stat, i) in stats.results" :key="i">
                   <td>
-                    <a target="_blank" :href="`https://trackmania.io/#/player/${stat.uuid}`">{{
+                    <a target="_blank" :href="`/#/statistics/${stat.uuid}`">{{
                       stat.name
                     }}</a>
                   </td>
@@ -145,7 +145,7 @@
 </template>
 
 <script setup lang="ts">
-import LoadingComponent from '@/components/LoadingComponent.vue'
+import LoadingComponent from '@/components/basic/LoadingComponent.vue'
 import { ref, type Ref, watch } from 'vue'
 import { APIClient } from '@/api/client'
 import { getEventValue } from '@/utils'

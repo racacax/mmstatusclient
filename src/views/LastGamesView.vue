@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { APIClient } from '@/api/client'
-import LoadingComponent from '@/components/LoadingComponent.vue'
+import LoadingComponent from '@/components/basic/LoadingComponent.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faBackward, faBackwardFast, faForward } from '@fortawesome/free-solid-svg-icons'
-import RankComponent from '@/components/RankComponent.vue'
+import RankComponent from '@/components/basic/RankComponent.vue'
 import { getEventValue } from '@/utils'
 import ErrorManager from '@/components/management/ErrorManager.vue'
 

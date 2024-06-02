@@ -56,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import LoadingComponent from '@/components/LoadingComponent.vue'
+import LoadingComponent from '@/components/basic/LoadingComponent.vue'
 import getCountryISO2 from 'country-iso-3-to-2'
 import { ref, watch } from 'vue'
 import { getEventValue } from '@/utils'

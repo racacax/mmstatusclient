@@ -33,7 +33,7 @@ export function randomItem<T>(e: T[]): T {
   return e[Math.floor(Math.random() * e.length)]
 }
 
-export function getRenderedRank(elo: number, rank: number, width: string) {
+export function getRenderedRank(elo: number, rank: number | null, width: string) {
   for (let i = 0; i < ranks.length; i++) {
     const rankObj = ranks[i]
     if (
