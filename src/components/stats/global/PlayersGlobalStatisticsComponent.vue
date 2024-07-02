@@ -47,25 +47,19 @@ function callback(order: string, oBy: string, p: number) {
 const seasonRef = ref(props.season)
 const {
   data: stats,
-  error,
-  fetchFn
-} = APIClient.getPlayersStatistics(seasonRef, orderBy, { lazy: true })
-function fetchStats() {
-  data.value = null
-  fetchFn().then(() => {
-    formatData()
-  })
-}
-fetchStats()
+  error
+} = APIClient.getPlayersStatistics(seasonRef, orderBy)
+
+
 watch(
   () => [props.season],
   () => {
     seasonRef.value = props.season
-    fetchStats()
   }
 )
-watch([orderBy], fetchStats)
+
 watch([page], formatData)
+watch(stats, formatData)
 
 function formatData() {
   let currentData: any[] = []

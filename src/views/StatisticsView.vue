@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import GlobalStatisticsComponent from '@/components/stats/global/GlobalStatisticsComponent.vue'
 import { type Ref, ref, watch } from 'vue'
+import { getEventValue } from '@/utils'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faSearch, faWandMagicSparkles, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { APIClient } from '@/api/client'
@@ -37,12 +38,10 @@ const minDateInput = ref()
 const maxDateInput = ref()
 const currentSeasonInput = ref()
 const currentSeason = ref<SeasonResult>()
-watch(
-  () => currentSeasonInput.value,
-  (input) => {
-    currentSeason.value = listSeasons.value?.results.find((e) => e.id === parseInt(input.value))
+const updateCurrentSeason = (value: string) => {
+    currentSeason.value = listSeasons.value?.results.find((e) => e.id === parseInt(value))
   }
-)
+watch(currentSeasonInput, () => updateCurrentSeason(currentSeasonInput.value.value))
 watch(currentSeason, () => {
   if (currentSeason.value !== undefined) {
     minDate.value = new Date(currentSeason.value.start_time * 1000)
@@ -93,11 +92,11 @@ watch(
       <div class="w-100" v-else>
         <div>
           <span>Season : </span>
-          <select ref="currentSeasonInput" class="form-select form-select-sm datetime d-inline">
+          <select ref="currentSeasonInput" class="form-select form-select-sm datetime d-inline" @change='(event) => updateCurrentSeason(getEventValue(event))'>
             <option
               :selected="
                 season.start_time * 1000 < new Date().getTime() &&
-                new Date().getTime() < season.end_time
+                new Date().getTime() < season.end_time * 1000
               "
               :key="season.id"
               :value="season.id"
