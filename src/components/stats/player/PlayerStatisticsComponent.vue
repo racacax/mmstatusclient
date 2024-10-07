@@ -11,7 +11,12 @@
                 class="position-absolute"
                 style="right: 10px; top: 5px; width: auto; font-size: 27px"
               >
-                <RankComponent :rank="stats.stats.rank" :elo="stats.stats.points" width="80px" />
+                <RankComponent
+                  v-if="stats.stats.rank.toString() !== 'N/A'"
+                  :rank="stats.stats.rank"
+                  :elo="stats.stats.points"
+                  width="80px"
+                />
               </div>
               <h6>
                 Name:

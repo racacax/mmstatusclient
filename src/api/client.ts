@@ -115,17 +115,13 @@ export class APIClient {
     return urlManager(getUrl, [minDate, maxDate], options)
   }
   static getMapsStatistics(
-    minDate: Ref<Date>,
-    maxDate: Ref<Date>,
+    season: Ref<number>,
     options: Options = {}
   ): FetchReturn<MapsStatistics> {
     const getUrl = () => {
-      return (
-        this.BASE_URL +
-        `/api/maps_statistics?min_date=${Math.round(minDate.value.getTime() / 1000)}&max_date=${Math.round(maxDate.value.getTime() / 1000)}`
-      )
+      return this.BASE_URL + `/api/computed_metric?metric=maps_statistics&season=${season.value}`
     }
-    return urlManager(getUrl, [minDate, maxDate], options)
+    return urlManager(getUrl, [season], options)
   }
   static getPlayerOpponentsStatistics(
     minDate: Ref<Date>,

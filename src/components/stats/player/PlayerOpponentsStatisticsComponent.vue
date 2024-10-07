@@ -76,9 +76,7 @@
               <tbody>
                 <tr v-for="(stat, i) in stats.results" :key="i">
                   <td>
-                    <a target="_blank" :href="`/#/statistics/${stat.uuid}`">{{
-                      stat.name
-                    }}</a>
+                    <a target="_blank" :href="`/#/statistics/${stat.uuid}`">{{ stat.name }}</a>
                   </td>
                   <td>{{ stat.total_played }}</td>
                   <td>{{ stat.total_played_along }}</td>

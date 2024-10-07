@@ -39,8 +39,8 @@ const maxDateInput = ref()
 const currentSeasonInput = ref()
 const currentSeason = ref<SeasonResult>()
 const updateCurrentSeason = (value: string) => {
-    currentSeason.value = listSeasons.value?.results.find((e) => e.id === parseInt(value))
-  }
+  currentSeason.value = listSeasons.value?.results.find((e) => e.id === parseInt(value))
+}
 watch(currentSeasonInput, () => updateCurrentSeason(currentSeasonInput.value.value))
 watch(currentSeason, () => {
   if (currentSeason.value !== undefined) {
@@ -92,7 +92,11 @@ watch(
       <div class="w-100" v-else>
         <div>
           <span>Season : </span>
-          <select ref="currentSeasonInput" class="form-select form-select-sm datetime d-inline" @change='(event) => updateCurrentSeason(getEventValue(event))'>
+          <select
+            ref="currentSeasonInput"
+            class="form-select form-select-sm datetime d-inline"
+            @change="(event) => updateCurrentSeason(getEventValue(event))"
+          >
             <option
               :selected="
                 season.start_time * 1000 < new Date().getTime() &&
@@ -105,14 +109,14 @@ watch(
               {{ season.name }}
             </option>
           </select>
-          <div v-if="!currentSeason?.is_aggregated" class="mt-1">
+          <div v-if="!currentSeason?.is_aggregated && currentTab == 'player'" class="mt-1">
             <span>Statistics between </span
             ><input
               class="form-check-input rounded-1 datetime"
               type="datetime-local"
               ref="minDateInput"
               :value="getLocalDate(minDate)"
-              min="2024-04-01T00:00"
+              :min="getLocalDate(new Date((currentSeason?.start_time ?? 0) * 1000))"
               :max="getLocalDate(maxDate)"
             />
             <span> and </span>
@@ -122,6 +126,7 @@ watch(
               type="datetime-local"
               :value="getLocalDate(maxDate)"
               :min="getLocalDate(minDate)"
+              :max="getLocalDate(new Date((currentSeason?.end_time ?? 0) * 1000))"
             />
             <div
               type="button"
@@ -207,7 +212,7 @@ watch(
             ref="tabGlobal"
           >
             <div class="row w-100 gx-0" v-if="currentTab === 'global'">
-              <GlobalStatisticsComponent :min-date="minDate" :max-date="maxDate" />
+              <GlobalStatisticsComponent :season="currentSeason?.id" />
               <PlayersGlobalStatisticsComponent :season="currentSeason?.id" />
               <div
                 class="col-12 col-lg-6 d-flex justify-content-center align-items-center"
@@ -275,7 +280,10 @@ watch(
                             </div>
                             <strong>Search results:</strong><br />
                             <div v-if="playersLoading">Loading...</div>
-                            <div v-else-if="listPlayers?.results.length === 0" style="color: #c90b0b">
+                            <div
+                              v-else-if="listPlayers?.results.length === 0"
+                              style="color: #c90b0b"
+                            >
                               No player matching query
                             </div>
                             <div

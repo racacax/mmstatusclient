@@ -45,11 +45,7 @@ function callback(order: string, oBy: string, p: number) {
 }
 
 const seasonRef = ref(props.season)
-const {
-  data: stats,
-  error
-} = APIClient.getPlayersStatistics(seasonRef, orderBy)
-
+const { data: stats, error } = APIClient.getPlayersStatistics(seasonRef, orderBy)
 
 watch(
   () => [props.season],

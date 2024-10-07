@@ -44,17 +44,14 @@ import { APIClient } from '@/api/client'
 import ErrorManager from '@/components/management/ErrorManager.vue'
 
 const props = defineProps({
-  minDate: { type: Date, required: true },
-  maxDate: { type: Date, required: true }
+  season: { type: Number, required: true }
 })
-const maxDateRef = ref(props.maxDate)
-const minDateRef = ref(props.minDate)
-const { data: stats, error, loading } = APIClient.getMapsStatistics(minDateRef, maxDateRef)
+const seasonRef = ref(props.season)
+const { data: stats, error, loading } = APIClient.getMapsStatistics(seasonRef)
 const updateRefs = () => {
-  minDateRef.value = props.minDate
-  maxDateRef.value = props.maxDate
+  seasonRef.value = props.season
 }
-watch(() => [props.maxDate, props.minDate], updateRefs)
+watch(() => [props.season], updateRefs)
 </script>
 
 <style scoped>
