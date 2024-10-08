@@ -22,7 +22,9 @@ import PlayerRanksComponent from '@/components/stats/player/PlayerRanksComponent
 import RankDistributionEvolutionComponent from '@/components/stats/ranks/RankDistributionEvolutionComponent.vue'
 import RankDistributionPercentageEvolutionComponent from '@/components/stats/ranks/RankDistributionPercentageEvolutionComponent.vue'
 import ErrorManager from '@/components/management/ErrorManager.vue'
-import CountryLeaderboardComponent from '@/components/stats/leaderboard/CountryLeaderboardComponent.vue'
+import LeaderboardByCountryComponent from '@/components/stats/leaderboard/LeaderboardByCountryComponent.vue'
+import CountriesLeaderboardComponent from '@/components/stats/leaderboard/CountriesLeaderboardComponent.vue'
+import ClubsLeaderboardComponent from '@/components/stats/leaderboard/ClubsLeaderboardComponent.vue'
 
 const minDate = ref(new Date(2024, 3, 8, 17, 0))
 const maxDate = ref(new Date())
@@ -390,7 +392,9 @@ watch(
             ref="tabLeaderboard"
           >
             <div class="row mt-2 w-100 gx-0" v-if="currentTab === 'leaderboard'">
-              <CountryLeaderboardComponent :season="currentSeason?.id" />
+              <LeaderboardByCountryComponent :season="currentSeason?.id" />
+              <ClubsLeaderboardComponent :season="currentSeason?.id" />
+              <CountriesLeaderboardComponent :season="currentSeason?.id" />
             </div>
           </div>
         </div>
