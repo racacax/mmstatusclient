@@ -265,3 +265,26 @@ export interface CountriesResult {
   country_alpha3: string
   file_name: string
 }
+
+
+export interface CountriesLeaderboard {
+  last_updated: number;
+  results:      CountriesLeaderboardResult[];
+}
+
+export interface CountriesLeaderboardResult {
+  name:           string;
+  file_name:      string;
+  country_alpha3: string;
+  points:         number;
+}
+
+export interface ClubsLeaderboard {
+  last_updated: number;
+  results:      ClubsLeaderboardResult[];
+}
+
+export interface ClubsLeaderboardResult {
+  name:   string;
+  points: number;
+}

@@ -1,5 +1,7 @@
 import {
+  type ClubsLeaderboard,
   type Countries,
+  type CountriesLeaderboard,
   type CountryAndHourStats,
   type CountryStats,
   type Game,
@@ -289,6 +291,30 @@ export class APIClient {
       )
     }
     return urlManager(getUrl, [season, metric, metricValue], options)
+  }
+  static getCountriesLeaderboard(
+    season: Ref<number>,
+    options: Options = {}
+  ): FetchReturn<CountriesLeaderboard> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/computed_metric?metric=countries_leaderboard&season=${season.value}`
+      )
+    }
+    return urlManager(getUrl, [season], options)
+  }
+  static getClubsLeaderboard(
+    season: Ref<number>,
+    options: Options = {}
+  ): FetchReturn<ClubsLeaderboard> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/computed_metric?metric=clubs_leaderboard&season=${season.value}`
+      )
+    }
+    return urlManager(getUrl, [season], options)
   }
   static getCountries(options: Options = {}): FetchReturn<Countries> {
     const getUrl = () => {

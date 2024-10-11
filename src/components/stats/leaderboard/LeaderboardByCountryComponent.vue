@@ -78,10 +78,9 @@ watch(
   () => [props.season],
   () => {
     seasonRef.value = props.season
-    fetchStats()
   }
 )
-watch([metricValueRef], () => {
+watch([metricValueRef, seasonRef], () => {
   page.value = 1
   fetchStats()
 })
