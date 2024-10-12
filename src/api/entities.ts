@@ -2,6 +2,7 @@ export interface Player {
   name: string
   country: Country | null
   uuid: string
+  club_tag: string | null
   rank: number
   points: number
   last_active: number
@@ -93,6 +94,7 @@ export interface OpponentsStatisticsResult {
 export interface PlayerStatistics {
   uuid: string
   name: string
+  club_tag: string | null
   stats: PlayerStatisticsStats
 }
 
@@ -266,25 +268,24 @@ export interface CountriesResult {
   file_name: string
 }
 
-
 export interface CountriesLeaderboard {
-  last_updated: number;
-  results:      CountriesLeaderboardResult[];
+  last_updated: number
+  results: CountriesLeaderboardResult[]
 }
 
 export interface CountriesLeaderboardResult {
-  name:           string;
-  file_name:      string;
-  country_alpha3: string;
-  points:         number;
+  name: string
+  file_name: string
+  country_alpha3: string
+  points: number
 }
 
 export interface ClubsLeaderboard {
-  last_updated: number;
-  results:      ClubsLeaderboardResult[];
+  last_updated: number
+  results: ClubsLeaderboardResult[]
 }
 
 export interface ClubsLeaderboardResult {
-  name:   string;
-  points: number;
+  name: string
+  points: number
 }

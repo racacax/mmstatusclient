@@ -24,7 +24,10 @@
                   class="player-label"
                   target="_blank"
                   :href="`https://trackmania.io/#/player/${stats.uuid}`"
-                  >{{ stats.name }}</a
+                  ><span v-if="stats.club_tag">
+                    [<span v-html="MPStyle(stats.club_tag)"></span>]&nbsp;</span
+                  >
+                  {{ stats.name }}</a
                 >
               </h6>
               <h6>
@@ -98,6 +101,7 @@ import { APIClient } from '@/api/client'
 import RankComponent from '@/components/basic/RankComponent.vue'
 import { ordinalSuffixOf } from '@/utils'
 import ErrorManager from '@/components/management/ErrorManager.vue'
+import { MPStyle } from '@tomvlk/ts-maniaplanet-formatter'
 
 const props = defineProps({
   minDate: { type: Date, required: true },

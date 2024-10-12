@@ -35,11 +35,7 @@ const columns = ref([' ', 'Country', 'Points'])
 function callback(_: string, __: string, p: number) {
   page.value = p
 }
-const {
-  data: stats,
-  error,
-  fetchFn
-} = APIClient.getCountriesLeaderboard(seasonRef, { lazy: true })
+const { data: stats, error, fetchFn } = APIClient.getCountriesLeaderboard(seasonRef, { lazy: true })
 function fetchStats() {
   data.value = null
   fetchFn().then(() => {
@@ -66,7 +62,7 @@ function formatData() {
         currentData.push([
           (page.value - 1) * 10 + (i + 1),
           `${countryCodeEmoji(getCountryISO2(e.country_alpha3))} ${e.name}`,
-          e.points,
+          e.points
         ])
       })
     data.value = currentData

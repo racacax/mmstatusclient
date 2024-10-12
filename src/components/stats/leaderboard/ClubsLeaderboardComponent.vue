@@ -36,11 +36,7 @@ const columns = ref([' ', 'Club', 'Points'])
 function callback(_: string, __: string, p: number) {
   page.value = p
 }
-const {
-  data: stats,
-  error,
-  fetchFn
-} = APIClient.getClubsLeaderboard(seasonRef, { lazy: true })
+const { data: stats, error, fetchFn } = APIClient.getClubsLeaderboard(seasonRef, { lazy: true })
 function fetchStats() {
   data.value = null
   fetchFn().then(() => {
@@ -67,7 +63,7 @@ function formatData() {
         currentData.push([
           (page.value - 1) * 10 + (i + 1),
           `<span style="font-size:18.71px">${MPStyle(e.name)}</span>`,
-          e.points,
+          e.points
         ])
       })
     data.value = currentData

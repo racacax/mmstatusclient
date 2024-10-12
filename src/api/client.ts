@@ -82,15 +82,20 @@ export class APIClient {
     maxRank: Ref<number>,
     name: Ref<string>,
     page: Ref<number>,
+    computeMatchesPlayed: Ref<boolean>,
     options: Options
   ): FetchReturn<Player[]> {
     const getUrl = () => {
       return (
         this.BASE_URL +
-        `/api/players?page=${page.value}&min_elo=${minElo.value}&max_elo=${maxElo.value}&min_rank=${minRank.value}&max_rank=${maxRank.value}&name=${name.value}`
+        `/api/players?page=${page.value}&min_elo=${minElo.value}&max_elo=${maxElo.value}&min_rank=${minRank.value}&max_rank=${maxRank.value}&name=${name.value}&compute_matches_played=${computeMatchesPlayed.value}`
       )
     }
-    return urlManager(getUrl, [minElo, maxElo, minRank, maxRank, name, page], options)
+    return urlManager(
+      getUrl,
+      [minElo, maxElo, minRank, maxRank, name, page, computeMatchesPlayed],
+      options
+    )
   }
   static getLastGames(
     minElo: Ref<number>,
@@ -298,8 +303,7 @@ export class APIClient {
   ): FetchReturn<CountriesLeaderboard> {
     const getUrl = () => {
       return (
-        this.BASE_URL +
-        `/api/computed_metric?metric=countries_leaderboard&season=${season.value}`
+        this.BASE_URL + `/api/computed_metric?metric=countries_leaderboard&season=${season.value}`
       )
     }
     return urlManager(getUrl, [season], options)
@@ -309,10 +313,7 @@ export class APIClient {
     options: Options = {}
   ): FetchReturn<ClubsLeaderboard> {
     const getUrl = () => {
-      return (
-        this.BASE_URL +
-        `/api/computed_metric?metric=clubs_leaderboard&season=${season.value}`
-      )
+      return this.BASE_URL + `/api/computed_metric?metric=clubs_leaderboard&season=${season.value}`
     }
     return urlManager(getUrl, [season], options)
   }

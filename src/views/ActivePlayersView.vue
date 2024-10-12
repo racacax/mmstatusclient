@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faBackward, faBackwardFast, faForward } from '@fortawesome/free-solid-svg-icons'
 import RankComponent from '@/components/basic/RankComponent.vue'
 import ErrorManager from '@/components/management/ErrorManager.vue'
+import { MPStyle } from '@tomvlk/ts-maniaplanet-formatter'
 
 const minElo = ref(0)
 const maxElo = ref(99999)
@@ -14,12 +15,13 @@ const minRank = ref(1)
 const maxRank = ref(99999999)
 const name = ref('')
 const page = ref(1)
+const computeMatchesPlayed = ref(false)
 
 const {
   data: players,
   error,
   loading
-} = APIClient.getPlayers(minElo, maxElo, minRank, maxRank, name, page, {})
+} = APIClient.getPlayers(minElo, maxElo, minRank, maxRank, name, page, computeMatchesPlayed, {})
 </script>
 
 <template>
@@ -130,6 +132,17 @@ const {
           style="width: 140px; height: 30px; margin-top: 0px"
         />
       </div>
+      <div>
+        <label class="form-label" for="displayMatchesPlayed"> Display matches played </label><br />
+        <input
+          class="form-check-input"
+          style="width: 30px; height: 30px; margin-top: 0px"
+          id="displayMatchesPlayed"
+          type="checkbox"
+          :checked="computeMatchesPlayed"
+          v-on:change="() => (computeMatchesPlayed = !computeMatchesPlayed)"
+        />
+      </div>
       <div class="d-flex align-items-end justify-content-end flex-grow-1">
         <div class="d-flex gap-2 align-items-stretch">
           <div>
@@ -191,18 +204,24 @@ const {
                 <th scope="col">Points</th>
                 <th scope="col">Rank</th>
                 <th scope="col">Activity</th>
-                <th scope="col">Matches last 24h</th>
-                <th scope="col">Matches last week</th>
-                <th scope="col">Matches last month</th>
+
+                <template v-if="computeMatchesPlayed">
+                  <th scope="col">Matches last 24h</th>
+                  <th scope="col">Matches last week</th>
+                  <th scope="col">Matches last month</th></template
+                >
               </tr>
             </thead>
             <tbody>
               <tr v-for="player in players" :key="player.uuid">
                 <td>
                   <img alt="" class="player-flag" :src="`/flags/${player.country?.file_name}`" />
-                  <a :href="`/#/statistics/${player.uuid}`" target="_blank">{{
-                    player.name.length > 0 ? player.name : 'Unknown Player'
-                  }}</a>
+                  <span v-if="player.club_tag"
+                    >[<span v-html="MPStyle(player.club_tag)"></span>]&nbsp;</span
+                  >
+                  <a :href="`/#/statistics/${player.uuid}`" target="_blank">
+                    {{ player.name.length > 0 ? player.name : 'Unknown Player' }}</a
+                  >
                 </td>
                 <td>{{ ordinalSuffixOf(player.rank) }}</td>
                 <td>{{ player.points }}</td>
@@ -220,9 +239,11 @@ const {
                     {{ new Date(player.last_active * 1000).toTimeString().split(' ')[0] }}</a
                   >
                 </td>
-                <td>{{ player.games_last_24_hours }}</td>
-                <td>{{ player.games_last_week }}</td>
-                <td>{{ player.games_last_month }}</td>
+                <template v-if="computeMatchesPlayed">
+                  <td>{{ player.games_last_24_hours }}</td>
+                  <td>{{ player.games_last_week }}</td>
+                  <td>{{ player.games_last_month }}</td></template
+                >
               </tr>
             </tbody>
           </table>
