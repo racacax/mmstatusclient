@@ -68,13 +68,6 @@ const route = useRoute()
     </div>
   </nav>
   <div class="main">
-    <div class="alert alert-warning" role="alert">
-      <FontAwesomeIcon :icon="faWarning" /> I am aware of the huge slowdowns currently happening on
-      the website. I am currently trying to resolve the issue with my hosting provider, performances
-      have been poor since a recent migration on their end. <br /><strong
-        >Loading can take up to 30s sometimes.</strong
-      >
-    </div>
     <RouterView />
   </div>
 </template>
