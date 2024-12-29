@@ -42,9 +42,20 @@ function fetchAndCatch<T>(url: Ref<string>, options: Options): FetchReturn<T> {
     return fetch(url.value)
       .then((r) => {
         if (r.status >= 400) {
-          return r.json().then((j) => {
-            throw new Error(j.message ?? 'Unknown error')
-          })
+          if (r.status == 403) {
+            throw new Error(
+              'Got 403 Forbidden. Might be rate limited (slow down your clicks bucko).'
+            )
+          } else {
+            return r
+              .json()
+              .then((j) => {
+                throw new Error(j.message ?? 'Unknown error')
+              })
+              .catch((_) => {
+                throw new Error('Unknown error')
+              })
+          }
         }
         return r.json()
       })

@@ -213,7 +213,7 @@ const {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="player in players" :key="player.uuid">
+              <tr v-if="!error" v-for="player in players" :key="player.uuid">
                 <td>
                   <img alt="" class="player-flag" :src="`/flags/${player.country?.file_name}`" />
                   <span v-if="player.club_tag"

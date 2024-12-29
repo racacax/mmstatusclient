@@ -69,10 +69,10 @@ const route = useRoute()
   </nav>
   <div class="main">
     <div class="alert alert-warning" role="alert">
-      <FontAwesomeIcon :icon="faWarning" /> Nadeo servers are in shambles for the past few days.
-      Some matches might not start at all. Bugged matches were marked as wins for anyone in the
-      match until now. Now, bugged matches will automatically be deleted from the statistics and not
-      be counted as a played match. This has been retroactive for any match in the past two weeks.
+      <FontAwesomeIcon :icon="faWarning" /> Nadeo servers have been in shambles for the past few
+      days. Some matches might not start at all. Until now, bugged matches were marked as wins for
+      anyone in the match. From Dec. 13th and onwards, bugged matches will automatically be deleted
+      from the statistics and not be counted.
     </div>
     <RouterView />
   </div>
