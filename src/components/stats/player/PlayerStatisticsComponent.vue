@@ -96,33 +96,36 @@
 
 <script setup lang="ts">
 import LoadingComponent from '@/components/basic/LoadingComponent.vue'
-import { ref, watch } from 'vue'
 import { APIClient } from '@/api/client'
 import RankComponent from '@/components/basic/RankComponent.vue'
-import { ordinalSuffixOf } from '@/utils'
+import { ordinalSuffixOf, toTimestamp } from '@/utils'
 import ErrorManager from '@/components/management/ErrorManager.vue'
 import { MPStyle } from '@tomvlk/ts-maniaplanet-formatter'
+import { type SeasonResult } from '@/api/entities'
 
-const props = defineProps({
-  minDate: { type: Date, required: true },
-  maxDate: { type: Date, required: true },
-  player: { type: String, required: true }
-})
-const minDateRef = ref(props.minDate)
-const maxDateRef = ref(props.maxDate)
-const playerRef = ref(props.player)
-const updateRefs = () => {
-  minDateRef.value = props.minDate
-  maxDateRef.value = props.maxDate
-  playerRef.value = props.player
+const props = defineProps<{
+  minDate: Date
+  maxDate: Date
+  player: string
+  season: SeasonResult
+}>()
+
+const getVariables = () => {
+  const areSeasonDatesEqual =
+    toTimestamp(props.minDate) === props.season.start_time &&
+    toTimestamp(props.maxDate) == props.season.end_time
+  if (areSeasonDatesEqual) {
+    return { player: props.player, season: props.season.id }
+  } else {
+    return {
+      player: props.player,
+      season: props.season.id,
+      min_date: props.minDate,
+      max_date: props.maxDate
+    }
+  }
 }
-const {
-  data: stats,
-  error,
-  loading
-} = APIClient.getPlayerStatistics(minDateRef, maxDateRef, playerRef)
-
-watch(() => [props.player, props.maxDate, props.minDate], updateRefs)
+const { data: stats, error, loading } = APIClient.getPlayerStatistics(getVariables)
 </script>
 
 <style scoped>

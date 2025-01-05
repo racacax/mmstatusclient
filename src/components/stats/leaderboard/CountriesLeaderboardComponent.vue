@@ -1,6 +1,6 @@
 <template>
   <TableComponent
-    tooltip="Top 1000 of the season are awarded points depending on their ranks. Points repartition depends on a log 2 scale."
+    tooltip="Top 1000 of the season are awarded points depending on their ranks. Points repartition depends on a log 2 scale. Note : From Winter 2025, only the top 10 of each country will score points."
     title="Countries leaderboard"
     classes="col-12 col-lg-6"
     :display-page="true"

@@ -270,6 +270,7 @@ export interface CountriesResult {
 
 export interface CountriesLeaderboard {
   last_updated: number
+  compute_method?: 'top_10'
   results: CountriesLeaderboardResult[]
 }
 
@@ -282,6 +283,7 @@ export interface CountriesLeaderboardResult {
 
 export interface ClubsLeaderboard {
   last_updated: number
+  compute_method?: 'top_10'
   results: ClubsLeaderboardResult[]
 }
 

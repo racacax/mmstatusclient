@@ -46,3 +46,24 @@ export function getRenderedRank(elo: number, rank: number | null, width: string)
   }
   return ''
 }
+
+export function formatVariables(variables: Record<string, unknown>) {
+  return Object.entries(variables)
+    .filter(([_, value]) => value !== undefined)
+    .map(([key, value]) => {
+      let formattedValue = value
+      if (Object.prototype.toString.call(formattedValue) === '[object Date]') {
+        formattedValue = Math.round((formattedValue as Date).getTime() / 1000)
+      }
+      return `${key}=${encodeURI(formattedValue as string)}`
+    })
+    .join('&')
+}
+
+export function toDate(ts: number) {
+  return new Date(ts * 1000)
+}
+
+export function toTimestamp(date: Date) {
+  return date.getTime() / 1000
+}

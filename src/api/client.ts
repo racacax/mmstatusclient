@@ -19,6 +19,7 @@ import {
   type SeasonResults,
   type Status
 } from '@/api/entities'
+import { formatVariables } from '@/utils'
 import { ref, type Ref, watch } from 'vue'
 
 export type FetchReturn<T> = {
@@ -43,7 +44,8 @@ function fetchAndCatch<T>(url: Ref<string>, options: Options): FetchReturn<T> {
       .then((r) => {
         if (r.status >= 400) {
           if (r.status == 403) {
-            error.value = 'Got 403 Forbidden. Might be rate limited (slow down your clicks bucko).'
+            error.value =
+              'Got error :403 Forbidden. Might be rate limited (slow down your clicks bucko).'
             return null
           } else {
             return r
@@ -77,7 +79,11 @@ function fetchAndCatch<T>(url: Ref<string>, options: Options): FetchReturn<T> {
   return { error, data, loading, fetchFn }
 }
 
-function urlManager<T>(getUrl: () => string, refs: Ref<any>[], options: Options): FetchReturn<T> {
+function urlManager<T>(
+  getUrl: () => string,
+  refs: Ref<any>[] | (() => Record<string, unknown>),
+  options: Options
+): FetchReturn<T> {
   const url = ref<string>(getUrl())
   watch(refs, () => {
     url.value = getUrl()
@@ -118,7 +124,7 @@ export class APIClient {
     const getUrl = () => {
       return (
         this.BASE_URL +
-        `/api/games?min_elo=${minElo.value}&max_elo=${maxElo.value}&page=${page.value}`
+        `/api/matches?min_elo=${minElo.value}&max_elo=${maxElo.value}&page=${page.value}`
       )
     }
     return urlManager(getUrl, [minElo, maxElo, page], options)
@@ -160,18 +166,18 @@ export class APIClient {
     return urlManager(getUrl, [minDate, maxDate, player, orderBy, order, page], options)
   }
   static getPlayerStatistics(
-    minDate: Ref<Date>,
-    maxDate: Ref<Date>,
-    player: Ref<string>,
+    getVariables: () => {
+      player: string
+      min_date?: Date
+      max_date?: Date
+      season?: number
+    },
     options: Options = {}
   ): FetchReturn<PlayerStatistics> {
     const getUrl = () => {
-      return (
-        this.BASE_URL +
-        `/api/player_statistics?min_date=${Math.round(minDate.value.getTime() / 1000)}&max_date=${Math.round(maxDate.value.getTime() / 1000)}&player=${player.value}`
-      )
+      return this.BASE_URL + `/api/player/statistics?${formatVariables(getVariables())}`
     }
-    return urlManager(getUrl, [minDate, maxDate, player], options)
+    return urlManager(getUrl, getVariables, options)
   }
   static getPlayerPoints(
     minDate: Ref<Date>,
@@ -182,7 +188,7 @@ export class APIClient {
     const getUrl = () => {
       return (
         this.BASE_URL +
-        `/api/player_points?min_date=${Math.round(minDate.value.getTime() / 1000)}&max_date=${Math.round(maxDate.value.getTime() / 1000)}&player=${player.value}`
+        `/api/player/points_evolution?min_date=${Math.round(minDate.value.getTime() / 1000)}&max_date=${Math.round(maxDate.value.getTime() / 1000)}&player=${player.value}`
       )
     }
     return urlManager(getUrl, [minDate, maxDate, player], options)
@@ -196,7 +202,7 @@ export class APIClient {
     const getUrl = () => {
       return (
         this.BASE_URL +
-        `/api/player_ranks?min_date=${Math.round(minDate.value.getTime() / 1000)}&max_date=${Math.round(maxDate.value.getTime() / 1000)}&player=${player.value}`
+        `/api/player/rank_evolution?min_date=${Math.round(minDate.value.getTime() / 1000)}&max_date=${Math.round(maxDate.value.getTime() / 1000)}&player=${player.value}`
       )
     }
     return urlManager(getUrl, [minDate, maxDate, player], options)
@@ -232,7 +238,7 @@ export class APIClient {
     const getUrl = () => {
       return (
         this.BASE_URL +
-        `/api/player_map_statistics?min_date=${Math.round(minDate.value.getTime() / 1000)}&max_date=${Math.round(maxDate.value.getTime() / 1000)}&player=${player.value}&order_by=${orderBy.value}&order=${order.value}&page=${page.value}`
+        `/api/player/map_statistics?min_date=${Math.round(minDate.value.getTime() / 1000)}&max_date=${Math.round(maxDate.value.getTime() / 1000)}&player=${player.value}&order_by=${orderBy.value}&order=${order.value}&page=${page.value}`
       )
     }
     return urlManager(getUrl, [minDate, maxDate, player, orderBy, order, page], options)
@@ -253,7 +259,7 @@ export class APIClient {
     const getUrl = () => {
       return (
         this.BASE_URL +
-        `/api/activity_per?metric=country&min_elo=${minElo.value}&season=${season.value}`
+        `/api/computed_metric?metric=activity_per_country&min_elo=${minElo.value}&season=${season.value}`
       )
     }
     return urlManager(getUrl, [season, minElo], options)
@@ -266,7 +272,7 @@ export class APIClient {
     const getUrl = () => {
       return (
         this.BASE_URL +
-        `/api/activity_per?metric=players_per_country&min_elo=${minElo.value}&season=${season.value}`
+        `/api/computed_metric?metric=players_per_country&min_elo=${minElo.value}&season=${season.value}`
       )
     }
     return urlManager(getUrl, [season, minElo], options)
@@ -280,7 +286,7 @@ export class APIClient {
     const getUrl = () => {
       return (
         this.BASE_URL +
-        `/api/activity_per?metric=country_and_hour&min_elo=${minElo.value}&season=${season.value}`
+        `/api/computed_metric?metric=activity_per_country_and_hour&min_elo=${minElo.value}&season=${season.value}`
       )
     }
     return urlManager(getUrl, [season, minElo], options)

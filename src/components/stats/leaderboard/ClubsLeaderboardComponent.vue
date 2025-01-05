@@ -1,6 +1,6 @@
 <template>
   <TableComponent
-    tooltip="Top 1000 of the season are awarded points depending on their ranks. Points repartition depends on a log 2 scale."
+    tooltip="Top 1000 of the season are awarded points depending on their ranks. Points repartition depends on a log 2 scale. Note : From Winter 2025, only the top 10 of each club will score points."
     title="Clubs leaderboard"
     classes="col-12 col-lg-6"
     :display-page="true"
@@ -18,8 +18,6 @@
 import { ref, type Ref, watch } from 'vue'
 import { APIClient } from '@/api/client'
 import TableComponent from '@/components/basic/TableComponent.vue'
-import getCountryISO2 from 'country-iso-3-to-2'
-import { countryCodeEmoji } from 'country-code-emoji'
 import { MPStyle } from '@tomvlk/ts-maniaplanet-formatter'
 
 const props = defineProps({
