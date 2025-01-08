@@ -5,6 +5,21 @@
         <h5>Opponents</h5>
         <div class="d-flex gap-2">
           <div class="d-flex flex-column gap-2">
+            Group by:
+            <select
+              class="form-select form-select-sm"
+              @change="
+                (e) => {
+                  groupBy = getEventValue(e)
+                }
+              "
+            >
+              <option value="uuid" selected>Player</option>
+              <option value="country">Country</option>
+              <option value="club_tag">Club</option>
+            </select>
+          </div>
+          <div class="d-flex flex-column gap-2">
             Order by:
             <select
               class="form-select form-select-sm"
@@ -63,7 +78,7 @@
             <table class="table table-striped table-sm" data-toggle="table">
               <thead>
                 <tr>
-                  <th scope="col">Player</th>
+                  <th scope="col"></th>
                   <th scope="col">Played</th>
                   <th scope="col">As teammate</th>
                   <th scope="col">As opponent</th>
@@ -75,9 +90,13 @@
               </thead>
               <tbody>
                 <tr v-for="(stat, i) in stats.results" :key="i">
-                  <td>
+                  <td v-if="groupBy == 'uuid'">
                     <a target="_blank" :href="`/#/statistics/${stat.uuid}`">{{ stat.name }}</a>
                   </td>
+                  <td v-if="groupBy == 'country'">
+                    {{ countryCodeEmoji(getCountryISO2(stat.country_alpha3)) }} {{ stat.name }}
+                  </td>
+                  <td v-if="groupBy == 'club_tag'" v-html="formatClubTag(stat)"></td>
                   <td>{{ stat.total_played }}</td>
                   <td>{{ stat.total_played_along }}</td>
                   <td>{{ stat.total_played_against }}</td>
@@ -148,6 +167,10 @@ import { ref, type Ref, watch } from 'vue'
 import { APIClient } from '@/api/client'
 import { getEventValue } from '@/utils'
 import ErrorManager from '@/components/management/ErrorManager.vue'
+import getCountryISO2 from 'country-iso-3-to-2'
+import { countryCodeEmoji } from 'country-code-emoji'
+import { MPStyle } from '@tomvlk/ts-maniaplanet-formatter'
+import type { OpponentsStatisticsResult } from '@/api/entities'
 
 const props = defineProps({
   minDate: { type: Date, required: true },
@@ -156,25 +179,28 @@ const props = defineProps({
 })
 
 const orderBy = ref('played')
+const groupBy = ref<'uuid' | 'club_tag' | 'country'>('uuid')
 const order: Ref<'desc' | 'asc'> = ref('desc')
 const page = ref(1)
-const minDateRef = ref(props.minDate)
-const maxDateRef = ref(props.maxDate)
-const playerRef = ref(props.player)
-const updateRefs = () => {
-  minDateRef.value = props.minDate
-  maxDateRef.value = props.maxDate
-  playerRef.value = props.player
-}
 const {
   data: stats,
   error,
   loading
-} = APIClient.getPlayerOpponentsStatistics(minDateRef, maxDateRef, playerRef, orderBy, order, page)
-watch(() => [props.player, props.maxDate, props.minDate], updateRefs)
+} = APIClient.getPlayerOpponentsStatistics(() => ({
+  min_date: props.minDate,
+  max_date: props.maxDate,
+  page: page.value,
+  player: props.player,
+  order: order.value,
+  order_by: orderBy.value,
+  group_by: groupBy.value
+}))
 watch([order, orderBy], () => {
   page.value = 1
 })
+const formatClubTag = (stat: OpponentsStatisticsResult) => {
+  return `<span style="font-size:18.71px">${MPStyle(stat.club_tag ?? 'No tag')}</span>`
+}
 </script>
 
 <style scoped>

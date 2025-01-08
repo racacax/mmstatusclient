@@ -5,8 +5,8 @@ import {
   faChartSimple,
   faFileText,
   faGamepad,
-  faUsers,
-  faWarning
+  faInfoCircle,
+  faUsers
 } from '@fortawesome/free-solid-svg-icons'
 import CustomIcon from '@/components/basic/CustomIcon.vue'
 import ThemeManager from '@/components/management/ThemeManager.vue'
@@ -68,12 +68,10 @@ const route = useRoute()
     </div>
   </nav>
   <div class="main">
-    <!---<div class="alert alert-warning" role="alert">
-      <FontAwesomeIcon :icon="faWarning" /> Nadeo servers have been in shambles for the past few
-      days. Some matches might not start at all. Until now, bugged matches were marked as wins for
-      anyone in the match. From Dec. 13th and onwards, bugged matches will automatically be deleted
-      from the statistics and not be counted.
-    </div>-->
+    <div class="alert alert-info" role="alert">
+      <FontAwesomeIcon :icon="faInfoCircle" /> New statistics available in player tab. You can now
+      see your performances against countries and clubs in addition to other players.
+    </div>
     <RouterView />
   </div>
 </template>

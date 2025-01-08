@@ -82,6 +82,9 @@ export interface OpponentsStatistics {
 export interface OpponentsStatisticsResult {
   uuid: string
   name: string
+  country_alpha3?: string
+  file_name?: string
+  club_tag?: string
   total_played: number
   total_played_against: number
   total_played_along: number

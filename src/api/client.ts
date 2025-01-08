@@ -149,22 +149,23 @@ export class APIClient {
     return urlManager(getUrl, [season], options)
   }
   static getPlayerOpponentsStatistics(
-    minDate: Ref<Date>,
-    maxDate: Ref<Date>,
-    player: Ref<string>,
-    orderBy: Ref<string>,
-    order: Ref<'desc' | 'asc'>,
-    page: Ref<number> = ref(1),
+    getVariables: () => {
+      min_date: Date
+      max_date: Date
+      player: string
+      order_by: string
+      order: 'desc' | 'asc'
+      group_by?: 'uuid' | 'country' | 'club_tag'
+      page?: number
+    },
     options: Options = {}
   ): FetchReturn<OpponentsStatistics> {
     const getUrl = () => {
-      return (
-        this.BASE_URL +
-        `/api/player_opponents_statistics?min_date=${Math.round(minDate.value.getTime() / 1000)}&max_date=${Math.round(maxDate.value.getTime() / 1000)}&player=${player.value}&order_by=${orderBy.value}&order=${order.value}&page=${page.value}`
-      )
+      return this.BASE_URL + `/api/player/opponents_statistics?${formatVariables(getVariables())}`
     }
-    return urlManager(getUrl, [minDate, maxDate, player, orderBy, order, page], options)
+    return urlManager(getUrl, getVariables, options)
   }
+
   static getPlayerStatistics(
     getVariables: () => {
       player: string
