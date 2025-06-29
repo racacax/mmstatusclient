@@ -5,7 +5,7 @@ import {
   faChartSimple,
   faFileText,
   faGamepad,
-  faInfoCircle,
+  faCircleExclamation,
   faUsers
 } from '@fortawesome/free-solid-svg-icons'
 import CustomIcon from '@/components/basic/CustomIcon.vue'
@@ -68,9 +68,9 @@ const route = useRoute()
     </div>
   </nav>
   <div class="main">
-    <div class="alert alert-info" role="alert">
-      <FontAwesomeIcon :icon="faInfoCircle" /> New statistics available in player tab. You can now
-      see your performances against countries and clubs in addition to other players.
+    <div class="alert alert-warning" role="alert">
+      <FontAwesomeIcon :icon="faCircleExclamation" /> Some downtime might occur on July 1st.
+      Matchmaking will be updated from 3v3 to 2v2 which might cause some breaking changes.
     </div>
     <RouterView />
   </div>
