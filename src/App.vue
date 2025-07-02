@@ -68,10 +68,10 @@ const route = useRoute()
     </div>
   </nav>
   <div class="main">
-    <div class="alert alert-warning" role="alert">
+    <!--<div class="alert alert-warning" role="alert">
       <FontAwesomeIcon :icon="faCircleExclamation" /> Some downtime might occur on July 1st.
       Matchmaking will be updated from 3v3 to 2v2 which might cause some breaking changes.
-    </div>
+    </div>--->
     <RouterView />
   </div>
 </template>
