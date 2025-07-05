@@ -4,7 +4,7 @@ import { ranks } from '@/constants'
 import { APIClient } from '@/api/client'
 import LoadingComponent from '@/components/basic/LoadingComponent.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
+import { faWandMagicSparkles, faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
 import RankComponent from '@/components/basic/RankComponent.vue'
 import { getEventValue, getLocalDate } from '@/utils'
 import ErrorManager from '@/components/management/ErrorManager.vue'
@@ -40,6 +40,10 @@ const getStatusCount = (key: string) => {
 </script>
 
 <template>
+  <div class="alert alert-info" role="alert">
+    <FontAwesomeIcon :icon="faCircleExclamation" /> This page will be replaced with a much more
+    performant tool in the future, with the ability to go beyond 30 days.
+  </div>
   <h2>What is the state of MM ?</h2>
   <span>Shows the last time a player of each rank got a match depending on your filters.</span>
   <div>

@@ -68,10 +68,10 @@ const route = useRoute()
     </div>
   </nav>
   <div class="main">
-    <div class="alert alert-warning" role="alert">
+    <!--- <div class="alert alert-warning" role="alert">
       <FontAwesomeIcon :icon="faCircleExclamation" /> Ranks might be incorrect until July 3rd as a
       fix to switch from 3v3 to 2v2 leaderboard was omitted the first few hours of the campaign.
-    </div>
+    </div> --->
     <RouterView />
   </div>
 </template>
