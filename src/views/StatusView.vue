@@ -41,8 +41,8 @@ const getStatusCount = (key: string) => {
 
 <template>
   <div class="alert alert-info" role="alert">
-    <FontAwesomeIcon :icon="faCircleExclamation" /> This page will be replaced with a much more
-    performant tool in the future, with the ability to go beyond 30 days.
+    <FontAwesomeIcon :icon="faCircleExclamation" /> Interval is now unrestricted. You can look at
+    statistics from Spring 2024 until today without being limited to 30 days.
   </div>
   <h2>What is the state of MM ?</h2>
   <span>Shows the last time a player of each rank got a match depending on your filters.</span>
