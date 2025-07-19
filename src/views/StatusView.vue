@@ -26,9 +26,7 @@ const getStatusDate = (key: string) => {
     return ''
   }
   const value = status.value[key as keyof Status]
-  return value && value.last_time
-    ? new Date(value.last_time * 1000).toLocaleTimeString()
-    : 'No match'
+  return value && value.last_time ? new Date(value.last_time * 1000).toLocaleString() : 'No match'
 }
 const getStatusCount = (key: string) => {
   if (status.value === null) {
