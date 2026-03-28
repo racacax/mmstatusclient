@@ -3,6 +3,7 @@ import ActivePlayersView from '@/views/ActivePlayersView.vue'
 import LastGamesView from '@/views/LastGamesView.vue'
 import StatusView from '@/views/StatusView.vue'
 import StatisticsView from '@/views/StatisticsView.vue'
+import ThreadHealthView from '@/views/ThreadHealthView.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -41,6 +42,11 @@ const router = createRouter({
       path: '/statistics/:playerId',
       name: 'statistics-id',
       component: StatisticsView
+    },
+    {
+      path: '/thread-health',
+      name: 'thread-health',
+      component: ThreadHealthView
     }
   ]
 })

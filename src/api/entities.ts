@@ -294,3 +294,14 @@ export interface ClubsLeaderboardResult {
   name: string
   points: number
 }
+
+export interface ThreadHealth {
+  [threadName: string]: ThreadHealthEntry
+}
+
+export interface ThreadHealthEntry {
+  is_alive: boolean
+  uptime_seconds: number
+  seconds_since_last_error: number | null
+  error_count: number
+}

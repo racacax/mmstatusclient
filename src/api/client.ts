@@ -17,7 +17,8 @@ import {
   type RankDistributionEvolution,
   type SearchPlayer,
   type SeasonResults,
-  type Status
+  type Status,
+  type ThreadHealth
 } from '@/api/entities'
 import { formatVariables } from '@/utils'
 import { ref, type Ref, watch } from 'vue'
@@ -339,6 +340,12 @@ export class APIClient {
   static getCountries(options: Options = {}): FetchReturn<Countries> {
     const getUrl = () => {
       return this.BASE_URL + `/api/countries`
+    }
+    return urlManager(getUrl, [], options)
+  }
+  static getThreadHealth(options: Options = {}): FetchReturn<ThreadHealth> {
+    const getUrl = () => {
+      return this.BASE_URL + `/api/thread_health`
     }
     return urlManager(getUrl, [], options)
   }

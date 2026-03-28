@@ -5,8 +5,8 @@ import {
   faChartSimple,
   faFileText,
   faGamepad,
-  faCircleExclamation,
-  faUsers
+  faUsers,
+  faHeartPulse
 } from '@fortawesome/free-solid-svg-icons'
 import CustomIcon from '@/components/basic/CustomIcon.vue'
 import ThemeManager from '@/components/management/ThemeManager.vue'
@@ -63,6 +63,9 @@ const route = useRoute()
             >
           </li>
         </ul>
+        <RouterLink class="nav-link me-4" aria-current="page" to="/thread-health">
+          <FontAwesomeIcon :icon="faHeartPulse" /> Health
+        </RouterLink>
         <ThemeManager />
       </div>
     </div>
