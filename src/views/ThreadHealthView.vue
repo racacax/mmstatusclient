@@ -18,7 +18,7 @@ function formatUptime(seconds: number): string {
 
 function formatLastError(seconds: number | null): string {
   if (seconds === null) return '—'
-  return `${Math.floor(seconds)}s ago`
+  return `${formatUptime(seconds)} ago`
 }
 </script>
 

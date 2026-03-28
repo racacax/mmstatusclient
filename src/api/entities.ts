@@ -295,6 +295,17 @@ export interface ClubsLeaderboardResult {
   points: number
 }
 
+export interface PlayerActivityHeatmap {
+  results: PlayerActivityHeatmapResult[]
+  player: string
+}
+
+export interface PlayerActivityHeatmapResult {
+  day: number
+  hour: number
+  count: number
+}
+
 export interface ThreadHealth {
   [threadName: string]: ThreadHealthEntry
 }

@@ -132,9 +132,11 @@
     <PlayerMapStatisticsComponent :min-date="minDate" :max-date="maxDate" :player="currentPlayer" />
     <PlayerPointsComponent :min-date="minDate" :max-date="maxDate" :player="currentPlayer" />
     <PlayerRanksComponent :min-date="minDate" :max-date="maxDate" :player="currentPlayer" />
-    <div class="col-12 col-lg-6 d-flex justify-content-center align-items-center">
-      <h5>More statistics soon...</h5>
-    </div>
+    <PlayerActivityHeatmapComponent
+      :min-date="minDate"
+      :max-date="maxDate"
+      :player="currentPlayer"
+    />
   </div>
 </template>
 <script setup lang="ts">
@@ -146,6 +148,7 @@ import PlayerMapStatisticsComponent from '@/components/stats/player/PlayerMapSta
 import PlayerOpponentsStatisticsComponent from '@/components/stats/player/PlayerOpponentsStatisticsComponent.vue'
 import PlayerPointsComponent from '@/components/stats/player/PlayerPointsComponent.vue'
 import PlayerRanksComponent from '@/components/stats/player/PlayerRanksComponent.vue'
+import PlayerActivityHeatmapComponent from '@/components/stats/player/PlayerActivityHeatmapComponent.vue'
 import { APIClient } from '@/api/client'
 import { useRoute } from 'vue-router'
 import type { SeasonResult } from '@/api/entities'

@@ -9,6 +9,7 @@ import {
   type MapsStatistics,
   type OpponentsStatistics,
   type Player,
+  type PlayerActivityHeatmap,
   type PlayerMapStatistics,
   type PlayerPoints,
   type PlayerRanks,
@@ -343,6 +344,21 @@ export class APIClient {
     }
     return urlManager(getUrl, [], options)
   }
+  static getPlayerActivityHeatmap(
+    minDate: Ref<Date>,
+    maxDate: Ref<Date>,
+    player: Ref<string>,
+    options: Options = {}
+  ): FetchReturn<PlayerActivityHeatmap> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/player/activity_heatmap?min_date=${Math.round(minDate.value.getTime() / 1000)}&max_date=${Math.round(maxDate.value.getTime() / 1000)}&player=${player.value}`
+      )
+    }
+    return urlManager(getUrl, [minDate, maxDate, player], options)
+  }
+
   static getThreadHealth(options: Options = {}): FetchReturn<ThreadHealth> {
     const getUrl = () => {
       return this.BASE_URL + `/api/thread_health`
