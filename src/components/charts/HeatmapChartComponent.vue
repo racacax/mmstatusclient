@@ -52,7 +52,6 @@ function formatData() {
     chart: {
       type: 'heatmap',
       styledMode: false,
-      marginTop: 20,
       marginBottom: 80,
       backgroundColor: 'transparent',
       events: {
@@ -93,12 +92,12 @@ function formatData() {
       backgroundColor: dark ? '#393939' : '#f7f7f7',
       style: { color: labelColor },
       formatter: function (this: any) {
-        return `<b>${props.yCategories[this.point.y]}</b> on <b>${props.xCategories[this.point.x]}</b>: <b>${this.point.value}</b> games`
+        return `<b>${props.yCategories[this.point.y]}</b> on <b>${props.xCategories[this.point.x]}</b>: <b>${this.point.value}</b> matches`
       }
     },
     series: [
       {
-        name: 'Games played',
+        name: 'Matches played',
         borderWidth: 1,
         data: props.data,
         dataLabels: {
