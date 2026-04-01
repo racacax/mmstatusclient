@@ -1,4 +1,35 @@
 import { ranks } from './constants'
+import { MPStyle } from '@tomvlk/ts-maniaplanet-formatter'
+
+function sanitizeMPTag(tag: string): string {
+  let depth = 0
+  let result = ''
+  for (let i = 0; i < tag.length; i++) {
+    if (tag[i] === '$' && i + 1 < tag.length) {
+      const next = tag[i + 1].toLowerCase()
+      if (next === '<') {
+        depth++
+        result += tag[i] + tag[i + 1]
+        i++
+      } else if (next === '>') {
+        if (depth > 0) {
+          depth--
+          result += tag[i] + tag[i + 1]
+        }
+        i++
+      } else {
+        result += tag[i]
+      }
+    } else {
+      result += tag[i]
+    }
+  }
+  return result
+}
+
+export function renderMPStyle(tag: string): string {
+  return MPStyle(sanitizeMPTag(tag))
+}
 
 export function ordinalSuffixOf(i: number) {
   const j = i % 10,

@@ -18,7 +18,7 @@
 import { ref, type Ref, watch } from 'vue'
 import { APIClient } from '@/api/client'
 import TableComponent from '@/components/basic/TableComponent.vue'
-import { MPStyle } from '@tomvlk/ts-maniaplanet-formatter'
+import { renderMPStyle as MPStyle } from '@/utils'
 
 const props = defineProps({
   season: { type: Number, required: true }

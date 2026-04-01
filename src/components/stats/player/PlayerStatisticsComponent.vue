@@ -100,7 +100,7 @@ import { APIClient } from '@/api/client'
 import RankComponent from '@/components/basic/RankComponent.vue'
 import { ordinalSuffixOf, toTimestamp } from '@/utils'
 import ErrorManager from '@/components/management/ErrorManager.vue'
-import { MPStyle } from '@tomvlk/ts-maniaplanet-formatter'
+import { renderMPStyle as MPStyle } from '@/utils'
 import { type SeasonResult } from '@/api/entities'
 
 const props = defineProps<{

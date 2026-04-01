@@ -169,7 +169,7 @@ import { getEventValue } from '@/utils'
 import ErrorManager from '@/components/management/ErrorManager.vue'
 import getCountryISO2 from 'country-iso-3-to-2'
 import { countryCodeEmoji } from 'country-code-emoji'
-import { MPStyle } from '@tomvlk/ts-maniaplanet-formatter'
+import { renderMPStyle as MPStyle } from '@/utils'
 import type { OpponentsStatisticsResult } from '@/api/entities'
 
 const props = defineProps({

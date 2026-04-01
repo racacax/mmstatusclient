@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faBackward, faBackwardFast, faForward } from '@fortawesome/free-solid-svg-icons'
 import RankComponent from '@/components/basic/RankComponent.vue'
 import ErrorManager from '@/components/management/ErrorManager.vue'
-import { MPStyle } from '@tomvlk/ts-maniaplanet-formatter'
+import { renderMPStyle as MPStyle } from '@/utils'
 
 const minElo = ref(0)
 const maxElo = ref(99999)
