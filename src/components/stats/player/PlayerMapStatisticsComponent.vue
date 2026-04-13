@@ -1,34 +1,48 @@
 <script setup lang="ts">
 import LoadingComponent from '@/components/basic/LoadingComponent.vue'
-import { ref, type Ref, watch } from 'vue'
+import { ref, type Ref, toRef, watch } from 'vue'
 import { APIClient } from '@/api/client'
-import { getEventValue } from '@/utils'
 import ErrorManager from '@/components/management/ErrorManager.vue'
+import SelectInputComponent from '@/components/basic/SelectInputComponent.vue'
+import NumberInputComponent from '@/components/basic/NumberInputComponent.vue'
 
-const props = defineProps({
-  minDate: { type: Date, required: true },
-  maxDate: { type: Date, required: true },
-  player: { type: String, required: true }
-})
+const props = defineProps<{
+  minDate: Date
+  maxDate: Date
+  player: string
+}>()
+
+const orderByOptions = [
+  { value: 'played', label: 'Played' },
+  { value: 'wins', label: 'Wins' },
+  { value: 'winrate', label: 'Win-rate' },
+  { value: 'losses', label: 'Losses' },
+  { value: 'lossrate', label: 'Loss-rate' },
+  { value: 'mvps', label: 'MVPs' },
+  { value: 'mvprate', label: 'MVP-rate' }
+]
+const orderOptions = [
+  { value: 'desc', label: 'Descending' },
+  { value: 'asc', label: 'Ascending' }
+]
 
 const orderBy = ref('played')
 const order: Ref<'desc' | 'asc'> = ref('desc')
 const page = ref(1)
-const minDateRef = ref(props.minDate)
-const maxDateRef = ref(props.maxDate)
-const playerRef = ref(props.player)
-const updateRefs = () => {
-  minDateRef.value = props.minDate
-  maxDateRef.value = props.maxDate
-  playerRef.value = props.player
-}
+
 const {
   data: stats,
   error,
   loading
-} = APIClient.getPlayerMapStatistics(minDateRef, maxDateRef, playerRef, orderBy, order, page)
-watch(() => [props.player, props.maxDate, props.minDate], updateRefs)
-watch([order, orderBy], () => {
+} = APIClient.getPlayerMapStatistics(
+  toRef(props, 'minDate'),
+  toRef(props, 'maxDate'),
+  toRef(props, 'player'),
+  orderBy,
+  order,
+  page
+)
+watch([order, orderBy, () => props.player, () => props.minDate, () => props.maxDate], () => {
   page.value = 1
 })
 </script>
@@ -37,57 +51,25 @@ watch([order, orderBy], () => {
     <div class="card w-100 p-2">
       <div class="d-flex justify-content-between align-items-center w-100">
         <h5>Maps</h5>
-        <div class="d-flex gap-2">
-          <div class="d-flex flex-column gap-2">
-            Order by:
-            <select
-              class="form-select form-select-sm"
-              @change="
-                (e) => {
-                  orderBy = getEventValue(e)
-                }
-              "
-            >
-              <option value="played" selected>Played</option>
-              <option value="wins">Wins</option>
-              <option value="winrate">Win-rate</option>
-              <option value="losses">Losses</option>
-              <option value="lossrate">Loss-rate</option>
-              <option value="mvps">MVPs</option>
-              <option value="mvprate">MVP-rate</option>
-            </select>
-          </div>
-
-          <div class="d-flex flex-column gap-2">
-            Order:
-            <select
-              class="form-select form-select-sm"
-              @change="
-                (e) => {
-                  order = getEventValue(e)
-                }
-              "
-            >
-              <option value="desc" selected>Descending</option>
-              <option value="asc">Ascending</option>
-            </select>
-          </div>
-
-          <div class="d-flex flex-column gap-2">
-            Page:
-            <input
-              class="form-control form-control-sm"
-              style="max-width: 80px"
-              :value="page"
-              min="1"
-              @change="
-                (e) => {
-                  page = parseInt(getEventValue(e))
-                }
-              "
-              type="number"
-            />
-          </div>
+        <div class="d-flex gap-2 flex-wrap">
+          <SelectInputComponent
+            label="Order by"
+            :options="orderByOptions"
+            :model-value="orderBy"
+            @update:model-value="orderBy = $event"
+          />
+          <SelectInputComponent
+            label="Order"
+            :options="orderOptions"
+            :model-value="order"
+            @update:model-value="order = $event as 'desc' | 'asc'"
+          />
+          <NumberInputComponent
+            label="Page"
+            :model-value="page"
+            :min="1"
+            @update:model-value="page = $event"
+          />
         </div>
       </div>
       <ErrorManager :error="error">

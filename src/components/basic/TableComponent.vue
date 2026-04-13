@@ -2,52 +2,27 @@
   <CardComponent :classes="classes" :title="title" :tooltip="tooltip">
     <template #filters>
       <slot name="custom-filters"></slot>
-      <div class="d-flex flex-column gap-2" v-if="orderBy !== undefined">
-        Order by:
-        <select
-          class="form-select form-select-sm"
-          @change="
-            (e) => {
-              currentOrderBy = getEventValue(e)
-            }
-          "
-        >
-          <option v-for="o in props.orderBy" :value="o.value" :key="o.value">
-            {{ o.label }}
-          </option>
-        </select>
-      </div>
-
-      <div class="d-flex flex-column gap-2" v-if="displayOrder">
-        Order:
-        <select
-          class="form-select form-select-sm"
-          @change="
-            (e) => {
-              order = getEventValue(e)
-            }
-          "
-        >
-          <option value="desc" selected>Descending</option>
-          <option value="asc">Ascending</option>
-        </select>
-      </div>
-
-      <div class="d-flex flex-column gap-2" v-if="displayPage">
-        Page:
-        <input
-          class="form-control form-control-sm"
-          style="max-width: 80px"
-          :value="page"
-          min="1"
-          @change="
-            (e) => {
-              page = parseInt(getEventValue(e))
-            }
-          "
-          type="number"
-        />
-      </div>
+      <SelectInputComponent
+        v-if="orderBy !== undefined"
+        label="Order by"
+        :options="orderBy!"
+        :model-value="currentOrderBy"
+        @update:model-value="currentOrderBy = $event"
+      />
+      <SelectInputComponent
+        v-if="displayOrder"
+        label="Order"
+        :options="orderOptions"
+        :model-value="order"
+        @update:model-value="order = $event as 'desc' | 'asc'"
+      />
+      <NumberInputComponent
+        v-if="displayPage"
+        label="Page"
+        :model-value="page"
+        :min="1"
+        @update:model-value="page = $event"
+      />
     </template>
     <template #main>
       <ErrorManager :error="error">
@@ -87,9 +62,10 @@
 <script setup lang="ts">
 import LoadingComponent from '@/components/basic/LoadingComponent.vue'
 import { ref, type Ref, watch } from 'vue'
-import { getEventValue } from '@/utils'
 import CardComponent from '@/components/basic/CardComponent.vue'
 import ErrorManager from '@/components/management/ErrorManager.vue'
+import SelectInputComponent from '@/components/basic/SelectInputComponent.vue'
+import NumberInputComponent from '@/components/basic/NumberInputComponent.vue'
 
 const props = defineProps<{
   title: string
@@ -105,6 +81,11 @@ const props = defineProps<{
   pageNumber?: number
   error?: string | null
 }>()
+
+const orderOptions = [
+  { value: 'desc', label: 'Descending' },
+  { value: 'asc', label: 'Ascending' }
+]
 
 const currentOrderBy = ref('all')
 if (props.orderBy !== undefined) {

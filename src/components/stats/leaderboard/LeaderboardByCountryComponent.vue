@@ -12,37 +12,25 @@
     :bottom-label="lastUpdated ?? undefined"
   >
     <template #custom-filters>
-      <div class="d-flex flex-column gap-2" v-if="!countriesLoading && countries !== null">
-        Country:
-        <select
-          class="form-select form-select-sm"
-          @change="
-            (e) => {
-              metricValueRef = getEventValue(e)
-            }
-          "
-        >
-          <option
-            v-for="o in countries.results"
-            :value="o.country_alpha3"
-            :key="o.country_alpha3"
-            :selected="o.country_alpha3 === metricValueRef"
-          >
-            {{ countryCodeEmoji(getCountryISO2(o.country_alpha3)) }} {{ o.name }}
-          </option>
-        </select>
-      </div>
+      <SelectInputComponent
+        v-if="!countriesLoading && countries !== null"
+        label="Country"
+        :options="countryOptions"
+        :model-value="metricValueRef"
+        @update:model-value="metricValueRef = $event"
+      />
     </template>
   </TableComponent>
 </template>
 
 <script setup lang="ts">
-import { ref, type Ref, watch } from 'vue'
+import { ref, computed, type Ref, watch } from 'vue'
 import { APIClient } from '@/api/client'
-import { getEventValue, getRenderedRank, ordinalSuffixOf } from '@/utils'
+import { getRenderedRank, ordinalSuffixOf, renderMPStyle } from '@/utils'
 import TableComponent from '@/components/basic/TableComponent.vue'
 import getCountryISO2 from 'country-iso-3-to-2'
 import { countryCodeEmoji } from 'country-code-emoji'
+import SelectInputComponent from '@/components/basic/SelectInputComponent.vue'
 
 const props = defineProps({
   season: { type: Number, required: true }
@@ -62,6 +50,14 @@ function callback(_: string, __: string, p: number) {
 }
 
 const { data: countries, loading: countriesLoading } = APIClient.getCountries()
+
+const countryOptions = computed(
+  () =>
+    countries.value?.results.map((o) => ({
+      value: o.country_alpha3,
+      label: `${countryCodeEmoji(getCountryISO2(o.country_alpha3))} ${o.name}`
+    })) ?? []
+)
 const {
   data: stats,
   error,
@@ -93,11 +89,13 @@ function formatData() {
     stats.value.results
       .filter((el, i) => i >= (page.value - 1) * 10 && i < page.value * 10)
       .forEach((e, i) => {
+        const regionFlag = e.region
+          ? `<img alt="" title="${e.region.name}" class="player-flag" src="/flags/${e.region.file_name}" />`
+          : ''
+        const clubTag = e.club_tag ? `[<span>${renderMPStyle(e.club_tag)}</span>]&nbsp;` : ''
         currentData.push([
           (page.value - 1) * 10 + (i + 1),
-          `
-            <a target="_blank" href="/#/statistics/${e.uuid}">${e.name}</a>
-            `,
+          `${regionFlag}${clubTag}<a target="_blank" href="/#/player-statistics/${e.uuid}">${e.name}</a>`,
           ordinalSuffixOf(e.rank),
           getRenderedRank(e.points, e.rank, '30px'),
           e.points

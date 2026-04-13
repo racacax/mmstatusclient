@@ -10,20 +10,16 @@
     <template #main>
       <ErrorManager :error="error">
         <template #body>
-          <div class="w-100 position-relative">
-            <div class="w-100" :class="{ 'opacity-0': data === null }">
-              <LineChartComponent
-                label="Points"
-                :data="data?.results?.map((entry) => [entry.time * 1000, entry.points]) ?? []"
-              />
-            </div>
-            <div class="w-100 position-absolute top-0 left-0">
-              <LoadingComponent v-if="data === null" />
-            </div>
-            <div class="w-100 d-flex justify-content-center" v-if="data?.results?.length === 0">
+          <LoadingComponent v-if="loading || data === null" />
+          <template v-else>
+            <LineChartComponent
+              label="Points"
+              :data="data.results.map((entry) => [entry.time * 1000, entry.points])"
+            />
+            <div class="w-100 d-flex justify-content-center" v-if="data.results.length === 0">
               <span>No data to display</span>
             </div>
-          </div>
+          </template>
         </template>
       </ErrorManager>
     </template>
@@ -32,26 +28,21 @@
 
 <script setup lang="ts">
 import LoadingComponent from '@/components/basic/LoadingComponent.vue'
-import { ref, watch } from 'vue'
+import { toRef } from 'vue'
 import { APIClient } from '@/api/client'
 import CardComponent from '@/components/basic/CardComponent.vue'
 import LineChartComponent from '@/components/charts/LineChartComponent.vue'
 import ErrorManager from '@/components/management/ErrorManager.vue'
 
-const props = defineProps({
-  minDate: { type: Date, required: true },
-  maxDate: { type: Date, required: true },
-  player: { type: String, required: true }
-})
+const props = defineProps<{
+  minDate: Date
+  maxDate: Date
+  player: string
+}>()
 
-const minDateRef = ref(props.minDate)
-const maxDateRef = ref(props.maxDate)
-const playerRef = ref(props.player)
-const updateRefs = () => {
-  minDateRef.value = props.minDate
-  maxDateRef.value = props.maxDate
-  playerRef.value = props.player
-}
-const { data, error } = APIClient.getPlayerPoints(minDateRef, maxDateRef, playerRef)
-watch(() => [props.player, props.maxDate, props.minDate], updateRefs)
+const { data, error, loading } = APIClient.getPlayerPoints(
+  toRef(props, 'minDate'),
+  toRef(props, 'maxDate'),
+  toRef(props, 'player')
+)
 </script>

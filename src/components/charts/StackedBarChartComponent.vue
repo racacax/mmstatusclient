@@ -26,6 +26,7 @@ function formatData() {
       type: 'column',
       styledMode: true
     },
+    boost: { enabled: false },
     tooltip: {
       split: false,
       shared: false

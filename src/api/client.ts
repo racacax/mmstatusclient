@@ -3,9 +3,20 @@ import {
   type Countries,
   type CountriesLeaderboard,
   type CountryAndHourStats,
+  type CountryH2H,
   type CountryStats,
+  type HotThisWeek,
+  type HotThisWeekByPointsDelta,
+  type NewPlayersPerWeek,
+  type ActivityPerDayOfWeek,
+  type CrossRankFrequency,
+  type GlobalActivityHeatmap,
+  type PlayerRetention,
   type Game,
+  type GlobalLeaderboard,
   type Leaderboard,
+  type MatchDetail,
+  type MapRankDistribution,
   type MapsStatistics,
   type OpponentsStatistics,
   type Player,
@@ -14,15 +25,19 @@ import {
   type PlayerPoints,
   type PlayerRanks,
   type PlayersStatistics,
+  type PlayerMatches,
+  type PlayerPerformanceVsElo,
+  type PlayerStatisticsPerRank,
   type PlayerStatistics,
   type RankDistributionEvolution,
   type SearchPlayer,
   type SeasonResults,
   type Status,
-  type ThreadHealth
+  type ThreadHealth,
+  type ActiveMatchesPerRank
 } from '@/api/entities'
 import { formatVariables } from '@/utils'
-import { ref, type Ref, watch } from 'vue'
+import { nextTick, ref, type Ref, watch } from 'vue'
 
 export type FetchReturn<T> = {
   error: Ref<string | null>
@@ -37,7 +52,7 @@ export type Options = {
 function fetchAndCatch<T>(url: Ref<string>, options: Options): FetchReturn<T> {
   const error: Ref<string | null> = ref(null)
   const data: Ref<T | null> = ref(null)
-  const loading: Ref<boolean> = ref(false)
+  const loading: Ref<boolean> = ref(!options.lazy)
   const fetchFn = () => {
     error.value = null
     loading.value = true
@@ -74,8 +89,14 @@ function fetchAndCatch<T>(url: Ref<string>, options: Options): FetchReturn<T> {
       })
   }
   if (!options.lazy) {
-    watch([url], fetchFn)
-    fetchFn()
+    let initialFetchDone = false
+    nextTick(() => {
+      initialFetchDone = true
+      fetchFn()
+    })
+    watch([url], () => {
+      if (initialFetchDone) fetchFn()
+    })
   }
 
   return { error, data, loading, fetchFn }
@@ -150,6 +171,19 @@ export class APIClient {
     }
     return urlManager(getUrl, [season], options)
   }
+  static getMapRankDistribution(
+    season: Ref<number>,
+    mapUid: Ref<string | null>,
+    options: Options = {}
+  ): FetchReturn<MapRankDistribution> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL + `/api/maps_rank_distribution?season=${season.value}&map_uid=${mapUid.value}`
+      )
+    }
+    return urlManager(getUrl, [season, mapUid], options)
+  }
+
   static getPlayerOpponentsStatistics(
     getVariables: () => {
       min_date: Date
@@ -166,6 +200,53 @@ export class APIClient {
       return this.BASE_URL + `/api/player/opponents_statistics?${formatVariables(getVariables())}`
     }
     return urlManager(getUrl, getVariables, options)
+  }
+
+  static getPlayerMatches(
+    minDate: Ref<Date>,
+    maxDate: Ref<Date>,
+    player: Ref<string>,
+    page: Ref<number>,
+    options: Options = {}
+  ): FetchReturn<PlayerMatches> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/player/matches?player=${player.value}&min_date=${Math.round(minDate.value.getTime() / 1000)}&max_date=${Math.round(maxDate.value.getTime() / 1000)}&page=${page.value}&limit=10`
+      )
+    }
+    return urlManager(getUrl, [minDate, maxDate, player, page], options)
+  }
+
+  static getPlayerPerformanceVsElo(
+    minDate: Ref<Date>,
+    maxDate: Ref<Date>,
+    player: Ref<string>,
+    threshold: Ref<number>,
+    options: Options = {}
+  ): FetchReturn<PlayerPerformanceVsElo> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/player/performance_vs_elo?player=${player.value}&min_date=${Math.round(minDate.value.getTime() / 1000)}&max_date=${Math.round(maxDate.value.getTime() / 1000)}&threshold=${threshold.value}`
+      )
+    }
+    return urlManager(getUrl, [minDate, maxDate, player, threshold], options)
+  }
+
+  static getPlayerStatisticsPerRank(
+    minDate: Ref<Date>,
+    maxDate: Ref<Date>,
+    player: Ref<string>,
+    options: Options = {}
+  ): FetchReturn<PlayerStatisticsPerRank> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/player/statistics_per_rank?player=${player.value}&min_date=${Math.round(minDate.value.getTime() / 1000)}&max_date=${Math.round(maxDate.value.getTime() / 1000)}`
+      )
+    }
+    return urlManager(getUrl, [minDate, maxDate, player], options)
   }
 
   static getPlayerStatistics(
@@ -338,6 +419,129 @@ export class APIClient {
     }
     return urlManager(getUrl, [season], options)
   }
+  static getHotThisWeek(
+    season: Ref<number>,
+    minElo: Ref<number>,
+    options: Options = {}
+  ): FetchReturn<HotThisWeek> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/computed_metric?metric=hot_this_week&min_elo=${minElo.value}&season=${season.value}`
+      )
+    }
+    return urlManager(getUrl, [season, minElo], options)
+  }
+  static getActivityPerDayOfWeek(
+    season: Ref<number>,
+    minElo: Ref<number>,
+    options: Options = {}
+  ): FetchReturn<ActivityPerDayOfWeek> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/computed_metric?metric=activity_per_day_of_the_week&season=${season.value}&min_elo=${minElo.value}`
+      )
+    }
+    return urlManager(getUrl, [season, minElo], options)
+  }
+  static getCrossRankFrequency(
+    season: Ref<number>,
+    minElo: Ref<number>,
+    options: Options = {}
+  ): FetchReturn<CrossRankFrequency> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/computed_metric?metric=cross_rank_frequency&season=${season.value}&min_elo=${minElo.value}`
+      )
+    }
+    return urlManager(getUrl, [season, minElo], options)
+  }
+  static getGlobalActivityHeatmap(
+    season: Ref<number>,
+    minElo: Ref<number>,
+    options: Options = {}
+  ): FetchReturn<GlobalActivityHeatmap> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/computed_metric?metric=activity_heatmap&season=${season.value}&min_elo=${minElo.value}`
+      )
+    }
+    return urlManager(getUrl, [season, minElo], options)
+  }
+  static getPlayerRetention(
+    season: Ref<number>,
+    minElo: Ref<number>,
+    options: Options = {}
+  ): FetchReturn<PlayerRetention> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/computed_metric?metric=player_retention&season=${season.value}&min_elo=${minElo.value}`
+      )
+    }
+    return urlManager(getUrl, [season, minElo], options)
+  }
+  static getNewPlayersPerWeek(
+    season: Ref<number>,
+    minElo: Ref<number>,
+    options: Options = {}
+  ): FetchReturn<NewPlayersPerWeek> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/computed_metric?metric=new_players_per_week&season=${season.value}&min_elo=${minElo.value}`
+      )
+    }
+    return urlManager(getUrl, [season, minElo], options)
+  }
+  static getHotThisWeekByPointsDelta(
+    season: Ref<number>,
+    minElo: Ref<number>,
+    options: Options = {}
+  ): FetchReturn<HotThisWeekByPointsDelta> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/computed_metric?metric=hot_this_week_by_points_delta&min_elo=${minElo.value}&season=${season.value}`
+      )
+    }
+    return urlManager(getUrl, [season, minElo], options)
+  }
+  static getMatch(matchId: Ref<number>, options: Options = {}): FetchReturn<MatchDetail> {
+    const getUrl = () => this.BASE_URL + `/api/match?match_id=${matchId.value}`
+    return urlManager(getUrl, [matchId], options)
+  }
+  static getCountryH2H(
+    season: Ref<number>,
+    country: Ref<string>,
+    minElo: Ref<number>,
+    options: Options = {}
+  ): FetchReturn<CountryH2H> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/country_h2h?season=${season.value}&country=${country.value}&min_elo=${minElo.value}`
+      )
+    }
+    return urlManager(getUrl, [season, country, minElo], options)
+  }
+  static getGlobalLeaderboard(
+    season: Ref<number>,
+    page: Ref<number>,
+    limit: Ref<number>,
+    options: Options = {}
+  ): FetchReturn<GlobalLeaderboard> {
+    const getUrl = () => {
+      return (
+        this.BASE_URL +
+        `/api/global_leaderboard?season=${season.value}&page=${page.value}&limit=${limit.value}`
+      )
+    }
+    return urlManager(getUrl, [season, page, limit], options)
+  }
   static getCountries(options: Options = {}): FetchReturn<Countries> {
     const getUrl = () => {
       return this.BASE_URL + `/api/countries`
@@ -362,6 +566,13 @@ export class APIClient {
   static getThreadHealth(options: Options = {}): FetchReturn<ThreadHealth> {
     const getUrl = () => {
       return this.BASE_URL + `/api/thread_health`
+    }
+    return urlManager(getUrl, [], options)
+  }
+
+  static getActiveMatchesPerRank(options: Options = {}): FetchReturn<ActiveMatchesPerRank> {
+    const getUrl = () => {
+      return this.BASE_URL + `/api/active_matches_per_rank`
     }
     return urlManager(getUrl, [], options)
   }

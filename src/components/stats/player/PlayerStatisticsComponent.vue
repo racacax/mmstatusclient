@@ -31,11 +31,26 @@
                 >
               </h6>
               <h6>
-                Position: <span class="player-label">{{ ordinalSuffixOf(stats.stats.rank) }}</span>
+                Position:
+                <span class="player-label"
+                  >{{ ordinalSuffixOf(stats.stats.rank) }}
+                  <div v-if="isTimeFiltered" class="season-badge d-flex align-items-end pb-1 ms-1">
+                    <span> ({{ stats.stats.season }})</span>
+                  </div></span
+                >
               </h6>
               <div class="d-flex justify-content-between">
                 <h6>
-                  Points: <span class="player-label">{{ stats.stats.points }}</span>
+                  Points:
+                  <span class="player-label"
+                    >{{ stats.stats.points }}
+                    <div
+                      v-if="isTimeFiltered"
+                      class="season-badge d-flex align-items-end pb-1 ms-1"
+                    >
+                      <span> ({{ stats.stats.season }})</span>
+                    </div></span
+                  >
                 </h6>
                 <h6>
                   Matches played:
@@ -86,6 +101,23 @@
                   >
                 </h6>
               </div>
+              <hr class="my-1" />
+              <div class="d-flex justify-content-between">
+                <h6>
+                  Best win streak:
+                  <span class="player-label">{{ stats.stats.most_wins_in_a_row }}</span>
+                </h6>
+                <h6>
+                  Current streak:
+                  <span class="player-label justify-content-end" :class="streakClass">{{
+                    streakLabel
+                  }}</span>
+                </h6>
+              </div>
+              <h6>
+                Worst loss streak:
+                <span class="player-label">{{ stats.stats.most_losses_in_a_row }}</span>
+              </h6>
             </div>
           </div></template
         ></ErrorManager
@@ -101,36 +133,73 @@ import RankComponent from '@/components/basic/RankComponent.vue'
 import { ordinalSuffixOf, toTimestamp } from '@/utils'
 import ErrorManager from '@/components/management/ErrorManager.vue'
 import { renderMPStyle as MPStyle } from '@/utils'
+import { computed } from 'vue'
 import { type SeasonResult } from '@/api/entities'
 
 const props = defineProps<{
   minDate: Date
   maxDate: Date
   player: string
-  season: SeasonResult
+  season?: SeasonResult | null
 }>()
 
+const isTimeFiltered = computed(() => {
+  if (!props.season) return true
+  return (
+    !props.season.is_aggregated &&
+    (toTimestamp(props.minDate) !== props.season.start_time ||
+      toTimestamp(props.maxDate) !== props.season.end_time)
+  )
+})
+
 const getVariables = () => {
+  if (!props.season) {
+    return { player: props.player, min_date: props.minDate, max_date: props.maxDate }
+  }
+  if (props.season.is_aggregated) {
+    return { player: props.player, season: props.season.id }
+  }
   const areSeasonDatesEqual =
     toTimestamp(props.minDate) === props.season.start_time &&
     toTimestamp(props.maxDate) == props.season.end_time
   if (areSeasonDatesEqual) {
     return { player: props.player, season: props.season.id }
-  } else {
-    return {
-      player: props.player,
-      season: props.season.id,
-      min_date: props.minDate,
-      max_date: props.maxDate
-    }
+  }
+  return {
+    player: props.player,
+    min_date: props.minDate,
+    max_date: props.maxDate
   }
 }
+
 const { data: stats, error, loading } = APIClient.getPlayerStatistics(getVariables)
+
+const streakLabel = computed(() => {
+  if (!stats.value) return ''
+  const s = stats.value.stats.current_win_streak
+  if (s > 0) return `+${s} W`
+  if (s < 0) return `${s} L`
+  return '0'
+})
+
+const streakClass = computed(() => {
+  if (!stats.value) return ''
+  const s = stats.value.stats.current_win_streak
+  if (s > 0) return 'text-success'
+  if (s < 0) return 'text-danger'
+  return ''
+})
 </script>
 
 <style scoped>
 .player-label {
   font-size: 27px;
   display: flex;
+}
+.season-badge {
+  font-size: 11px;
+  font-weight: normal;
+  color: var(--bs-secondary-color);
+  vertical-align: middle;
 }
 </style>

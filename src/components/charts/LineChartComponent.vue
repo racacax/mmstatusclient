@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps({
   data: Array,
@@ -18,67 +18,25 @@ const props = defineProps({
   label: String
 })
 
-function formatData() {
-  return {
-    chart: {
-      styledMode: true
-    },
-    rangeSelector: {
-      buttons: [
-        {
-          type: 'month',
-          count: 1,
-          text: '1m',
-          title: 'View 1 month'
-        },
-        {
-          type: 'day',
-          count: 15,
-          text: '15d',
-          title: 'View 15 days'
-        },
-        {
-          type: 'day',
-          count: 7,
-          text: '7d',
-          title: 'View 7 days'
-        },
-        {
-          type: 'day',
-          count: 1,
-          text: '1d',
-          title: 'View 1 day'
-        },
-        {
-          type: 'all',
-          text: 'All',
-          title: 'View all'
-        }
-      ]
-    },
-
-    title: {
-      text: ''
-    },
-
-    series: [
-      {
-        name: props.label,
-        data: props.data,
-        tooltip: {
-          valueDecimals: 2
-        }
-      }
-    ],
-    yAxis: {
-      reversed: props.reverse
+const chartOptions = computed(() => ({
+  chart: { styledMode: true },
+  rangeSelector: {
+    buttons: [
+      { type: 'month', count: 1, text: '1m', title: 'View 1 month' },
+      { type: 'day', count: 15, text: '15d', title: 'View 15 days' },
+      { type: 'day', count: 7, text: '7d', title: 'View 7 days' },
+      { type: 'day', count: 1, text: '1d', title: 'View 1 day' },
+      { type: 'all', text: 'All', title: 'View all' }
+    ]
+  },
+  title: { text: '' },
+  series: [
+    {
+      name: props.label,
+      data: props.data,
+      tooltip: { valueDecimals: 2 }
     }
-  }
-}
-
-const chartOptions = ref(formatData())
-watch(
-  () => [props.data, props.label],
-  () => (chartOptions.value = formatData())
-)
+  ],
+  yAxis: { reversed: props.reverse }
+}))
 </script>

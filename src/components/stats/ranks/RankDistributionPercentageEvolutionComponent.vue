@@ -7,43 +7,36 @@
     <template #main>
       <ErrorManager :error="error">
         <template #body>
-          <div class="w-100 position-relative">
-            <div class="w-100" :class="{ 'opacity-0': data === null }">
-              <StackedBarChartComponent
-                label="Players"
-                :enable-legend="true"
-                :data="
-                  ranks.map((rank) => ({
-                    name: rank.name,
-                    data: data?.results?.map((result) => {
-                      const clonedResult = { ...result }
-                      clonedResult.date = 0
-                      const total = Object.values(clonedResult).reduce((a, b) => a + b, 0)
-                      return [
-                        result.date * 1000,
-                        Math.round(
-                          (result[rank.key as keyof RankDistributionEvolutionResult] * 10000) /
-                            total
-                        ) / 100
-                      ]
-                    })
-                  })) ?? []
-                "
-              />
-            </div>
-            <div class="w-100 position-absolute top-0 left-0">
-              <LoadingComponent v-if="loading || data === null" />
-            </div>
-            <div class="w-100 d-flex justify-content-center" v-if="data?.results?.length === 0">
+          <LoadingComponent v-if="loading || data === null" />
+          <template v-else>
+            <div v-if="data.results.length === 0" class="w-100 d-flex justify-content-center">
               <span>No data to display</span>
             </div>
+            <StackedBarChartComponent
+              v-else
+              label="Players"
+              :enable-legend="true"
+              :data="
+                ranks.map((rank) => ({
+                  name: rank.name,
+                  data: data?.results.map((result) => {
+                    const clonedResult = { ...result }
+                    clonedResult.date = 0
+                    const total = Object.values(clonedResult).reduce((a, b) => a + b, 0)
+                    return [
+                      result.date * 1000,
+                      Math.round(
+                        (result[rank.key as keyof RankDistributionEvolutionResult] * 10000) / total
+                      ) / 100
+                    ]
+                  })
+                }))
+              "
+            />
             <div class="w-100 d-flex justify-content-end">
-              <i
-                >Last updated at:
-                {{ new Date((data?.last_updated ?? 0) * 1000).toLocaleString() }}</i
-              >
+              <i>Last updated at: {{ new Date(data.last_updated * 1000).toLocaleString() }}</i>
             </div>
-          </div>
+          </template>
         </template>
       </ErrorManager>
     </template>
