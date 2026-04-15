@@ -21,6 +21,19 @@ const name = ref('')
 const page = ref(1)
 const computeMatchesPlayed = ref(false)
 
+function setMinRank(val: number) {
+  minRank.value = val
+  page.value = 1
+}
+function setMaxRank(val: number) {
+  maxRank.value = val
+  page.value = 1
+}
+function setName(val: string) {
+  name.value = val
+  page.value = 1
+}
+
 const minElo = computed(() => minEloSelected.value)
 const maxElo = computed(() => {
   const idx = ranks.findIndex((r) => r.minElo === maxEloSelected.value)
@@ -55,20 +68,14 @@ const {
         :model-value="minRank"
         :min="1"
         :max="9999999"
-        @update:model-value="
-          minRank = $event
-          page = 1
-        "
+        @update:model-value="setMinRank"
       />
       <NumberInputComponent
         label="Max. position"
         :model-value="maxRank"
         :min="1"
         :max="9999999"
-        @update:model-value="
-          maxRank = $event
-          page = 1
-        "
+        @update:model-value="setMaxRank"
       />
       <TextInputComponent
         label="Player name"
@@ -76,10 +83,7 @@ const {
         min-width="160px"
         placeholder="Enter player name..."
         :lazy="true"
-        @update:model-value="
-          name = $event
-          page = 1
-        "
+        @update:model-value="setName"
       />
       <ToggleInputComponent
         label="Display matches played"
@@ -113,36 +117,38 @@ const {
               </tr>
             </thead>
             <tbody>
-              <tr v-if="!error" v-for="player in players" :key="player.uuid">
-                <td>
-                  <img alt="" class="player-flag" :src="`/flags/${player.country?.file_name}`" />
-                  <span v-if="player.club_tag"
-                    >[<span v-html="MPStyle(player.club_tag)"></span>]&nbsp;</span
+              <template v-if="!error">
+                <tr v-for="player in players" :key="player.uuid">
+                  <td>
+                    <img alt="" class="player-flag" :src="`/flags/${player.country?.file_name}`" />
+                    <span v-if="player.club_tag"
+                      >[<span v-html="MPStyle(player.club_tag)"></span>]&nbsp;</span
+                    >
+                    <a :href="`/#/player-statistics/${player.uuid}`" target="_blank">
+                      {{ player.name.length > 0 ? player.name : 'Unknown Player' }}</a
+                    >
+                  </td>
+                  <td>{{ ordinalSuffixOf(player.rank) }}</td>
+                  <td>{{ player.points }}</td>
+                  <td>
+                    <RankComponent :elo="player.points" :rank="player.rank" width="30px" />
+                  </td>
+                  <td v-if="!player.last_game_finished">
+                    <a :href="`/#/match/${player.last_game_id}`" target="_blank">In match</a>
+                  </td>
+                  <td v-else>
+                    <a :href="`/#/match/${player.last_game_id}`" target="_blank"
+                      >Last match on {{ new Date(player.last_active * 1000).toLocaleDateString() }}
+                      {{ new Date(player.last_active * 1000).toTimeString().split(' ')[0] }}</a
+                    >
+                  </td>
+                  <template v-if="computeMatchesPlayed">
+                    <td>{{ player.games_last_24_hours }}</td>
+                    <td>{{ player.games_last_week }}</td>
+                    <td>{{ player.games_last_month }}</td></template
                   >
-                  <a :href="`/#/player-statistics/${player.uuid}`" target="_blank">
-                    {{ player.name.length > 0 ? player.name : 'Unknown Player' }}</a
-                  >
-                </td>
-                <td>{{ ordinalSuffixOf(player.rank) }}</td>
-                <td>{{ player.points }}</td>
-                <td>
-                  <RankComponent :elo="player.points" :rank="player.rank" width="30px" />
-                </td>
-                <td v-if="!player.last_game_finished">
-                  <a :href="`/#/match/${player.last_game_id}`" target="_blank">In match</a>
-                </td>
-                <td v-else>
-                  <a :href="`/#/match/${player.last_game_id}`" target="_blank"
-                    >Last match on {{ new Date(player.last_active * 1000).toLocaleDateString() }}
-                    {{ new Date(player.last_active * 1000).toTimeString().split(' ')[0] }}</a
-                  >
-                </td>
-                <template v-if="computeMatchesPlayed">
-                  <td>{{ player.games_last_24_hours }}</td>
-                  <td>{{ player.games_last_week }}</td>
-                  <td>{{ player.games_last_month }}</td></template
-                >
-              </tr>
+                </tr>
+              </template>
             </tbody>
           </table>
         </div>
