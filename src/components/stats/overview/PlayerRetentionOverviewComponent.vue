@@ -17,7 +17,11 @@
 
             <table class="retention-table w-100">
               <tbody>
-                <tr v-for="r in lastWeeks" :key="r.week_start">
+                <tr
+                  v-for="r in lastWeeks"
+                  :key="r.week_start"
+                  :class="{ 'prev-season-row': r.isPrev }"
+                >
                   <td class="ret-date">{{ formatDate(r.week_start) }}</td>
                   <td class="ret-counts text-muted">
                     {{ r.retained_players }}/{{ r.total_players }}
@@ -45,27 +49,61 @@ import { APIClient } from '@/api/client'
 import CardComponent from '@/components/basic/CardComponent.vue'
 import LoadingComponent from '@/components/basic/LoadingComponent.vue'
 import ErrorManager from '@/components/management/ErrorManager.vue'
+import type { PlayerRetentionResult } from '@/api/entities'
 
-const props = defineProps<{ season: number }>()
+const N_PREV_WEEKS = 8
+
+type MergedRow = PlayerRetentionResult & { isPrev?: boolean }
+
+const props = defineProps<{ season: number; prevSeason?: number }>()
 const seasonRef = ref(props.season)
 const minElo = ref(0)
+const prevSeasonRef = ref(props.prevSeason ?? 0)
+
 watch(
   () => props.season,
-  (v) => {
-    seasonRef.value = v
-  }
+  (v) => (seasonRef.value = v)
 )
 
 const { data, error, loading } = APIClient.getPlayerRetention(seasonRef, minElo)
+const { data: prevData, fetchFn: fetchPrev } = APIClient.getPlayerRetention(prevSeasonRef, minElo, {
+  lazy: true
+})
+
+watch(
+  [() => props.prevSeason, () => props.season],
+  ([prevSeason]) => {
+    if (prevSeason) {
+      prevSeasonRef.value = prevSeason
+      fetchPrev()
+    }
+  },
+  { immediate: true }
+)
 
 const results = computed(() => data.value?.results ?? [])
-const lastWeeks = computed(() => results.value.slice(-7))
+
+const mergedResults = computed((): MergedRow[] => {
+  const current = results.value
+  const prev = prevData.value?.results ?? []
+  if (!props.prevSeason || !prev.length) return current
+  const needed = Math.max(0, N_PREV_WEEKS - current.length)
+  if (needed === 0) return current
+  const prevSlice: MergedRow[] = prev.slice(-needed).map((r) => ({ ...r, isPrev: true }))
+  return [...prevSlice, ...current]
+})
+
+// Exclude weeks with no data (first week of a season has no previous week to compare against)
+const validMerged = computed(() => mergedResults.value.filter((r) => r.total_players > 0))
+
+const lastWeeks = computed(() => validMerged.value.slice(-7))
+
 const latestRate = computed(() => {
-  const last = results.value[results.value.length - 1]
+  const last = validMerged.value[validMerged.value.length - 1]
   return last ? pct(last) : 0
 })
 const prevRate = computed(() => {
-  const prev = results.value[results.value.length - 2]
+  const prev = validMerged.value[validMerged.value.length - 2]
   return prev ? pct(prev) : null
 })
 
@@ -145,5 +183,8 @@ function formatDate(ts: number): string {
 }
 .rate-bad {
   color: var(--bs-danger);
+}
+.prev-season-row {
+  color: var(--bs-secondary-color);
 }
 </style>

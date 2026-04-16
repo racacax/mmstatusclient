@@ -31,6 +31,19 @@ const currentSeason = computed(() => {
 const isNewSeason = computed(() => {
   return currentSeason.value && currentSeason.value.start_time > new Date().getTime() / 1000 - 86400
 })
+
+const N_PARENT_WEEKS = 12
+
+// Only pass prevSeason to components when the current season is still early enough to need filling
+const prevSeason = computed((): number | null => {
+  if (!seasonsData.value || !currentSeason.value) return null
+  const seasons = seasonsData.value.results.filter((s) => !s.is_aggregated)
+  const idx = seasons.findIndex((s) => s.id === currentSeason.value!.id)
+  if (idx <= 0) return null
+  const weeksSinceStart = (Date.now() / 1000 - currentSeason.value.start_time) / (7 * 86400)
+  if (weeksSinceStart >= N_PARENT_WEEKS) return null
+  return seasons[idx - 1].id
+})
 </script>
 
 <template>
@@ -55,12 +68,18 @@ const isNewSeason = computed(() => {
 
       <HotThisWeekOverviewComponent :season="currentSeason.id" />
       <div class="col-lg-4 col-12 row gx-0">
-        <NewPlayersOverviewComponent :season="currentSeason.id" />
+        <NewPlayersOverviewComponent
+          :season="currentSeason.id"
+          :prev-season="prevSeason ?? undefined"
+        />
         <MostPlayedMapMiniCard :season="currentSeason.id" />
         <MostActivePlayerMiniCard :season="currentSeason.id" />
       </div>
       <div class="col-lg-4 col-12 row gx-0">
-        <PlayerRetentionOverviewComponent :season="currentSeason.id" />
+        <PlayerRetentionOverviewComponent
+          :season="currentSeason.id"
+          :prev-season="prevSeason ?? undefined"
+        />
         <TotalPlayersMiniCard :season="currentSeason.id" />
         <MostActiveCountryMiniCard :season="currentSeason.id" />
       </div>

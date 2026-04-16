@@ -1187,6 +1187,11 @@ g.highcharts-series,
   outline: none;
 }
 
+/* Previous season series: dashed line for retention rate trend */
+.prev-season-series .highcharts-graph {
+  stroke-dasharray: 6 3;
+}
+
 /* Gantt */
 .highcharts-treegrid-node-collapsed,
 .highcharts-treegrid-node-expanded {
