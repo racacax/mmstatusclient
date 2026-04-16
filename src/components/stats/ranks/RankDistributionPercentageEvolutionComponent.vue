@@ -16,6 +16,7 @@
               v-else
               label="Players"
               :enable-legend="true"
+              :categories="data.results.map((r) => dateFormat('%b %d', r.date * 1000))"
               :data="
                 ranks.map((rank) => ({
                   name: rank.name,
@@ -23,12 +24,11 @@
                     const clonedResult = { ...result }
                     clonedResult.date = 0
                     const total = Object.values(clonedResult).reduce((a, b) => a + b, 0)
-                    return [
-                      result.date * 1000,
+                    return (
                       Math.round(
                         (result[rank.key as keyof RankDistributionEvolutionResult] * 10000) / total
                       ) / 100
-                    ]
+                    )
                   })
                 }))
               "
@@ -46,6 +46,7 @@
 <script setup lang="ts">
 import LoadingComponent from '@/components/basic/LoadingComponent.vue'
 import { ref, watch } from 'vue'
+import { dateFormat } from 'highcharts'
 import { APIClient } from '@/api/client'
 import CardComponent from '@/components/basic/CardComponent.vue'
 import StackedBarChartComponent from '@/components/charts/StackedBarChartComponent.vue'
