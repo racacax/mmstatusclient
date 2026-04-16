@@ -25,7 +25,6 @@
                     <th>Avg. rank</th>
                     <th>Result</th>
                     <th>MVP</th>
-                    <th>Position</th>
                     <th>Rank after</th>
                     <th>Elo Δ</th>
                     <th>Played at</th>
@@ -50,24 +49,31 @@
                     </td>
                     <td>
                       <span
+                        v-if="match.is_finished"
                         :class="
                           match.is_win ? 'text-success fw-semibold' : 'text-danger fw-semibold'
                         "
                       >
                         {{ match.is_win ? 'Win' : 'Loss' }}
                       </span>
+                      <span v-else class="text-muted">—</span>
                     </td>
                     <td>
                       <span v-if="match.is_mvp" class="text-warning fw-semibold">MVP</span>
                       <span v-else class="text-muted">—</span>
                     </td>
-                    <td>{{ ordinalSuffixOf(match.position) }}</td>
                     <td>
-                      <RankComponent :rank="null" :elo="match.points_after_match" width="25px" />
-                      ({{ match.points_after_match }} pts)
+                      <template v-if="match.is_finished">
+                        <RankComponent :rank="null" :elo="match.points_after_match" width="25px" />
+                        ({{ match.points_after_match }} pts)
+                      </template>
+                      <span v-else class="text-muted">—</span>
                     </td>
                     <td>
-                      <span v-if="i < data.results.length - 1" :class="eloDeltaClass(i)">
+                      <span
+                        v-if="match.is_finished && i < data.results.length - 1"
+                        :class="eloDeltaClass(i)"
+                      >
                         {{ eloDeltaLabel(i) }}
                       </span>
                       <span v-else class="text-muted">—</span>
