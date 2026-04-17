@@ -1,21 +1,44 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { getEventValue, ordinalSuffixOf } from '@/utils'
+import { ref, computed } from 'vue'
+import { ordinalSuffixOf } from '@/utils'
+import { ranks } from '@/constants'
 import { APIClient } from '@/api/client'
 import LoadingComponent from '@/components/basic/LoadingComponent.vue'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faBackward, faBackwardFast, faForward } from '@fortawesome/free-solid-svg-icons'
 import RankComponent from '@/components/basic/RankComponent.vue'
 import ErrorManager from '@/components/management/ErrorManager.vue'
 import { renderMPStyle as MPStyle } from '@/utils'
+import RankFilterComponent from '@/components/basic/RankFilterComponent.vue'
+import NumberInputComponent from '@/components/basic/NumberInputComponent.vue'
+import TextInputComponent from '@/components/basic/TextInputComponent.vue'
+import ToggleInputComponent from '@/components/basic/ToggleInputComponent.vue'
+import PageControlComponent from '@/components/basic/PageControlComponent.vue'
 
-const minElo = ref(0)
-const maxElo = ref(99999)
+const minEloSelected = ref(0)
+const maxEloSelected = ref(4000)
 const minRank = ref(1)
 const maxRank = ref(99999999)
 const name = ref('')
 const page = ref(1)
 const computeMatchesPlayed = ref(false)
+
+function setMinRank(val: number) {
+  minRank.value = val
+  page.value = 1
+}
+function setMaxRank(val: number) {
+  maxRank.value = val
+  page.value = 1
+}
+function setName(val: string) {
+  name.value = val
+  page.value = 1
+}
+
+const minElo = computed(() => minEloSelected.value)
+const maxElo = computed(() => {
+  const idx = ranks.findIndex((r) => r.minElo === maxEloSelected.value)
+  return idx === 0 ? 99999 : ranks[idx - 1].minElo - 1
+})
 
 const {
   data: players,
@@ -29,168 +52,49 @@ const {
   <span>Shows last active players matching your filters</span>
   <div class="w-100">
     <div class="d-flex gap-2 flex-wrap">
-      <div>
-        <label class="form-label">Min. rank</label>
-        <select
-          class="form-select form-select-sm"
-          aria-label="Min-elo"
-          @change="
-            (e) => {
-              minElo = parseInt(getEventValue(e))
-              page = 1
-            }
-          "
-        >
-          <option selected value="0">Bronze I</option>
-          <option value="300">Bronze II</option>
-          <option value="600">Bronze III</option>
-          <option value="1000">Silver I</option>
-          <option value="1300">Silver II</option>
-          <option value="1600">Silver III</option>
-          <option value="2000">Gold I</option>
-          <option value="2300">Gold II</option>
-          <option value="2600">Gold III</option>
-          <option value="3000">Master I</option>
-          <option value="3300">Master II</option>
-          <option value="3600">Master III</option>
-          <option value="4000">Trackmaster (4000 pts)</option>
-        </select>
-      </div>
-      <div>
-        <label class="form-label">Max. rank</label>
-        <select
-          class="form-select form-select-sm"
-          aria-label="Min-elo"
-          @change="
-            (e) => {
-              maxElo = parseInt(getEventValue(e))
-              page = 1
-            }
-          "
-        >
-          <option value="299">Bronze I</option>
-          <option value="599">Bronze II</option>
-          <option value="999">Bronze III</option>
-          <option value="1299">Silver I</option>
-          <option value="1599">Silver II</option>
-          <option value="1999">Silver III</option>
-          <option value="2299">Gold I</option>
-          <option value="2599">Gold II</option>
-          <option value="2999">Gold III</option>
-          <option value="3299">Master I</option>
-          <option value="3599">Master II</option>
-          <option value="3999">Master III (-4000 pts)</option>
-          <option selected value="9999999">Trackmaster (4000+ pts)</option>
-        </select>
-      </div>
-      <div>
-        <label class="form-label">Min. position</label><br />
-        <input
-          @change="
-            (e) => {
-              minRank = parseInt(getEventValue(e))
-              page = 1
-            }
-          "
-          type="number"
-          min="1"
-          max="9999999"
-          value="1"
-          class="form-check-input form-select-sm"
-          style="width: 80px; height: 30px; margin-top: 0px"
-        />
-      </div>
-      <div>
-        <label class="form-label">Max. position</label><br />
-        <input
-          @change="
-            (e) => {
-              maxRank = parseInt(getEventValue(e))
-              page = 1
-            }
-          "
-          type="number"
-          min="1"
-          max="9999999"
-          value="9999999"
-          class="form-check-input form-select-sm"
-          style="width: 80px; height: 30px; margin-top: 0px"
-        />
-      </div>
-      <div>
-        <label class="form-label">Player name</label><br />
-        <input
-          @change="
-            (e) => {
-              name = getEventValue(e)
-              page = 1
-            }
-          "
-          type="text"
-          placeholder="Enter player name..."
-          class="form-check-input form-select-sm"
-          style="width: 140px; height: 30px; margin-top: 0px"
-        />
-      </div>
-      <div>
-        <label class="form-label" for="displayMatchesPlayed"> Display matches played </label><br />
-        <input
-          class="form-check-input"
-          style="width: 30px; height: 30px; margin-top: 0px"
-          id="displayMatchesPlayed"
-          type="checkbox"
-          :checked="computeMatchesPlayed"
-          v-on:change="() => (computeMatchesPlayed = !computeMatchesPlayed)"
-        />
-      </div>
-      <div class="d-flex align-items-end justify-content-end flex-grow-1">
-        <div class="d-flex gap-2 align-items-stretch">
-          <div>
-            <button
-              class="btn btn-primary"
-              :disabled="page === 1"
-              @click="
-                () => {
-                  page = 1
-                }
-              "
-            >
-              <FontAwesomeIcon :icon="faBackwardFast" />
-            </button>
-          </div>
-          <div>
-            <button
-              class="btn btn-primary"
-              :disabled="page === 1"
-              @click="
-                () => {
-                  page -= 1
-                }
-              "
-            >
-              <FontAwesomeIcon :icon="faBackward" />
-            </button>
-          </div>
-          <div class="d-flex align-items-center">
-            <div>
-              <span>Page {{ page }}</span>
-            </div>
-          </div>
-          <div>
-            <button
-              class="btn btn-primary"
-              :disabled="players === null || players.length === 0"
-              @click="
-                () => {
-                  page += 1
-                }
-              "
-            >
-              <FontAwesomeIcon :icon="faForward" />
-            </button>
-          </div>
-        </div>
-      </div>
+      <RankFilterComponent
+        v-model="minEloSelected"
+        label="Min. rank"
+        @update:model-value="page = 1"
+      />
+      <RankFilterComponent
+        v-model="maxEloSelected"
+        label="Max. rank"
+        :default-value="4000"
+        @update:model-value="page = 1"
+      />
+      <NumberInputComponent
+        label="Min. position"
+        :model-value="minRank"
+        :min="1"
+        :max="9999999"
+        @update:model-value="setMinRank"
+      />
+      <NumberInputComponent
+        label="Max. position"
+        :model-value="maxRank"
+        :min="1"
+        :max="9999999"
+        @update:model-value="setMaxRank"
+      />
+      <TextInputComponent
+        label="Player name"
+        :model-value="name"
+        min-width="160px"
+        placeholder="Enter player name..."
+        :lazy="true"
+        @update:model-value="setName"
+      />
+      <ToggleInputComponent
+        label="Display matches played"
+        :model-value="computeMatchesPlayed"
+        @update:model-value="computeMatchesPlayed = $event"
+      />
+      <PageControlComponent
+        :model-value="page"
+        :has-more="players !== null && players.length > 0"
+        @update:model-value="page = $event"
+      />
     </div>
     <ErrorManager :error="error">
       <template #body>
@@ -213,38 +117,38 @@ const {
               </tr>
             </thead>
             <tbody>
-              <tr v-if="!error" v-for="player in players" :key="player.uuid">
-                <td>
-                  <img alt="" class="player-flag" :src="`/flags/${player.country?.file_name}`" />
-                  <span v-if="player.club_tag"
-                    >[<span v-html="MPStyle(player.club_tag)"></span>]&nbsp;</span
+              <template v-if="!error">
+                <tr v-for="player in players" :key="player.uuid">
+                  <td>
+                    <img alt="" class="player-flag" :src="`/flags/${player.country?.file_name}`" />
+                    <span v-if="player.club_tag"
+                      >[<span v-html="MPStyle(player.club_tag)"></span>]&nbsp;</span
+                    >
+                    <a :href="`/#/player-statistics/${player.uuid}`" target="_blank">
+                      {{ player.name.length > 0 ? player.name : 'Unknown Player' }}</a
+                    >
+                  </td>
+                  <td>{{ ordinalSuffixOf(player.rank) }}</td>
+                  <td>{{ player.points }}</td>
+                  <td>
+                    <RankComponent :elo="player.points" :rank="player.rank" width="30px" />
+                  </td>
+                  <td v-if="!player.last_game_finished">
+                    <a :href="`/#/match/${player.last_game_id}`" target="_blank">In match</a>
+                  </td>
+                  <td v-else>
+                    <a :href="`/#/match/${player.last_game_id}`" target="_blank"
+                      >Last match on {{ new Date(player.last_active * 1000).toLocaleDateString() }}
+                      {{ new Date(player.last_active * 1000).toTimeString().split(' ')[0] }}</a
+                    >
+                  </td>
+                  <template v-if="computeMatchesPlayed">
+                    <td>{{ player.games_last_24_hours }}</td>
+                    <td>{{ player.games_last_week }}</td>
+                    <td>{{ player.games_last_month }}</td></template
                   >
-                  <a :href="`/#/statistics/${player.uuid}`" target="_blank">
-                    {{ player.name.length > 0 ? player.name : 'Unknown Player' }}</a
-                  >
-                </td>
-                <td>{{ ordinalSuffixOf(player.rank) }}</td>
-                <td>{{ player.points }}</td>
-                <td>
-                  <RankComponent :elo="player.points" :rank="player.rank" width="30px" />
-                </td>
-                <td v-if="!player.last_game_finished">
-                  <a :href="`https://trackmania.io/#/match/${player.last_game_id}`" target="_blank"
-                    >In match</a
-                  >
-                </td>
-                <td v-else>
-                  <a :href="`https://trackmania.io/#/match/${player.last_game_id}`" target="_blank"
-                    >Last match on {{ new Date(player.last_active * 1000).toLocaleDateString() }}
-                    {{ new Date(player.last_active * 1000).toTimeString().split(' ')[0] }}</a
-                  >
-                </td>
-                <template v-if="computeMatchesPlayed">
-                  <td>{{ player.games_last_24_hours }}</td>
-                  <td>{{ player.games_last_week }}</td>
-                  <td>{{ player.games_last_month }}</td></template
-                >
-              </tr>
+                </tr>
+              </template>
             </tbody>
           </table>
         </div>

@@ -8,14 +8,18 @@ import App from './App.vue'
 import router from './router'
 import Stock from 'highcharts/modules/stock'
 import Heatmap from 'highcharts/modules/heatmap'
-//import HighchartsBoost from "highcharts/modules/boost"
+import HighchartsBoost from 'highcharts/modules/boost'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as bootstrap from 'bootstrap'
 Maps(Highcharts)
 Stock(Highcharts)
 Heatmap(Highcharts)
-// HighchartsBoost(Highcharts)
+HighchartsBoost(Highcharts)
+
+Highcharts.setOptions({
+  plotOptions: { series: { animation: false } }
+})
 const app = createApp(App)
 app.use(HighchartsVue)
 

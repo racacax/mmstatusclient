@@ -19,6 +19,7 @@
 <script setup lang="ts">
 import { ref, type Ref, watch } from 'vue'
 import { APIClient } from '@/api/client'
+import { renderMPStyle } from '@/utils'
 import TableComponent from '@/components/basic/TableComponent.vue'
 import ErrorManager from '@/components/management/ErrorManager.vue'
 
@@ -64,10 +65,12 @@ function formatData() {
     stats.value.results
       .filter((el, i) => i >= (page.value - 1) * 10 && i < page.value * 10)
       .forEach((e) => {
+        const flag = e.country
+          ? `<img alt="" title="${e.country.name}" class="player-flag" src="/flags/${e.country.file_name}" />`
+          : ''
+        const clubTag = e.club_tag ? ` [<span>${renderMPStyle(e.club_tag)}</span>]&nbsp;` : ''
         currentData.push([
-          `
-          <a target="_blank" href="/#/statistics/${e.uuid}">${e.name}</a>
-          `,
+          `${flag}${clubTag}<a target="_blank" href="/#/player-statistics/${e.uuid}">${e.name}</a>`,
           e.played,
           e.wins.toString().replace(' ', '&nbsp;') +
             ' (' +

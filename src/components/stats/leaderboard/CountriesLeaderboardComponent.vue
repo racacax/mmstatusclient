@@ -18,8 +18,6 @@
 import { ref, type Ref, watch } from 'vue'
 import { APIClient } from '@/api/client'
 import TableComponent from '@/components/basic/TableComponent.vue'
-import getCountryISO2 from 'country-iso-3-to-2'
-import { countryCodeEmoji } from 'country-code-emoji'
 
 const props = defineProps({
   season: { type: Number, required: true }
@@ -61,7 +59,7 @@ function formatData() {
       .forEach((e, i) => {
         currentData.push([
           (page.value - 1) * 10 + (i + 1),
-          `${countryCodeEmoji(getCountryISO2(e.country_alpha3))} ${e.name}`,
+          `<img src="/flags/${e.file_name}" class="player-flag" style=border-radius:2px;margin-right:5px;vertical-align:middle">${e.name}`,
           e.points
         ])
       })

@@ -98,3 +98,17 @@ export function toDate(ts: number) {
 export function toTimestamp(date: Date) {
   return date.getTime() / 1000
 }
+
+const SEASON_EMOJIS: [string, string][] = [
+  ['Winter', '❄️'],
+  ['Fall', '🍂'],
+  ['Spring', '🌸'],
+  ['Summer', '☀️']
+]
+
+export function formatSeasonName(name: string): string {
+  for (const [keyword, emoji] of SEASON_EMOJIS) {
+    if (name.includes(keyword)) return `${emoji} ${name}`
+  }
+  return name
+}

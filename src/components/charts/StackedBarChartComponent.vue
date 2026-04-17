@@ -1,17 +1,11 @@
 <template>
   <div>
-    <highcharts
-      :constructor-type="'stockChart'"
-      class="hc"
-      :options="chartOptions"
-      ref="chart"
-    ></highcharts>
+    <highcharts class="hc" :options="chartOptions" ref="chart"></highcharts>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { dateFormat } from 'highcharts'
 
 const props = defineProps({
   data: Array,
@@ -26,23 +20,17 @@ function formatData() {
       type: 'column',
       styledMode: true
     },
+    boost: { enabled: false },
     tooltip: {
       split: false,
       shared: false
-    },
-    scrollbar: {
-      enabled: false
-    },
-    rangeSelector: {
-      inputEnabled: false,
-      enabled: true,
-      buttons: []
     },
     title: {
       text: ''
     },
     xAxis: {
-      categories: props.categories?.map((cat) => dateFormat(cat as string, 0))
+      type: 'category',
+      categories: props.categories as string[]
     },
     yAxis: {
       min: 0,

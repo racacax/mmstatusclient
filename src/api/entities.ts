@@ -66,6 +66,19 @@ export interface MapsStatisticsResult {
   total_played: number
 }
 
+export interface MapRankDistribution {
+  map_uid: string
+  map_name: string
+  results: MapRankDistributionResult[]
+  last_updated: number
+}
+
+export interface MapRankDistributionResult {
+  rank: string
+  name: string
+  count: number
+}
+
 export interface SearchPlayer {
   results: SearchPlayerResult[]
 }
@@ -82,6 +95,7 @@ export interface OpponentsStatistics {
 export interface OpponentsStatisticsResult {
   uuid: string
   name: string
+  country?: Country | null
   country_alpha3?: string
   file_name?: string
   club_tag?: string
@@ -92,6 +106,54 @@ export interface OpponentsStatisticsResult {
   total_games_won_against: number
   total_games_lost_along: number
   total_games_won_along: number
+}
+
+export interface PlayerPerformanceVsElo {
+  player: string
+  threshold: number
+  results: PlayerPerformanceVsEloBucket[]
+}
+
+export interface PlayerPerformanceVsEloBucket {
+  bucket: 'underdog' | 'even' | 'favorite'
+  games_played: number
+  wins: number
+  losses: number
+  win_rate: number
+}
+
+export interface PlayerMatches {
+  results: PlayerMatchResult[]
+  player: string
+  page: number
+}
+
+export interface PlayerMatchResult {
+  id: number
+  time: number
+  is_finished: boolean
+  average_elo: number
+  min_elo: number
+  map_uid: string
+  map_name: string
+  is_win: boolean
+  is_mvp: boolean
+  position: number
+  points_after_match: number
+  rank_after_match: number
+}
+
+export interface PlayerStatisticsPerRank {
+  player: string
+  results: PlayerStatisticsPerRankResult[]
+}
+
+export interface PlayerStatisticsPerRankResult {
+  rank: string
+  rank_name: string
+  played: number
+  wins: number
+  mvps: number
 }
 
 export interface PlayerStatistics {
@@ -109,6 +171,9 @@ export interface PlayerStatisticsStats {
   total_wins: number
   total_losses: number
   total_mvp: number
+  most_wins_in_a_row: number
+  most_losses_in_a_row: number
+  current_win_streak: number
 }
 
 export interface PlayerMapStatistics {
@@ -136,6 +201,8 @@ export interface PlayersStatistics {
 export interface PlayersStatisticsResult {
   name: string
   uuid: string
+  club_tag?: string | null
+  country?: { name: string; file_name: string; alpha3: string }
   played: number
   wins: number
   losses: number
@@ -256,6 +323,8 @@ export interface LeaderboardResult {
   uuid: string
   rank: number
   points: number
+  club_tag: string | null
+  region: { name: string; file_name: string } | null
 }
 
 export interface Countries {
@@ -295,6 +364,139 @@ export interface ClubsLeaderboardResult {
   points: number
 }
 
+export interface MatchDetail {
+  id: number
+  time: number
+  is_finished: boolean
+  map: Map
+  min_elo: number
+  max_elo: number
+  average_elo: number
+  trackmaster_points_limit: number
+  rounds: number | null
+  players: MatchDetailPlayer[]
+}
+
+export interface MatchDetailPlayer {
+  uuid: string
+  name: string
+  position: number | null
+  is_win: boolean
+  is_mvp: boolean
+  score: number | null
+  elo_before: number
+  elo_after: number | null
+  elo_gained: number | null
+  rank_after: number | null
+}
+
+export interface ActivityPerDayOfWeek {
+  last_updated: number
+  results: Record<string, number>
+}
+
+export interface CrossRankFrequency {
+  last_updated: number
+  results: CrossRankFrequencyResult[]
+}
+
+export interface CrossRankFrequencyResult {
+  spread_min: number
+  spread_max: number | null
+  count: number
+}
+
+export interface GlobalActivityHeatmap {
+  last_updated: number
+  results: PlayerActivityHeatmapResult[]
+}
+
+export interface PlayerRetention {
+  last_updated: number
+  results: PlayerRetentionResult[]
+}
+
+export interface PlayerRetentionResult {
+  week: number
+  week_start: number
+  total_players: number
+  retained_players: number
+  retention_rate: number
+}
+
+export interface NewPlayersPerWeek {
+  last_updated: number
+  results: NewPlayersPerWeekResult[]
+}
+
+export interface NewPlayersPerWeekResult {
+  week: number
+  week_start: number
+  new_players: number
+}
+
+export interface HotThisWeekByPointsDelta {
+  last_updated: number
+  results: HotThisWeekByPointsDeltaResult[]
+}
+
+export interface HotThisWeekByPointsDeltaResult {
+  name: string
+  uuid: string
+  club_tag: string | null
+  country: { name: string; file_name: string; alpha3: string }
+  current_points: number
+  delta: number
+  played: number
+}
+
+export interface HotThisWeek {
+  last_updated: number
+  results: HotThisWeekResult[]
+}
+
+export interface HotThisWeekResult {
+  name: string
+  uuid: string
+  club_tag: string | null
+  country: { name: string; file_name: string; alpha3: string }
+  current_points: number
+  wins: number
+  played: number
+}
+
+export interface CountryH2H {
+  results: CountryH2HResult[]
+  last_updated: number
+}
+
+export interface CountryH2HResult {
+  opponent: { name: string; file_name: string; alpha3: string }
+  wins: number
+  losses: number
+  draws: number
+  games: number
+}
+
+export interface GlobalLeaderboard {
+  results: GlobalLeaderboardResult[]
+  page: number
+  limit: number
+  total: number
+}
+
+export interface GlobalLeaderboardResult {
+  rank: number
+  points: number
+  name: string
+  uuid: string
+  club_tag: string | null
+  country: {
+    name: string
+    file_name: string
+  }
+}
+
 export interface PlayerActivityHeatmap {
   results: PlayerActivityHeatmapResult[]
   player: string
@@ -315,4 +517,14 @@ export interface ThreadHealthEntry {
   uptime_seconds: number
   seconds_since_last_error: number | null
   error_count: number
+}
+
+export interface ActiveMatchRankEntry {
+  rank: string
+  name: string
+  count: number
+}
+
+export interface ActiveMatchesPerRank {
+  results: ActiveMatchRankEntry[]
 }

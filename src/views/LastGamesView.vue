@@ -1,16 +1,23 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { APIClient } from '@/api/client'
+import { ranks } from '@/constants'
 import LoadingComponent from '@/components/basic/LoadingComponent.vue'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faBackward, faBackwardFast, faForward } from '@fortawesome/free-solid-svg-icons'
 import RankComponent from '@/components/basic/RankComponent.vue'
-import { getEventValue } from '@/utils'
 import ErrorManager from '@/components/management/ErrorManager.vue'
+import RankFilterComponent from '@/components/basic/RankFilterComponent.vue'
+import PageControlComponent from '@/components/basic/PageControlComponent.vue'
 
-const minElo = ref(0)
-const maxElo = ref(99999)
+const minEloSelected = ref(0)
+const maxEloSelected = ref(4000)
 const page = ref(1)
+
+const minElo = computed(() => minEloSelected.value)
+const maxElo = computed(() => {
+  const idx = ranks.findIndex((r) => r.minElo === maxEloSelected.value)
+  return idx === 0 ? 99999 : ranks[idx - 1].minElo - 1
+})
+
 const { data: games, error, loading } = APIClient.getLastGames(minElo, maxElo, page, {})
 </script>
 
@@ -19,108 +26,22 @@ const { data: games, error, loading } = APIClient.getLastGames(minElo, maxElo, p
   <span>Shows the last matches matching your filters</span>
   <div class="w-100">
     <div class="d-flex gap-2 flex-wrap">
-      <div>
-        <label class="form-label">Min. rank</label>
-        <select
-          class="form-select form-select-sm"
-          aria-label="Min-elo"
-          @change="
-            (e) => {
-              minElo = parseInt(getEventValue(e))
-              page = 1
-            }
-          "
-        >
-          <option selected value="0">Bronze I</option>
-          <option value="300">Bronze II</option>
-          <option value="600">Bronze III</option>
-          <option value="1000">Silver I</option>
-          <option value="1300">Silver II</option>
-          <option value="1600">Silver III</option>
-          <option value="2000">Gold I</option>
-          <option value="2300">Gold II</option>
-          <option value="2600">Gold III</option>
-          <option value="3000">Master I</option>
-          <option value="3300">Master II</option>
-          <option value="3600">Master III</option>
-          <option value="4000">Trackmaster (4000 pts)</option>
-        </select>
-      </div>
-      <div>
-        <label class="form-label">Max. rank</label>
-        <select
-          class="form-select form-select-sm"
-          aria-label="Min-elo"
-          @change="
-            (e) => {
-              maxElo = parseInt(getEventValue(e))
-              page = 1
-            }
-          "
-        >
-          <option value="299">Bronze I</option>
-          <option value="599">Bronze II</option>
-          <option value="999">Bronze III</option>
-          <option value="1299">Silver I</option>
-          <option value="1599">Silver II</option>
-          <option value="1999">Silver III</option>
-          <option value="2299">Gold I</option>
-          <option value="2599">Gold II</option>
-          <option value="2999">Gold III</option>
-          <option value="3299">Master I</option>
-          <option value="3599">Master II</option>
-          <option value="3999">Master III (-4000 pts)</option>
-          <option selected value="9999999">Trackmaster (4000+ pts)</option>
-        </select>
-      </div>
-      <div class="d-flex align-items-end justify-content-end flex-grow-1">
-        <div class="d-flex gap-2 align-items-stretch">
-          <div>
-            <button
-              class="btn btn-primary"
-              :disabled="page === 1"
-              @click="
-                () => {
-                  page = 1
-                }
-              "
-            >
-              <FontAwesomeIcon :icon="faBackwardFast" />
-            </button>
-          </div>
-          <div>
-            <button
-              class="btn btn-primary"
-              :disabled="page === 1"
-              @click="
-                () => {
-                  page -= 1
-                }
-              "
-            >
-              <FontAwesomeIcon :icon="faBackward" />
-            </button>
-          </div>
-          <div class="d-flex align-items-center">
-            <div>
-              <span>Page {{ page }}</span>
-            </div>
-          </div>
-          <div>
-            <button
-              class="btn btn-primary"
-              :disabled="games === null || games.length === 0"
-              @click="
-                () => {
-                  page += 1
-                }
-              "
-            >
-              <FontAwesomeIcon :icon="faForward" />
-            </button>
-          </div>
-        </div>
-      </div>
+      <RankFilterComponent
+        v-model="minEloSelected"
+        label="Min. rank"
+        @update:model-value="page = 1"
+      />
+      <RankFilterComponent
+        v-model="maxEloSelected"
+        label="Max. rank"
+        :default-value="4000"
+        @update:model-value="page = 1"
+      />
+      <PageControlComponent
+        :model-value="page"
+        :has-more="games !== null && games.length > 0"
+        @update:model-value="page = $event"
+      />
     </div>
     <ErrorManager :error="error">
       <template #body>
@@ -142,9 +63,7 @@ const { data: games, error, loading } = APIClient.getLastGames(minElo, maxElo, p
             <tbody>
               <tr v-for="game in games" :key="game.id">
                 <td>
-                  <a :href="`https://trackmania.io/#/match/${game.id}`" target="_blank">{{
-                    game.id
-                  }}</a>
+                  <RouterLink :to="`/match/${game.id}`">{{ game.id }}</RouterLink>
                 </td>
                 <td>
                   <a
@@ -178,12 +97,10 @@ const { data: games, error, loading } = APIClient.getLastGames(minElo, maxElo, p
                   ({{ game.max_elo }} pts)
                 </td>
                 <td v-if="!game.is_finished">
-                  <a :href="`https://trackmania.io/#/match/${game.id}`" target="_blank">Active</a>
+                  <a :href="`/#/match/${game.id}`" target="_blank">Active</a>
                 </td>
                 <td v-else>
-                  <a :href="`https://trackmania.io/#/match/${game.id}`" target="_blank"
-                    >Completed</a
-                  >
+                  <a :href="`/#/match/${game.id}`" target="_blank">Completed</a>
                 </td>
                 <td>
                   {{ new Date(game.time * 1000).toLocaleDateString() }}

@@ -1,6 +1,6 @@
 <template>
   <div :class="`${classes ?? ''} px-1 align-items-stretch d-flex mb-2`">
-    <div class="card d-flex flex-column p-2 w-100 overflow-x-auto">
+    <div class="card d-flex flex-column p-2 w-100">
       <div class="d-flex justify-content-between align-items-center w-100">
         <h5 class="d-inline-flex gap-1">
           <span>{{ props.title }}</span>
@@ -15,7 +15,9 @@
           <slot name="filters"></slot>
         </div>
       </div>
-      <slot name="main"></slot>
+      <div class="overflow-x-auto">
+        <slot name="main"></slot>
+      </div>
     </div>
   </div>
 </template>
@@ -52,9 +54,12 @@ const props = defineProps({
 .tooltip-sub-container {
   position: absolute;
   width: 250px;
-  left: 30px;
+  left: 0;
+  top: 100%;
+  margin-top: 4px;
   display: flex;
   justify-content: flex-start;
+  z-index: 10001;
 }
 .tooltip-container:hover .tooltip-text {
   display: block;

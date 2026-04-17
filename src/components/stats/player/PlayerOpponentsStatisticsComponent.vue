@@ -3,72 +3,31 @@
     <div class="mb-2 card d-flex flex-column p-2 w-100 overflow-x-scroll overflow-x-lg-hidden">
       <div class="d-flex justify-content-between align-items-center w-100">
         <h5>Opponents</h5>
-        <div class="d-flex gap-2">
-          <div class="d-flex flex-column gap-2">
-            Group by:
-            <select
-              class="form-select form-select-sm"
-              @change="
-                (e) => {
-                  groupBy = getEventValue(e)
-                }
-              "
-            >
-              <option value="uuid" selected>Player</option>
-              <option value="country">Country</option>
-              <option value="club_tag">Club</option>
-            </select>
-          </div>
-          <div class="d-flex flex-column gap-2">
-            Order by:
-            <select
-              class="form-select form-select-sm"
-              @change="
-                (e) => {
-                  orderBy = getEventValue(e)
-                }
-              "
-            >
-              <option value="played" selected>Played</option>
-              <option value="played_against">As opponent</option>
-              <option value="played_along">As teammate</option>
-              <option value="games_lost_against">Losses against</option>
-              <option value="games_won_against">Wins against</option>
-              <option value="games_lost_along">Losses along</option>
-              <option value="games_won_along">Wins along</option>
-            </select>
-          </div>
-
-          <div class="d-flex flex-column gap-2">
-            Order:
-            <select
-              class="form-select form-select-sm"
-              @change="
-                (e) => {
-                  order = getEventValue(e)
-                }
-              "
-            >
-              <option value="desc" selected>Descending</option>
-              <option value="asc">Ascending</option>
-            </select>
-          </div>
-
-          <div class="d-flex flex-column gap-2">
-            Page:
-            <input
-              class="form-control form-control-sm"
-              style="max-width: 80px"
-              :value="page"
-              min="1"
-              @change="
-                (e) => {
-                  page = parseInt(getEventValue(e))
-                }
-              "
-              type="number"
-            />
-          </div>
+        <div class="d-flex gap-2 flex-wrap">
+          <SelectInputComponent
+            label="Group by"
+            :options="groupByOptions"
+            :model-value="groupBy"
+            @update:model-value="groupBy = $event as 'uuid' | 'club_tag' | 'country'"
+          />
+          <SelectInputComponent
+            label="Order by"
+            :options="orderByOptions"
+            :model-value="orderBy"
+            @update:model-value="orderBy = $event"
+          />
+          <SelectInputComponent
+            label="Order"
+            :options="orderOptions"
+            :model-value="order"
+            @update:model-value="order = $event as 'desc' | 'asc'"
+          />
+          <NumberInputComponent
+            label="Page"
+            :model-value="page"
+            :min="1"
+            @update:model-value="page = $event"
+          />
         </div>
       </div>
       <ErrorManager :error="error">
@@ -91,7 +50,17 @@
               <tbody>
                 <tr v-for="(stat, i) in stats.results" :key="i">
                   <td v-if="groupBy == 'uuid'">
-                    <a target="_blank" :href="`/#/statistics/${stat.uuid}`">{{ stat.name }}</a>
+                    <img
+                      v-if="stat.country"
+                      :src="`/flags/${stat.country.file_name}`"
+                      :alt="stat.country.name"
+                      class="player-flag"
+                    />
+                    <a target="_blank" :href="`/#/player-statistics/${stat.uuid}`">
+                      <span v-if="stat.club_tag"
+                        >[<span v-html="MPStyle(stat.club_tag)"></span>]&nbsp;</span
+                      >{{ stat.name }}
+                    </a>
                   </td>
                   <td v-if="groupBy == 'country'">
                     {{ countryCodeEmoji(getCountryISO2(stat.country_alpha3)) }} {{ stat.name }}
@@ -165,18 +134,38 @@
 import LoadingComponent from '@/components/basic/LoadingComponent.vue'
 import { ref, type Ref, watch } from 'vue'
 import { APIClient } from '@/api/client'
-import { getEventValue } from '@/utils'
 import ErrorManager from '@/components/management/ErrorManager.vue'
 import getCountryISO2 from 'country-iso-3-to-2'
 import { countryCodeEmoji } from 'country-code-emoji'
 import { renderMPStyle as MPStyle } from '@/utils'
 import type { OpponentsStatisticsResult } from '@/api/entities'
+import SelectInputComponent from '@/components/basic/SelectInputComponent.vue'
+import NumberInputComponent from '@/components/basic/NumberInputComponent.vue'
 
 const props = defineProps({
   minDate: { type: Date, required: true },
   maxDate: { type: Date, required: true },
   player: { type: String, required: true }
 })
+
+const groupByOptions = [
+  { value: 'uuid', label: 'Player' },
+  { value: 'country', label: 'Country' },
+  { value: 'club_tag', label: 'Club' }
+]
+const orderByOptions = [
+  { value: 'played', label: 'Played' },
+  { value: 'played_against', label: 'As opponent' },
+  { value: 'played_along', label: 'As teammate' },
+  { value: 'games_lost_against', label: 'Losses against' },
+  { value: 'games_won_against', label: 'Wins against' },
+  { value: 'games_lost_along', label: 'Losses along' },
+  { value: 'games_won_along', label: 'Wins along' }
+]
+const orderOptions = [
+  { value: 'desc', label: 'Descending' },
+  { value: 'asc', label: 'Ascending' }
+]
 
 const orderBy = ref('played')
 const groupBy = ref<'uuid' | 'club_tag' | 'country'>('uuid')
@@ -193,9 +182,10 @@ const {
   player: props.player,
   order: order.value,
   order_by: orderBy.value,
-  group_by: groupBy.value
+  group_by: groupBy.value,
+  limit: 13
 }))
-watch([order, orderBy], () => {
+watch([order, orderBy, () => props.player, () => props.minDate, () => props.maxDate], () => {
   page.value = 1
 })
 const formatClubTag = (stat: OpponentsStatisticsResult) => {
@@ -208,5 +198,10 @@ const formatClubTag = (stat: OpponentsStatisticsResult) => {
   .overflow-x-lg-hidden {
     overflow-x: hidden !important;
   }
+}
+.player-flag {
+  height: 20px;
+  margin-right: 3px;
+  vertical-align: middle;
 }
 </style>

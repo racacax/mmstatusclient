@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps<{
   data: [number, number, number][]
@@ -42,7 +42,7 @@ function renderColors(chart: any) {
   })
 }
 
-function formatData() {
+const chartOptions = computed(() => {
   const dark = isDark()
   const stops = dark ? DARK_STOPS : LIGHT_STOPS
   const labelColor = dark ? '#d6d6d6' : '#333333'
@@ -54,8 +54,12 @@ function formatData() {
       styledMode: false,
       marginBottom: 80,
       backgroundColor: 'transparent',
+      animation: false,
       events: {
-        render: function (this: any) {
+        load: function (this: any) {
+          renderColors(this)
+        },
+        redraw: function (this: any) {
           renderColors(this)
         }
       }
@@ -92,7 +96,7 @@ function formatData() {
       backgroundColor: dark ? '#393939' : '#f7f7f7',
       style: { color: labelColor },
       formatter: function (this: any) {
-        return `<b>${props.yCategories[this.point.y]}</b> on <b>${props.xCategories[this.point.x]}</b>: <b>${this.point.value}</b> matches`
+        return `<b>${props.yCategories[this.point.y]}</b> at <b>${props.xCategories[this.point.x]}</b>: <b>${this.point.value}</b> matches`
       }
     },
     series: [
@@ -107,11 +111,5 @@ function formatData() {
       }
     ]
   }
-}
-
-const chartOptions = ref(formatData())
-watch(
-  () => [props.data, props.xCategories, props.yCategories, props.colorAxisMax],
-  () => (chartOptions.value = formatData())
-)
+})
 </script>

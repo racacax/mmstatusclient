@@ -6,18 +6,27 @@ import {
   faFileText,
   faGamepad,
   faUsers,
-  faHeartPulse
+  faHeartPulse,
+  faTableCells,
+  faUser
 } from '@fortawesome/free-solid-svg-icons'
+import { Dropdown } from 'bootstrap'
 import CustomIcon from '@/components/basic/CustomIcon.vue'
 import ThemeManager from '@/components/management/ThemeManager.vue'
 const route = useRoute()
+
+function closeDropdown(e: MouseEvent) {
+  const menu = e.currentTarget as HTMLElement
+  const toggle = menu.closest('.dropdown')?.querySelector('[data-bs-toggle="dropdown"]')
+  if (toggle) Dropdown.getInstance(toggle)?.hide()
+}
 </script>
 
 <template>
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
       <a class="navbar-brand" href="#/"
-        ><img src="/images/TM.png" style="width: 50px" /> Matchmaking Status</a
+        ><img src="/images/TM.png" style="width: 50px" /> Matchmaking Stats</a
       >
       <button
         class="navbar-toggler"
@@ -33,8 +42,13 @@ const route = useRoute()
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
+            <RouterLink class="nav-link" aria-current="page" to="/"
+              ><FontAwesomeIcon :icon="faTableCells" /> Overview</RouterLink
+            >
+          </li>
+          <li class="nav-item">
             <RouterLink class="nav-link" aria-current="page" to="/active-players"
-              ><FontAwesomeIcon :icon="faUsers" /> Players</RouterLink
+              ><FontAwesomeIcon :icon="faUsers" /> Active Players</RouterLink
             >
           </li>
           <li class="nav-item">
@@ -44,18 +58,36 @@ const route = useRoute()
           </li>
           <li class="nav-item">
             <RouterLink class="nav-link" aria-current="page" to="/current-status">
-              <CustomIcon icon="wave-pulse" /> Status</RouterLink
+              <CustomIcon icon="wave-pulse" /> Activity</RouterLink
             >
           </li>
-          <li class="nav-item">
-            <RouterLink
-              class="nav-link"
-              aria-current="page"
-              to="/statistics"
-              :class="{ 'router-link-active': route.path.includes('/statistics/') }"
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              :class="{
+                'router-link-active':
+                  route.path.startsWith('/statistics') ||
+                  route.path.startsWith('/player-statistics')
+              }"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
             >
-              <FontAwesomeIcon :icon="faChartSimple" /> Statistics</RouterLink
-            >
+              <FontAwesomeIcon :icon="faChartSimple" /> Statistics
+            </a>
+            <ul class="dropdown-menu" @click="closeDropdown">
+              <li>
+                <RouterLink class="dropdown-item" to="/statistics">
+                  <FontAwesomeIcon :icon="faChartSimple" /> Global
+                </RouterLink>
+              </li>
+              <li>
+                <RouterLink class="dropdown-item" to="/player-statistics">
+                  <FontAwesomeIcon :icon="faUser" /> Player
+                </RouterLink>
+              </li>
+            </ul>
           </li>
           <li class="nav-item">
             <a class="nav-link" aria-current="page" target="_blank" href="/api/">
