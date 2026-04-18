@@ -1,5 +1,14 @@
 @import './base.css';
 @import './highcharts.css';
+
+@font-face {
+  font-family: 'ManiaIcons';
+  src: url('/fonts/ManiaIcons.woff2') format('woff2');
+}
+
+.mp-styled {
+  font-family: 'ManiaIcons', sans-serif;
+}
 #app {
   width: 100%;
   margin: 0 auto;

@@ -28,7 +28,7 @@ function sanitizeMPTag(tag: string): string {
 }
 
 export function renderMPStyle(tag: string): string {
-  return MPStyle(sanitizeMPTag(tag))
+  return `<span class="mp-styled">${MPStyle(sanitizeMPTag(tag))}</span>`
 }
 
 export function ordinalSuffixOf(i: number) {
