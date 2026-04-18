@@ -1,5 +1,7 @@
 <script setup lang="ts" generic="T extends string | number">
-defineProps<{
+import { computed } from 'vue'
+
+const props = defineProps<{
   options: { value: T; label: string; detail?: string; icon?: string }[]
   modelValue: T | null
 }>()
@@ -8,12 +10,7 @@ const emit = defineEmits<{
   'update:modelValue': [value: T]
 }>()
 
-function selected(
-  options: { value: T; label: string; detail?: string; icon?: string }[],
-  modelValue: T | null
-) {
-  return options.find((o) => o.value === modelValue) ?? null
-}
+const selectedOption = computed(() => props.options.find((o) => o.value === props.modelValue) ?? null)
 </script>
 
 <template>
@@ -25,18 +22,18 @@ function selected(
     >
       <div class="dropdown-btn-content">
         <img
-          v-if="selected(options, modelValue)?.icon"
-          :src="selected(options, modelValue)!.icon"
+          v-if="selectedOption?.icon"
+          :src="selectedOption!.icon"
           class="dropdown-option-icon"
         />
         <div class="dropdown-btn-text">
-          <template v-if="selected(options, modelValue)">
-            <div class="dropdown-btn-label fs-6">{{ selected(options, modelValue)!.label }}</div>
+          <template v-if="selectedOption">
+            <div class="dropdown-btn-label fs-6">{{ selectedOption.label }}</div>
             <div
-              v-if="selected(options, modelValue)!.detail"
+              v-if="selectedOption.detail"
               class="dropdown-btn-detail text-muted"
             >
-              {{ selected(options, modelValue)!.detail }}
+              {{ selectedOption.detail }}
             </div>
           </template>
           <template v-else>—</template>
