@@ -8,6 +8,7 @@
     :sub-value="top ? `${top.played.toLocaleString()} matches` : undefined"
     :link="top ? `/#/player-statistics/${top.uuid}` : undefined"
     link-text="Profile →"
+    classes="col-6 col-lg-3"
   >
     <template #display>
       <img

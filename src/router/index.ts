@@ -7,6 +7,7 @@ import StatisticsView from '@/views/StatisticsView.vue'
 import PlayerStatisticsView from '@/views/PlayerStatisticsView.vue'
 import ThreadHealthView from '@/views/ThreadHealthView.vue'
 import MainView from '@/views/MainView.vue'
+import AboutView from '@/views/AboutView.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -65,6 +66,11 @@ const router = createRouter({
       path: '/thread-health',
       name: 'thread-health',
       component: ThreadHealthView
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: AboutView
     }
   ]
 })

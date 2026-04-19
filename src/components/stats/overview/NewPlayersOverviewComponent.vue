@@ -1,6 +1,6 @@
 <template>
   <CardComponent
-    classes="col-12"
+    classes="col-12 col-lg-6"
     title="New Players / Week"
     tooltip="Players who played their first match each week this season."
   >

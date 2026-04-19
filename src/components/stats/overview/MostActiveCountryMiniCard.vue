@@ -8,6 +8,7 @@
     :sub-value="top ? `${top.total.toLocaleString()} player matches` : undefined"
     link="/#/statistics/tab/country"
     link-text="Country stats →"
+    classes="col-6 col-lg-3"
   >
     <template #display>
       <img v-if="top" :src="`/flags/${top.file_name}`" :alt="top.name" class="mini-flag" />

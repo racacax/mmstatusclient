@@ -8,11 +8,15 @@ import {
   faUsers,
   faHeartPulse,
   faTableCells,
-  faUser
+  faUser,
+  faEllipsis
 } from '@fortawesome/free-solid-svg-icons'
 import { Dropdown } from 'bootstrap'
 import CustomIcon from '@/components/basic/CustomIcon.vue'
 import ThemeManager from '@/components/management/ThemeManager.vue'
+import KofiDonateComponent from '@/components/basic/KofiDonateComponent.vue'
+import { faFolderPlus } from '@fortawesome/free-solid-svg-icons/faFolderPlus'
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons/faInfoCircle'
 const route = useRoute()
 
 function closeDropdown(e: MouseEvent) {
@@ -28,6 +32,7 @@ function closeDropdown(e: MouseEvent) {
       <a class="navbar-brand" href="#/"
         ><img src="/images/TM.png" style="width: 50px" /> Matchmaking Stats</a
       >
+      <KofiDonateComponent class="d-lg-none" />
       <button
         class="navbar-toggler"
         type="button"
@@ -89,15 +94,40 @@ function closeDropdown(e: MouseEvent) {
               </li>
             </ul>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" aria-current="page" target="_blank" href="/api/">
-              <FontAwesomeIcon :icon="faFileText" /> Docs</a
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              :class="{
+                'router-link-active':
+                  route.path.startsWith('/thread-health') || route.path.startsWith('/about')
+              }"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
             >
+              <FontAwesomeIcon :icon="faFolderPlus" /> More
+            </a>
+            <ul class="dropdown-menu" @click="closeDropdown">
+              <li>
+                <a class="dropdown-item" aria-current="page" target="_blank" href="/api/">
+                  <FontAwesomeIcon :icon="faFileText" /> Docs</a
+                >
+              </li>
+              <li>
+                <RouterLink class="dropdown-item" aria-current="page" to="/thread-health">
+                  <FontAwesomeIcon :icon="faHeartPulse" /> App Health</RouterLink
+                >
+              </li>
+              <li>
+                <RouterLink class="dropdown-item" aria-current="page" to="/about">
+                  <FontAwesomeIcon :icon="faInfoCircle" /> About</RouterLink
+                >
+              </li>
+            </ul>
           </li>
         </ul>
-        <RouterLink class="nav-link me-4" aria-current="page" to="/thread-health">
-          <FontAwesomeIcon :icon="faHeartPulse" /> Health
-        </RouterLink>
+        <KofiDonateComponent class="me-4 d-none d-lg-flex" />
         <ThemeManager />
       </div>
     </div>

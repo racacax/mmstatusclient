@@ -10,7 +10,9 @@ const emit = defineEmits<{
   'update:modelValue': [value: T]
 }>()
 
-const selectedOption = computed(() => props.options.find((o) => o.value === props.modelValue) ?? null)
+const selectedOption = computed(
+  () => props.options.find((o) => o.value === props.modelValue) ?? null
+)
 </script>
 
 <template>
@@ -21,18 +23,11 @@ const selectedOption = computed(() => props.options.find((o) => o.value === prop
       data-bs-toggle="dropdown"
     >
       <div class="dropdown-btn-content">
-        <img
-          v-if="selectedOption?.icon"
-          :src="selectedOption!.icon"
-          class="dropdown-option-icon"
-        />
+        <img v-if="selectedOption?.icon" :src="selectedOption!.icon" class="dropdown-option-icon" />
         <div class="dropdown-btn-text">
           <template v-if="selectedOption">
             <div class="dropdown-btn-label fs-6">{{ selectedOption.label }}</div>
-            <div
-              v-if="selectedOption.detail"
-              class="dropdown-btn-detail text-muted"
-            >
+            <div v-if="selectedOption.detail" class="dropdown-btn-detail text-muted">
               {{ selectedOption.detail }}
             </div>
           </template>

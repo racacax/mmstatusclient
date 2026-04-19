@@ -67,19 +67,17 @@ const prevSeason = computed((): number | null => {
       <HotThisWeekDeltaOverviewComponent :season="currentSeason.id" />
 
       <HotThisWeekOverviewComponent :season="currentSeason.id" />
-      <div class="col-lg-4 col-12 row gx-0">
+      <div class="col-lg-8 col-12 row gx-0">
         <NewPlayersOverviewComponent
+          :season="currentSeason.id"
+          :prev-season="prevSeason ?? undefined"
+        />
+        <PlayerRetentionOverviewComponent
           :season="currentSeason.id"
           :prev-season="prevSeason ?? undefined"
         />
         <MostPlayedMapMiniCard :season="currentSeason.id" />
         <MostActivePlayerMiniCard :season="currentSeason.id" />
-      </div>
-      <div class="col-lg-4 col-12 row gx-0">
-        <PlayerRetentionOverviewComponent
-          :season="currentSeason.id"
-          :prev-season="prevSeason ?? undefined"
-        />
         <TotalPlayersMiniCard :season="currentSeason.id" />
         <MostActiveCountryMiniCard :season="currentSeason.id" />
       </div>

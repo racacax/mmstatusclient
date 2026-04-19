@@ -86,7 +86,7 @@ watch([searchRef], () => {
   <div class="d-flex flex-md-row-reverse flex-column align-items-end position-relative">
     <div class="d-flex justify-content-end align-items-start gap-2 flex-wrap mb-2">
       <form class="d-flex flex-column" method="dialog">
-        <div class="p-2 border rounded-top d-flex gap-2">
+        <div class="p-2 border rounded-top d-flex gap-2 flex-wrap flex-lg-nowrap">
           <div>
             <div class="d-flex gap-2 align-items-end h-100">
               <div class="d-flex h-100">

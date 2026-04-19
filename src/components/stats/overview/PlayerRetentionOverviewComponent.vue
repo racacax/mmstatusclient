@@ -1,6 +1,6 @@
 <template>
   <CardComponent
-    classes="col-12"
+    classes="col-12 col-lg-6"
     title="Player Retention / Week"
     tooltip="Percentage of players from a given week who played again the following week."
   >

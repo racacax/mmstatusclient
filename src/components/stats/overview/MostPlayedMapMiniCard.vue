@@ -6,8 +6,9 @@
     :error="error"
     :main-value="top?.map_name ?? '—'"
     :sub-value="top ? `${top.total_played.toLocaleString()} matches` : undefined"
-    link="/#/statistics/tab/global"
+    link="/#/statistics/tab/maps"
     link-text="Map stats →"
+    classes="col-6 col-lg-3"
   />
 </template>
 

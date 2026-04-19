@@ -8,6 +8,7 @@
     sub-value="active players"
     link="/#/statistics/tab/ranks"
     link-text="Rank stats →"
+    classes="col-6 col-lg-3"
   />
 </template>
 
