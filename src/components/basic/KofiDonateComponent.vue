@@ -22,7 +22,7 @@ onMounted(() => {
       aria-expanded="false"
     >
       <img src="/icons/kofi.png" alt="Ko-fi" class="kofi-icon" />
-      Support
+      <span class="d-none d-lg-inline fw-semibold">Support</span>
     </button>
     <div class="dropdown-menu dropdown-menu-end kofi-dropdown p-0">
       <iframe
